@@ -79,8 +79,6 @@ final class HtmlRenderer
     private function renderField(FieldDefinition $field, ThemeInterface $theme): string
     {
         $type = $field->type->renderType();
-        $name = $this->escape($field->name);
-        $id = $this->escape($field->id());
         $label = $this->escape($field->label());
 
         $rowAttr = (array) ($field->options['row_attr'] ?? []);
@@ -89,26 +87,32 @@ final class HtmlRenderer
         $attr = (array) ($field->options['attr'] ?? []);
         $attr['id'] = $field->id();
         $attr['name'] = $field->name;
-        if ($type !== 'textarea' && $type !== 'select' && $type !== 'submit') {
+        if (($field->options['multiple'] ?? false) === true) {
+            $attr['multiple'] = true;
+            if (!str_ends_with($field->name, '[]')) {
+                $attr['name'] = $field->name . '[]';
+            }
+        }
+        if (!in_array($type, ['textarea', 'select', 'submit', 'button', 'reset', 'radio', 'datalist'], true)) {
             $attr['value'] = is_array($field->value) ? '' : (string) ($field->value ?? '');
         }
-        if ($type !== 'submit' && $type !== 'hidden' && !isset($attr['class'])) {
+        if (!in_array($type, ['submit', 'hidden', 'button', 'reset'], true) && !isset($attr['class'])) {
             $attr['class'] = $theme->inputClass();
-        } elseif ($type !== 'submit' && $type !== 'hidden') {
-            $attr['class'] = trim($attr['class'] . ' ' . $theme->inputClass());
+        } elseif (!in_array($type, ['submit', 'hidden', 'button', 'reset'], true)) {
+            $attr['class'] = trim((string) $attr['class'] . ' ' . $theme->inputClass());
         }
 
         $html = '<div' . $this->attributes($rowAttr) . '>';
-        if ($type !== 'submit' && $type !== 'hidden') {
+        if (!in_array($type, ['submit', 'hidden', 'button', 'reset'], true)) {
             $labelAttr = (array) ($field->options['label_attr'] ?? []);
             $labelAttr['for'] = $field->id();
             $labelAttr['class'] = trim(($labelAttr['class'] ?? '') . ' ' . $theme->labelClass());
             $html .= '<label' . $this->attributes($labelAttr) . '>' . $label . '</label>';
         }
 
-        if ($type === 'submit') {
+        if (in_array($type, ['submit', 'button', 'reset'], true)) {
             $buttonAttr = $attr;
-            $buttonAttr['type'] = 'submit';
+            $buttonAttr['type'] = $type;
             unset($buttonAttr['value']);
             $html .= '<button' . $this->attributes($buttonAttr) . '>' . $label . '</button>';
         } elseif ($type === 'textarea') {
@@ -116,13 +120,24 @@ final class HtmlRenderer
             $html .= '<textarea' . $this->attributes($attr) . '>' . $this->escape((string) ($field->value ?? '')) . '</textarea>';
         } elseif ($type === 'select') {
             unset($attr['value']);
+            $selectedValues = is_array($field->value) ? array_map('strval', $field->value) : [(string) ($field->value ?? '')];
             $html .= '<select' . $this->attributes($attr) . '>';
             $placeholder = $field->options['placeholder'] ?? null;
-            if (is_string($placeholder) && $placeholder !== '') {
-                $html .= '<option value="">' . $this->escape($placeholder) . '</option>';
+            if (is_string($placeholder) && $placeholder !== '' && (($field->options['multiple'] ?? false) !== true)) {
+                $selected = ($field->value === null || $field->value === '') ? ' selected' : '';
+                $html .= '<option value=""' . $selected . '>' . $this->escape($placeholder) . '</option>';
             }
             foreach ((array) ($field->options['choices'] ?? []) as $choiceLabel => $choiceValue) {
-                $selected = (string) $choiceValue === (string) ($field->value ?? '') ? ' selected' : '';
+                if (is_array($choiceValue)) {
+                    $html .= '<optgroup label="' . $this->escape((string) $choiceLabel) . '">';
+                    foreach ($choiceValue as $nestedLabel => $nestedValue) {
+                        $selected = in_array((string) $nestedValue, $selectedValues, true) ? ' selected' : '';
+                        $html .= '<option value="' . $this->escape((string) $nestedValue) . '"' . $selected . '>' . $this->escape((string) $nestedLabel) . '</option>';
+                    }
+                    $html .= '</optgroup>';
+                    continue;
+                }
+                $selected = in_array((string) $choiceValue, $selectedValues, true) ? ' selected' : '';
                 $html .= '<option value="' . $this->escape((string) $choiceValue) . '"' . $selected . '>' . $this->escape((string) $choiceLabel) . '</option>';
             }
             $html .= '</select>';
@@ -133,6 +148,44 @@ final class HtmlRenderer
             $attr['type'] = 'checkbox';
             $attr['value'] = (string) ($field->options['checked_value'] ?? '1');
             $html .= '<input' . $this->attributes($attr) . '>';
+        } elseif ($type === 'radio') {
+            unset($attr['value']);
+            $choices = (array) ($field->options['choices'] ?? []);
+            if ($choices === []) {
+                $radioAttr = $attr;
+                $radioAttr['type'] = 'radio';
+                $radioAttr['value'] = (string) ($field->options['checked_value'] ?? '1');
+                if ((string) ($field->value ?? '') === $radioAttr['value']) {
+                    $radioAttr['checked'] = 'checked';
+                }
+                $html .= '<input' . $this->attributes($radioAttr) . '>';
+            } else {
+                $idx = 0;
+                foreach ($choices as $choiceValue => $choiceLabel) {
+                    $radioAttr = $attr;
+                    $radioAttr['type'] = 'radio';
+                    $radioAttr['id'] = $field->id() . '-' . $idx;
+                    $radioAttr['value'] = (string) $choiceValue;
+                    if ((string) ($field->value ?? '') === (string) $choiceValue) {
+                        $radioAttr['checked'] = 'checked';
+                    }
+                    $html .= '<label' . $this->attributes(['for' => $radioAttr['id']]) . '><input' . $this->attributes($radioAttr) . '> ' . $this->escape((string) $choiceLabel) . '</label>';
+                    $idx++;
+                }
+            }
+        } elseif ($type === 'datalist') {
+            $listId = $field->id() . '-list';
+            $inputAttr = $attr;
+            $inputAttr['list'] = $listId;
+            $inputAttr['type'] = 'text';
+            $html .= '<input' . $this->attributes($inputAttr) . '>';
+            $html .= '<datalist id="' . $this->escape($listId) . '">';
+            foreach ((array) ($field->options['choices'] ?? []) as $choice) {
+                if (is_string($choice) || is_numeric($choice)) {
+                    $html .= '<option value="' . $this->escape((string) $choice) . '">';
+                }
+            }
+            $html .= '</datalist>';
         } else {
             $attr['type'] = $type;
             $html .= '<input' . $this->attributes($attr) . '>';
@@ -166,7 +219,7 @@ final class HtmlRenderer
     private function needsMultipart(Form $form): bool
     {
         foreach ($form->fields() as $field) {
-            if ($field->type->renderType() === 'file') {
+            if (in_array($field->type->renderType(), ['file'], true)) {
                 return true;
             }
         }

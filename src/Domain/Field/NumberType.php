@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-class ChoiceType extends AbstractFieldType
+final class NumberType extends AbstractFieldType
 {
     public function renderType(): string
     {
-        return 'select';
+        return 'number';
     }
 
     public function normalizeOptions(array $options): array
     {
         $options = parent::normalizeOptions($options);
-        $options['choices'] ??= [];
-        $options['placeholder'] ??= null;
-        $options['multiple'] ??= false;
+        $options['attr']['min'] ??= '0';
+        $options['attr']['max'] ??= '100';
+        $options['attr']['step'] ??= '1';
         return $options;
     }
 }

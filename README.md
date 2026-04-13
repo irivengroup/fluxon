@@ -1,83 +1,60 @@
-# PhpFormGenerator V3.2 Enterprise avancée
+# PhpFormGenerator V3.2
 
-Framework de formulaires PHP orienté entreprise avec :
+Enterprise-oriented PHP form framework starter with fieldsets, validation, CSRF, events, themes and mappers.
 
-- architecture `Application / Domain / Infrastructure / Presentation`
-- `FormFactory`, `FormBuilder`, `Form`
-- `FormTypeInterface` réutilisable
-- validation par contraintes
-- CSRF
-- événements de formulaire
-- mappers array et object
-- thèmes HTML `Default`, `Bootstrap5`, `Tailwind`
-- gestion native des `fieldset`
-- dataset `CountryType` réintégré depuis le legacy
+## Legacy field type parity
 
-## Exemple rapide
+This build preserves the full set of historically supported field types from the legacy package:
+
+- Audio
+- Button
+- Captcha
+- Checkbox
+- Color
+- Countries
+- Datalist
+- Date
+- Datetime
+- DatetimeLocal
+- Editor
+- Email
+- File
+- Hidden
+- Image
+- Month
+- Number
+- Password
+- Phone
+- Radio
+- Range
+- Reset
+- Search
+- Select
+- Submit
+- Text
+- Textarea
+- Time
+- Url
+- Video
+- Week
+- YesNo
+
+## Quick start
 
 ```php
-use Iriven\PhpFormGenerator\Application\FormFactory;
-use Iriven\PhpFormGenerator\Application\Type\ContactType;
-use Iriven\PhpFormGenerator\Infrastructure\Http\ArrayRequest;
-use Iriven\PhpFormGenerator\Presentation\Html\HtmlRenderer;
+use Iriven\PhpFormGenerator\Application\FormGenerator;
 
-$factory = new FormFactory();
-$form = $factory->create(ContactType::class, null, 'contact', [
-    'method' => 'POST',
-    'csrf_protection' => true,
-]);
-
-$form->handleRequest(new ArrayRequest('POST', $_POST, $_FILES));
-
-if ($form->isSubmitted() && $form->isValid()) {
-    $data = $form->data();
-}
-
-echo (new HtmlRenderer())->render($form);
+$html = (new FormGenerator())
+    ->open('profile', ['method' => 'POST'])
+    ->addFieldset(['legend' => 'Identity'])
+    ->addText('name', ['label' => 'Name'])
+    ->addEmail('email', ['label' => 'Email', 'required' => true])
+    ->addCountries('country', ['label' => 'Country'])
+    ->endFieldset()
+    ->addSubmit('save', ['label' => 'Save'])
+    ->render();
 ```
 
-## Types fournis
+## CI note
 
-- `TextType`
-- `EmailType`
-- `TextareaType`
-- `CheckboxType`
-- `HiddenType`
-- `SubmitType`
-- `ChoiceType`
-- `CountryType`
-- `YesNoType`
-- `UrlType`
-- `FileType`
-- `FormType`
-- `CollectionType`
-
-## Contraintes fournies
-
-- `Required`
-- `Email`
-- `Length`
-- `Choice`
-- `Regex`
-- `Url`
-- `Min`
-- `Max`
-- `Range`
-- `Count`
-- `File`
-- `MimeType`
-- `MaxFileSize`
-- `Callback`
-
-## Points inclus
-
-- `fieldset` imbriqués
-- events `PRE_SET_DATA`, `PRE_SUBMIT`, `SUBMIT`, `POST_SUBMIT`, `VALIDATION_ERROR`
-- build Scrutinizer
-- GitHub Actions
-- base compatible industrialisation
-
-
-## Composer CI note
-
-This project explicitly allows the Composer plugin `infection/extension-installer` via `config.allow-plugins` to avoid CI failures on Composer 2.2+.
+Composer 2.2+ blocks plugins by default. This project explicitly allows the Infection Composer plugin through `config.allow-plugins` in `composer.json`.

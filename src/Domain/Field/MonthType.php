@@ -3,19 +3,17 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-class ChoiceType extends AbstractFieldType
+final class MonthType extends AbstractFieldType
 {
     public function renderType(): string
     {
-        return 'select';
+        return 'month';
     }
 
     public function normalizeOptions(array $options): array
     {
         $options = parent::normalizeOptions($options);
-        $options['choices'] ??= [];
-        $options['placeholder'] ??= null;
-        $options['multiple'] ??= false;
+        $options['attr']['pattern'] ??= '\\d{4}-\\d{2}';
         return $options;
     }
 }

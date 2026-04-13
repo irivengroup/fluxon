@@ -1,76 +1,38 @@
+
 # PhpFormGenerator
 
-Refonte complète moderne du projet legacy `PhpFormGenerator`.
-
-## Points clés
-
-- architecture en `src/`
-- séparation Application / Domain / Infrastructure / Presentation
-- plus de couche legacy
-- API fluide moderne
-- rendu HTML échappé
-- tous les éléments historiquement supportés conservés :
-  - audio
-  - button
-  - captcha
-  - checkbox
-  - color
-  - countries
-  - datalist
-  - date
-  - datetime
-  - datetime-local
-  - editor
-  - email
-  - file
-  - hidden
-  - image
-  - month
-  - number
-  - password
-  - phone
-  - radio
-  - range
-  - reset
-  - search
-  - select
-  - submit
-  - text
-  - textarea
-  - time
-  - url
-  - video
-  - week
-  - yes/no
+Refonte complète du projet legacy avec architecture moderne en `src/`.
 
 ## Installation
 
 ```bash
-composer install
+composer require iriven/php-form-generator
 ```
 
 ## Exemple
 
 ```php
-<?php
-
-require __DIR__ . '/vendor/autoload.php';
-
 use Iriven\PhpFormGenerator\FormGenerator;
-use Iriven\PhpFormGenerator\Infrastructure\Request\ArrayRequestDataProvider;
+use Iriven\PhpFormGenerator\Infrastructure\ArrayRequestDataProvider;
 
-$form = new FormGenerator(new ArrayRequestDataProvider(
-    method: 'POST',
-    post: ['name' => 'Ada']
-));
+$form = new FormGenerator(new ArrayRequestDataProvider([], ['email' => 'john@example.com'], 'POST'));
 
 echo $form
-    ->open(['method' => 'post', 'class' => 'profile-form'])
+    ->open(['method' => 'post', 'action' => '/submit'])
     ->addFieldset(['legend' => 'Profil'])
-    ->addText('Name')
+    ->addText('Nom')
     ->addEmail('Email')
-    ->addCountries('Country')
     ->endFieldset()
-    ->addSubmit('Save')
+    ->addCountries('Country')
+    ->addFile('Document')
+    ->addSubmit('Envoyer')
     ->close();
 ```
+
+## Points clés
+
+- plus de couche legacy
+- API fluide maintenue
+- pré-remplissage via provider injectable
+- rendu HTML échappé
+- support de tous les éléments historiquement exposés

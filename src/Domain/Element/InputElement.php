@@ -6,7 +6,7 @@ namespace Iriven\PhpFormGenerator\Domain\Element;
 
 class InputElement extends AbstractElement
 {
-    public function __construct(string $label, string $type = 'text', array $attributes = [])
+    public function __construct(string $label, array $attributes = [], string $type = 'text')
     {
         parent::__construct($label, $attributes);
         $this->attributes->set('type', $type);
@@ -14,11 +14,6 @@ class InputElement extends AbstractElement
 
     public function render(): string
     {
-        $type = (string) $this->attributes->get('type', 'text');
-
-        return $this->renderLabel()
-            . '<input'
-            . $this->attributes->render($type)
-            . '>';
+        return $this->renderLabel() . '<input' . $this->attributes->render() . '>';
     }
 }

@@ -4,59 +4,46 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Element;
 
-use Iriven\PhpFormGenerator\Presentation\Html\HtmlAttributes;
-use Iriven\PhpFormGenerator\Presentation\Html\LabelView;
-use Iriven\PhpFormGenerator\Presentation\Html\Str;
+use Iriven\PhpFormGenerator\Domain\Contract\Renderable;
+use Iriven\PhpFormGenerator\Domain\Label;
+use Iriven\PhpFormGenerator\Domain\ValueObject\Attributes;
 
-abstract class AbstractElement implements ElementInterface
+abstract class AbstractElement implements Renderable
 {
-    protected HtmlAttributes $attributes;
-    protected LabelView $label;
+    protected Label $label;
+    protected Attributes $attributes;
 
     public function __construct(string $label, array $attributes = [])
     {
-        $this->label = new LabelView($label, new HtmlAttributes());
-        $this->attributes = new HtmlAttributes($attributes);
-
+        $this->label = new Label($label);
+        $this->attributes = new Attributes($attributes);
         if (!$this->attributes->has('name')) {
-            $this->attributes->set('name', Str::normalizeName($label));
+            $this->attributes->set('name', $this->normalize($label));
         }
         if (!$this->attributes->has('id')) {
             $this->attributes->createElementId((string) $this->attributes->get('name'));
         }
-        if (!$this->attributes->has('autocomplete')) {
-            $this->attributes->set('autocomplete', 'off');
-        }
-        if (!$this->attributes->has('type')) {
-            $this->attributes->set('type', 'text');
-        }
     }
 
-    public function attributes(): HtmlAttributes
+    public function attributes(): Attributes
     {
         return $this->attributes;
     }
 
-    public function name(): string
-    {
-        return (string) $this->attributes->get('name');
-    }
-
-    public function setValue(mixed $value): void
-    {
-        $this->attributes->set('value', $value);
-    }
-
-    public function shouldForceMultipart(): bool
-    {
-        return false;
-    }
-
     protected function renderLabel(): string
     {
-        return $this->label->renderFor(
-            (string) $this->attributes->get('type', 'text'),
-            (string) $this->attributes->get('id')
-        );
+        return $this->label->render((string) $this->attributes->get('type', 'text'), (string) $this->attributes->get('id'));
+    }
+
+    protected function escape(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    protected function normalize(string $value): string
+    {
+        $value = strtolower(trim($value));
+        $value = preg_replace('/[^a-z0-9\-_]+/', '-', $value) ?? $value;
+        return trim($value, '-');
     }
 }

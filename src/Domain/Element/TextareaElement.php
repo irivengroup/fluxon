@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Element;
 
-use Iriven\PhpFormGenerator\Presentation\Html\Escaper;
-
 final class TextareaElement extends AbstractElement
 {
     public function __construct(string $label, array $attributes = [])
@@ -14,20 +12,18 @@ final class TextareaElement extends AbstractElement
         $this->attributes
             ->set('type', 'textarea')
             ->set('rows', $this->attributes->get('rows', 6))
-            ->set('cols', $this->attributes->get('cols', 60));
+            ->set('cols', $this->attributes->get('cols', 60))
+            ->ignore('value');
+
+        $style = trim((string) $this->label->attributes()->get('style', '') . ' vertical-align: top;');
+        $this->label->attributes()->set('style', $style);
     }
 
     public function render(): string
     {
-        $value = (string) $this->attributes->get('value', '');
-        $attrs = clone $this->attributes;
-        $attrs->ignore(['value']);
-
         return $this->renderLabel()
-            . '<textarea'
-            . $attrs->render('textarea')
-            . '>'
-            . Escaper::text($value)
+            . '<textarea' . $this->attributes->render() . '>'
+            . $this->escape((string) $this->attributes->get('value', ''))
             . '</textarea>';
     }
 }

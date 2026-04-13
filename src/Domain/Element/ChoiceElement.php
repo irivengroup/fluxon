@@ -4,16 +4,12 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Element;
 
-use Iriven\PhpFormGenerator\Presentation\Html\Escaper;
+use Iriven\PhpFormGenerator\Domain\ValueObject\Attributes;
 
-class ChoiceElement extends AbstractElement
+final class ChoiceElement extends AbstractElement
 {
-    public function __construct(
-        string $label,
-        protected readonly array $options,
-        string $type,
-        array $attributes = [],
-    ) {
+    public function __construct(string $label, private readonly array $options = [], array $attributes = [], string $type = 'checkbox')
+    {
         parent::__construct($label, $attributes);
         $this->attributes->set('type', $type);
     }
@@ -21,50 +17,46 @@ class ChoiceElement extends AbstractElement
     public function render(): string
     {
         $type = (string) $this->attributes->get('type');
-        $value = $this->attributes->get('value', null);
 
         if (count($this->options) < 2 && $type === 'checkbox') {
-            $checked = (bool) $value;
-            $visible = clone $this->attributes;
+            $inputAttributes = $this->attributes->all();
+            $checked = (bool) ($inputAttributes['value'] ?? false);
+            $inputAttributes['value'] = '1';
+            $base = new InputElement($this->label->text(), $inputAttributes, 'checkbox');
             if ($checked) {
-                $visible->set('checked', 'checked');
+                $base->attributes()->set('checked', 'checked');
             }
-            $visible->set('value', '1');
-            $hidden = new InputElement($this->name(), 'hidden', [
-                'name' => $this->name(),
-                'value' => '0',
-            ]);
-
-            return $this->renderLabel()
-                . '<input' . $visible->render('checkbox') . '>'
-                . $hidden->render();
+            $hidden = new InputElement($this->label->text(), ['name' => (string) $this->attributes->get('name'), 'value' => '0'], 'hidden');
+            return $base->render() . $hidden->render();
         }
 
-        $selectedValues = is_array($value) ? $value : ($value === null || $value === '' ? [] : [$value]);
-        $name = $this->name();
+        $values = $this->attributes->get('value', []);
+        if (!is_array($values)) {
+            $values = [$values];
+        }
+        $values = array_map('strval', $values);
+
+        $name = (string) $this->attributes->get('name');
         if ($type === 'checkbox' && !str_ends_with($name, '[]')) {
             $name .= '[]';
         }
 
-        $base = clone $this->attributes;
-        $base->ignore(['id', 'value', 'checked', 'required']);
-        $base->set('name', $name);
+        $common = new Attributes($this->attributes->all());
+        $common->set('name', $name)->ignore(['id', 'value', 'checked', 'required', 'type']);
 
+        $baseId = (string) $this->attributes->get('id');
         $html = $this->renderLabel();
         $i = 0;
-        foreach ($this->options as $optionValue => $optionLabel) {
-            $id = (string) $this->attributes->get('id') . '-' . $i++;
-            $input = clone $base;
-            $input->set('id', $id)->set('value', (string) $optionValue);
-            if (in_array((string) $optionValue, array_map('strval', $selectedValues), true)) {
-                $input->set('checked', 'checked');
+        foreach ($this->options as $value => $caption) {
+            $optionId = $baseId . '-' . $i;
+            $html .= '<label for="' . $this->escape($optionId) . '">';
+            $html .= '<input id="' . $this->escape($optionId) . '" type="' . $this->escape($type) . '" value="' . $this->escape((string) $value) . '"' . $common->render();
+            if (in_array((string) $value, $values, true)) {
+                $html .= ' checked="checked"';
             }
-
-            $html .= '<label for="' . Escaper::attr($id) . '">';
-            $html .= '<input' . $input->render($type) . '>';
-            $html .= Escaper::text((string) $optionLabel) . '</label>';
+            $html .= '>' . $this->escape((string) $caption) . '</label>';
+            $i++;
         }
-
         return $html;
     }
 }

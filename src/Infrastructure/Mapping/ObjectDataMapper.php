@@ -1,20 +1,31 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Infrastructure\Mapping;
 
-use Iriven\PhpFormGenerator\Domain\Form\Form;
+use Iriven\PhpFormGenerator\Domain\Contract\DataMapperInterface;
 
-final class ObjectDataMapper
+final class ObjectDataMapper implements DataMapperInterface
 {
-    public function map(Form $form, object $target): object
+    public function __construct(private readonly ?string $className = null)
     {
-        foreach ($form->fields() as $field) {
-            if (property_exists($target, $field->name)) {
-                $target->{$field->name} = $field->value;
+    }
+
+    public function map(array $submittedData, mixed $target = null): mixed
+    {
+        $object = $target;
+        if ($object === null) {
+            $class = $this->className;
+            if ($class === null) {
+                return (object) $submittedData;
             }
+            $object = new $class();
         }
-        return $target;
+
+        foreach ($submittedData as $key => $value) {
+            $object->{$key} = $value;
+        }
+
+        return $object;
     }
 }

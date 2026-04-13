@@ -1,22 +1,22 @@
+build:
+  nodes:
+    analysis:
+      project_setup:
+        override:
+          - composer install --no-interaction
+      tests:
+        override:
+          - command: vendor/bin/phpunit
+            coverage:
+              file: coverage.xml
+              format: clover
+
 checks:
   php:
     code_rating: true
     duplication: true
+
 filter:
-  paths:
-    - src/*
+  excluded_paths:
     - tests/*
-build:
-  environment:
-    php:
-      version: 8.2
-  dependencies:
-    before:
-      - composer install --no-interaction --prefer-dist
-  tests:
-    override:
-      - command: composer analyse
-      - command: composer test
-        coverage:
-          file: coverage.clover
-          format: php-clover
+    - vendor/*

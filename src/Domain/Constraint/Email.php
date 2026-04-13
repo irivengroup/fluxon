@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Constraint;
@@ -12,7 +11,7 @@ final class Email implements ConstraintInterface
     {
     }
 
-    public function validate(mixed $value): array
+    public function validate(mixed $value, array $context = []): array
     {
         if ($value === null || $value === '') {
             return [];

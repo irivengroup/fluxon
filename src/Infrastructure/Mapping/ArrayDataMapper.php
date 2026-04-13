@@ -1,19 +1,14 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Infrastructure\Mapping;
 
-use Iriven\PhpFormGenerator\Domain\Form\Form;
+use Iriven\PhpFormGenerator\Domain\Contract\DataMapperInterface;
 
-final class ArrayDataMapper
+final class ArrayDataMapper implements DataMapperInterface
 {
-    public function map(Form $form): array
+    public function map(array $submittedData, mixed $target = null): mixed
     {
-        $data = [];
-        foreach ($form->fields() as $field) {
-            $data[$field->name] = $field->value;
-        }
-        return $data;
+        return $submittedData;
     }
 }

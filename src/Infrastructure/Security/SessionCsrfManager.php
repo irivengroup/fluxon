@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Infrastructure\Security;
@@ -8,29 +7,28 @@ use Iriven\PhpFormGenerator\Domain\Contract\CsrfManagerInterface;
 
 final class SessionCsrfManager implements CsrfManagerInterface
 {
-    public function __construct(private readonly string $sessionKeyPrefix = '_pfg_csrf_')
-    {
-    }
-
-    public function generateToken(string $tokenId): string
+    public function __construct(private readonly string $namespace = '_php_form_generator_csrf')
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
             @session_start();
         }
 
-        $key = $this->sessionKeyPrefix . $tokenId;
+        $_SESSION[$this->namespace] ??= [];
+    }
+
+    public function generateToken(string $tokenId): string
+    {
         $token = bin2hex(random_bytes(16));
-        $_SESSION[$key] = $token;
+        $_SESSION[$this->namespace][$tokenId] = $token;
         return $token;
     }
 
     public function isTokenValid(string $tokenId, ?string $token): bool
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            @session_start();
+        if ($token === null) {
+            return false;
         }
 
-        $key = $this->sessionKeyPrefix . $tokenId;
-        return isset($_SESSION[$key]) && is_string($token) && hash_equals($_SESSION[$key], $token);
+        return hash_equals((string) ($_SESSION[$this->namespace][$tokenId] ?? ''), $token);
     }
 }

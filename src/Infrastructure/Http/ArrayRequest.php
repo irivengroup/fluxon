@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Infrastructure\Http;
@@ -8,10 +7,11 @@ use Iriven\PhpFormGenerator\Domain\Contract\RequestInterface;
 
 final class ArrayRequest implements RequestInterface
 {
+    /** @param array<string,mixed> $input */
     public function __construct(
         private readonly string $method = 'POST',
-        private readonly array $data = [],
-        private readonly array $filesData = [],
+        private readonly array $input = [],
+        private readonly array $files = [],
     ) {
     }
 
@@ -22,11 +22,21 @@ final class ArrayRequest implements RequestInterface
 
     public function input(string $key, mixed $default = null): mixed
     {
-        return $this->data[$key] ?? $default;
+        return $this->input[$key] ?? $default;
     }
 
-    public function files(string $key, mixed $default = null): mixed
+    public function has(string $key): bool
     {
-        return $this->filesData[$key] ?? $default;
+        return array_key_exists($key, $this->input);
+    }
+
+    public function all(): array
+    {
+        return $this->input;
+    }
+
+    public function files(): array
+    {
+        return $this->files;
     }
 }

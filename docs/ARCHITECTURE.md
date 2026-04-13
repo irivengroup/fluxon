@@ -1,16 +1,17 @@
-# Architecture V3.2
+# Architecture
 
-## Couches
+## Application
+Façades et factory du framework.
 
-- `Application` : factory, orchestration
-- `Domain` : contrats, formulaire, champs, contraintes
-- `Infrastructure` : request, mapping, csrf, traduction
-- `Presentation` : rendering et thèmes
+## Domain
+Noyau métier : formulaires, champs, contraintes, événements, contrats.
 
-## Hardening V3.2
+## Infrastructure
+Adaptateurs techniques : requête, CSRF, mapping, dispatcher.
 
-- pipeline CI standardisé
-- configuration mutation testing
-- configuration refactoring automatique
-- configuration static analysis
-- point d'extension debug metadata sur la vue
+## Presentation
+Rendu HTML et thèmes.
+
+## Notes
+Cette V3.2 "enterprise avancée" fournit un noyau cohérent et extensible.
+Les sous-formulaires et collections sont présents comme types et points d'extension, mais pas encore avec un moteur de binding récursif complet type Symfony Forms.

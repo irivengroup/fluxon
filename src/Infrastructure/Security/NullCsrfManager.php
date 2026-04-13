@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Infrastructure\Security;
@@ -10,11 +9,11 @@ final class NullCsrfManager implements CsrfManagerInterface
 {
     public function generateToken(string $tokenId): string
     {
-        return 'csrf-disabled';
+        return 'dev-token';
     }
 
     public function isTokenValid(string $tokenId, ?string $token): bool
     {
-        return true;
+        return $token === 'dev-token';
     }
 }

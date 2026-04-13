@@ -1,45 +1,78 @@
-# PhpFormGenerator V3.2 Production Hardening
+# PhpFormGenerator V3.2 Enterprise avancée
 
-Cette version pousse le starter V3.1 vers une base plus industrialisée.
+Framework de formulaires PHP orienté entreprise avec :
 
-## Ajouts V3.2
-
-- hardening outillage qualité
-- configuration Scrutinizer
-- GitHub Actions CI
-- PHPStan niveau 8
-- Rector
-- Infection
-- support fieldsets conservé
-- renderer HTML échappé
-- request handling, validation et CSRF de base
-- point d'extension pour debug metadata
+- architecture `Application / Domain / Infrastructure / Presentation`
+- `FormFactory`, `FormBuilder`, `Form`
+- `FormTypeInterface` réutilisable
+- validation par contraintes
+- CSRF
+- événements de formulaire
+- mappers array et object
+- thèmes HTML `Default`, `Bootstrap5`, `Tailwind`
+- gestion native des `fieldset`
+- dataset `CountryType` réintégré depuis le legacy
 
 ## Exemple rapide
 
 ```php
 use Iriven\PhpFormGenerator\Application\FormFactory;
-use Iriven\PhpFormGenerator\Domain\Field\EmailType;
-use Iriven\PhpFormGenerator\Domain\Field\TextType;
+use Iriven\PhpFormGenerator\Application\Type\ContactType;
+use Iriven\PhpFormGenerator\Infrastructure\Http\ArrayRequest;
+use Iriven\PhpFormGenerator\Presentation\Html\HtmlRenderer;
 
 $factory = new FormFactory();
-$builder = $factory->createBuilder('contact');
+$form = $factory->create(ContactType::class, null, 'contact', [
+    'method' => 'POST',
+    'csrf_protection' => true,
+]);
 
-$form = $builder
-    ->addFieldset([
-        'legend' => 'Contact',
-        'description' => 'Informations principales',
-    ])
-    ->add('name', TextType::class, ['label' => 'Nom'])
-    ->add('email', EmailType::class, ['label' => 'Email'])
-    ->endFieldset()
-    ->getForm();
+$form->handleRequest(new ArrayRequest('POST', $_POST, $_FILES));
+
+if ($form->isSubmitted() && $form->isValid()) {
+    $data = $form->data();
+}
+
+echo (new HtmlRenderer())->render($form);
 ```
 
-## Scripts
+## Types fournis
 
-- `composer qa`
-- `composer analyse`
-- `composer test`
-- `composer refactor`
-- `composer mutate`
+- `TextType`
+- `EmailType`
+- `TextareaType`
+- `CheckboxType`
+- `HiddenType`
+- `SubmitType`
+- `ChoiceType`
+- `CountryType`
+- `YesNoType`
+- `UrlType`
+- `FileType`
+- `FormType`
+- `CollectionType`
+
+## Contraintes fournies
+
+- `Required`
+- `Email`
+- `Length`
+- `Choice`
+- `Regex`
+- `Url`
+- `Min`
+- `Max`
+- `Range`
+- `Count`
+- `File`
+- `MimeType`
+- `MaxFileSize`
+- `Callback`
+
+## Points inclus
+
+- `fieldset` imbriqués
+- events `PRE_SET_DATA`, `PRE_SUBMIT`, `SUBMIT`, `POST_SUBMIT`, `VALIDATION_ERROR`
+- build Scrutinizer
+- GitHub Actions
+- base compatible industrialisation

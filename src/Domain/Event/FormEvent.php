@@ -1,0 +1,30 @@
+<?php
+declare(strict_types=1);
+
+namespace Iriven\PhpFormGenerator\Domain\Event;
+
+use Iriven\PhpFormGenerator\Domain\Form\Form;
+
+final class FormEvent
+{
+    public function __construct(
+        private readonly Form $form,
+        private mixed $data = null,
+    ) {
+    }
+
+    public function form(): Form
+    {
+        return $this->form;
+    }
+
+    public function data(): mixed
+    {
+        return $this->data;
+    }
+
+    public function setData(mixed $data): void
+    {
+        $this->data = $data;
+    }
+}

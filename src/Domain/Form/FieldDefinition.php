@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Form;
@@ -18,5 +17,20 @@ final class FieldDefinition
         public mixed $value = null,
         public array $errors = [],
     ) {
+    }
+
+    public function label(): string
+    {
+        return (string) ($this->options['label'] ?? ucfirst(str_replace('_', ' ', $this->name)));
+    }
+
+    public function id(): string
+    {
+        return (string) ($this->options['id'] ?? $this->name);
+    }
+
+    public function mapped(): bool
+    {
+        return (bool) ($this->options['mapped'] ?? true);
     }
 }

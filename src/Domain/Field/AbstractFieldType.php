@@ -11,33 +11,40 @@ abstract class AbstractFieldType implements FieldTypeInterface
 {
     public function configureOptions(array $options = []): array
     {
-        return array_merge([
+        return array_replace([
             'label' => null,
             'required' => false,
-            'constraints' => [],
+            'mapped' => true,
+            'default' => null,
+            'empty_data' => null,
             'attr' => [],
+            'row_attr' => [],
+            'label_attr' => [],
+            'help' => null,
+            'help_attr' => [],
+            'disabled' => false,
+            'readonly' => false,
+            'constraints' => [],
+            'transformers' => [],
             'choices' => [],
+            'expanded' => false,
+            'multiple' => false,
+            'safe_html' => false,
+            'type' => $this->getBlockPrefix(),
         ], $options);
     }
 
-    public function buildField(string $name, array $options = []): Field
+    public function buildField(Field $field, array $options = []): void
     {
-        return new Field($name, $this, $this->configureOptions($options), $options['data'] ?? null);
     }
 
-    public function normalizeSubmittedValue(mixed $value, array $options = []): mixed
+    public function transformFromModel(mixed $value, array $options = []): mixed
     {
         return $value;
     }
 
-    public function buildViewVariables(Field $field): array
+    public function transformToModel(mixed $value, array $options = []): mixed
     {
-        return [
-            'type' => $field->option('type', $this->name()),
-            'label' => $field->option('label') ?? ucfirst($field->name()),
-            'value' => $field->data(),
-            'choices' => $field->option('choices', []),
-            'attributes' => $field->option('attr', []),
-        ];
+        return $value;
     }
 }

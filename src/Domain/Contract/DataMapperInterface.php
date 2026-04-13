@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Contract;
 
+use Iriven\PhpFormGenerator\Domain\Form\Field;
+
 interface DataMapperInterface
 {
-    public function mapDataToFields(mixed $data, array $fieldNames): array;
+    public function mapDataToFields(mixed $data, array $fields): void;
 
-    public function mapFieldsToData(array $submitted, mixed $target = null): mixed;
+    /**
+     * @param array<string, Field> $fields
+     */
+    public function mapFieldsToData(array $fields, mixed $data): mixed;
 }

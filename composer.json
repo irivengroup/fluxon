@@ -1,6 +1,6 @@
 {
   "name": "iriven/php-form-generator",
-  "description": "Enterprise-ready form framework starter kit for PHP 8.2+",
+  "description": "Enterprise form framework starter with validation, mapping, CSRF, nested forms, events and HTML rendering.",
   "type": "library",
   "license": "MIT",
   "require": {
@@ -20,8 +20,7 @@
     "phpunit/phpunit": "^11.0"
   },
   "scripts": {
-    "test": "phpunit"
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true
+    "test": "phpunit",
+    "analyse": "php -l $(find src -name '*.php')"
+  }
 }

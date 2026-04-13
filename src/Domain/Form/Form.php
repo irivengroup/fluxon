@@ -4,79 +4,107 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Form;
 
+use Iriven\PhpFormGenerator\Domain\Contract\ConstraintInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\CsrfManagerInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\DataMapperInterface;
-use Iriven\PhpFormGenerator\Domain\Contract\FormInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\RequestInterface;
+use Iriven\PhpFormGenerator\Domain\Event\EventDispatcher;
+use Iriven\PhpFormGenerator\Domain\Event\FormEvent;
+use Iriven\PhpFormGenerator\Domain\Event\FormEvents;
 use Iriven\PhpFormGenerator\Domain\Validation\ValidationError;
-use Iriven\PhpFormGenerator\Domain\Validation\ValidatorEngine;
+use Iriven\PhpFormGenerator\Presentation\Html\FormViewFactory;
 
 final class Form implements FormInterface
 {
-    /** @var array<string, Field> */
-    private array $fields;
-    private bool $submitted = false;
-    private bool $valid = false;
-    /** @var list<ValidationError> */
-    private array $errors = [];
-    private mixed $data;
-
     /**
      * @param array<string, Field> $fields
-     * @param array<string, mixed> $options
+     * @param list<ConstraintInterface> $formConstraints
+     * @param list<ValidationError> $errors
      */
     public function __construct(
-        array $fields,
-        private readonly array $options,
+        private readonly FormConfig $config,
+        private array $fields,
         private readonly DataMapperInterface $dataMapper,
-        private readonly CsrfManagerInterface $csrfManager,
-        private readonly ValidatorEngine $validator,
-        mixed $data = null
+        private readonly ?CsrfManagerInterface $csrfManager = null,
+        private readonly ?EventDispatcher $eventDispatcher = null,
+        private array $formConstraints = [],
+        private mixed $data = [],
+        private bool $submitted = false,
+        private array $errors = [],
     ) {
-        $this->fields = $fields;
-        $this->data = $data;
-
-        if ($data !== null) {
-            $mapped = $this->dataMapper->mapDataToFields($data, array_keys($fields));
-            foreach ($mapped as $name => $value) {
-                if (isset($this->fields[$name])) {
-                    $this->fields[$name]->setData($value);
-                }
-            }
-        }
+        $this->setData($this->data);
     }
 
     public function handleRequest(RequestInterface $request): void
     {
-        $requestMethod = strtoupper($request->method());
-        $formMethod = strtoupper((string) ($this->options['method'] ?? 'POST'));
-        if ($requestMethod !== $formMethod) {
+        $this->submitted = false;
+        $submittedData = $request->getFormData($this->config->name);
+        if ($submittedData === []) {
             return;
         }
 
         $this->submitted = true;
-        $submitted = [];
+        $event = new FormEvent($this, $submittedData);
+        $this->eventDispatcher?->dispatch(FormEvents::PRE_SUBMIT, $event);
+        $submittedData = is_array($event->getData()) ? $event->getData() : [];
 
-        foreach ($this->fields as $name => $field) {
-            $raw = $field->option('type') === 'file' ? ($request->files()[$name] ?? null) : $request->get($name);
-            $normalized = $field->type()->normalizeSubmittedValue($raw, $field->options());
-            $field->setData($normalized);
-            $errors = $this->validator->validate($normalized, $field->option('constraints', []), ['field' => $name]);
-            $field->setErrors($errors);
-            $submitted[$name] = $normalized;
-        }
+        $this->clearErrors();
 
-        if (($this->options['csrf_protection'] ?? true) === true) {
-            $tokenField = (string) ($this->options['csrf_field_name'] ?? '_token');
-            $tokenId = (string) ($this->options['csrf_token_id'] ?? 'form');
-            $token = $request->get($tokenField);
-            if (!$this->csrfManager->isTokenValid($tokenId, is_string($token) ? $token : null)) {
+        if ($this->config->csrfProtection && $this->csrfManager !== null) {
+            $token = isset($submittedData[$this->config->csrfFieldName]) ? (string) $submittedData[$this->config->csrfFieldName] : null;
+            if (!$this->csrfManager->isTokenValid($this->config->csrfTokenId, $token)) {
                 $this->errors[] = new ValidationError('Invalid CSRF token.');
             }
         }
 
-        $this->data = $this->dataMapper->mapFieldsToData($submitted, $this->data);
-        $this->valid = count($this->getErrors()) === 0;
+        foreach ($this->fields as $name => $field) {
+            $raw = $submittedData[$name] ?? null;
+            $options = $field->getOptions();
+            if (($options['type'] ?? null) === 'collection') {
+                $entries = is_array($raw) ? $raw : [];
+                $entryType = $options['entry_type'];
+                $normalized = [];
+                foreach ($entries as $entry) {
+                    $normalized[] = $entry;
+                }
+                $field->setData($normalized);
+            } else {
+                $value = $field->getType()->transformToModel($raw, $options);
+                foreach ($options['transformers'] ?? [] as $transformer) {
+                    $value = $transformer->reverseTransform($value);
+                }
+                $field->setData($value);
+            }
+        }
+
+        $this->data = $this->dataMapper->mapFieldsToData($this->fields, $this->data);
+
+        foreach ($this->fields as $name => $field) {
+            $errors = [];
+            foreach ($field->getOptions()['constraints'] ?? [] as $constraint) {
+                foreach ($constraint->validate($field->getData(), [
+                    'field' => $name,
+                    'form' => $this,
+                    'options' => $field->getOptions(),
+                    'data' => $this->data,
+                ]) as $error) {
+                    $errors[] = $error;
+                }
+            }
+            $field->setErrors($errors);
+            if ($errors !== []) {
+                $this->eventDispatcher?->dispatch(FormEvents::VALIDATION_ERROR, new FormEvent($this, $errors));
+            }
+        }
+
+        foreach ($this->formConstraints as $constraint) {
+            foreach ($constraint->validate($this->data, ['form' => $this]) as $error) {
+                $this->errors[] = $error;
+            }
+        }
+
+        $this->eventDispatcher?->dispatch(FormEvents::SUBMIT, new FormEvent($this, $this->data));
+        $this->eventDispatcher?->dispatch(FormEvents::POST_SUBMIT, new FormEvent($this, $this->data));
     }
 
     public function isSubmitted(): bool
@@ -86,7 +114,21 @@ final class Form implements FormInterface
 
     public function isValid(): bool
     {
-        return $this->submitted && $this->valid;
+        if (!$this->submitted) {
+            return false;
+        }
+
+        if ($this->errors !== []) {
+            return false;
+        }
+
+        foreach ($this->fields as $field) {
+            if ($field->getErrors() !== []) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function getData(): mixed
@@ -94,52 +136,77 @@ final class Form implements FormInterface
         return $this->data;
     }
 
+    public function setData(mixed $data): void
+    {
+        $this->data = $data;
+        $this->eventDispatcher?->dispatch(FormEvents::PRE_SET_DATA, new FormEvent($this, $data));
+        $this->dataMapper->mapDataToFields($data, $this->fields);
+    }
+
     public function createView(): FormView
     {
-        $children = [];
-        foreach ($this->fields as $field) {
-            $children[] = array_merge([
-                'name' => $field->name(),
-                'errors' => array_map(static fn (ValidationError $e) => $e->message, $field->errors()),
-                'data' => $field->data(),
-                'options' => $field->options(),
-            ], $field->type()->buildViewVariables($field));
-        }
-
-        if (($this->options['csrf_protection'] ?? true) === true) {
-            $children[] = [
-                'name' => (string) ($this->options['csrf_field_name'] ?? '_token'),
-                'type' => 'hidden',
-                'label' => null,
-                'value' => $this->csrfManager->generateToken((string) ($this->options['csrf_token_id'] ?? 'form')),
-                'errors' => [],
-                'options' => [],
-                'choices' => [],
-                'attributes' => [],
-            ];
-        }
-
-        return new FormView(
-            name: (string) ($this->options['name'] ?? 'form'),
-            method: strtoupper((string) ($this->options['method'] ?? 'POST')),
-            action: (string) ($this->options['action'] ?? ''),
-            attributes: (array) ($this->options['attr'] ?? []),
-            children: $children,
-            errors: array_map(static fn (ValidationError $e) => $e->message, $this->errors)
-        );
+        return (new FormViewFactory())->create($this);
     }
 
     public function getErrors(bool $deep = true): array
     {
         $errors = $this->errors;
+
         if ($deep) {
             foreach ($this->fields as $field) {
-                foreach ($field->errors() as $error) {
-                    $errors[] = $error;
-                }
+                $errors = [...$errors, ...$field->getErrors()];
             }
         }
 
         return $errors;
+    }
+
+    public function get(string $name): Field
+    {
+        if (!isset($this->fields[$name])) {
+            throw new \InvalidArgumentException(sprintf('Unknown field "%s".', $name));
+        }
+
+        return $this->fields[$name];
+    }
+
+    /**
+     * @return array<string, Field>
+     */
+    public function all(): array
+    {
+        return $this->fields;
+    }
+
+    public function getName(): string
+    {
+        return $this->config->name;
+    }
+
+    public function getConfig(): FormConfig
+    {
+        return $this->config;
+    }
+
+    public function getCsrfToken(): ?string
+    {
+        if (!$this->config->csrfProtection || $this->csrfManager === null) {
+            return null;
+        }
+
+        return $this->csrfManager->generateToken($this->config->csrfTokenId);
+    }
+
+    public function addField(Field $field): void
+    {
+        $this->fields[$field->getName()] = $field;
+    }
+
+    private function clearErrors(): void
+    {
+        $this->errors = [];
+        foreach ($this->fields as $field) {
+            $field->clearErrors();
+        }
     }
 }

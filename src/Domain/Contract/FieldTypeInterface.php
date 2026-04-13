@@ -8,13 +8,13 @@ use Iriven\PhpFormGenerator\Domain\Form\Field;
 
 interface FieldTypeInterface
 {
-    public function name(): string;
+    public function getBlockPrefix(): string;
 
     public function configureOptions(array $options = []): array;
 
-    public function buildField(string $name, array $options = []): Field;
+    public function buildField(Field $field, array $options = []): void;
 
-    public function normalizeSubmittedValue(mixed $value, array $options = []): mixed;
+    public function transformFromModel(mixed $value, array $options = []): mixed;
 
-    public function buildViewVariables(Field $field): array;
+    public function transformToModel(mixed $value, array $options = []): mixed;
 }

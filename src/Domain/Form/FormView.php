@@ -6,14 +6,15 @@ namespace Iriven\PhpFormGenerator\Domain\Form;
 
 final class FormView
 {
-    /** @param list<array<string,mixed>> $children */
+    /**
+     * @param array<string, scalar|array|null> $vars
+     * @param array<string, FormView> $children
+     * @param list<string> $errors
+     */
     public function __construct(
-        public readonly string $name,
-        public readonly string $method,
-        public readonly string $action,
-        public readonly array $attributes,
-        public readonly array $children,
-        public readonly array $errors = []
+        public array $vars = [],
+        public array $children = [],
+        public array $errors = [],
     ) {
     }
 }

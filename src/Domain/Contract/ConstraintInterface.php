@@ -8,6 +8,8 @@ use Iriven\PhpFormGenerator\Domain\Validation\ValidationError;
 
 interface ConstraintInterface
 {
-    /** @return list<ValidationError> */
+    /**
+     * @return list<ValidationError>
+     */
     public function validate(mixed $value, array $context = []): array;
 }

@@ -8,23 +8,32 @@ use Iriven\PhpFormGenerator\Domain\Contract\RequestInterface;
 
 final class NativeRequest implements RequestInterface
 {
+    public function __construct(
+        private readonly array $post = [],
+        private readonly array $get = [],
+        private readonly string $method = 'POST',
+    ) {
+    }
+
+    public static function fromGlobals(): self
+    {
+        return new self($_POST, $_GET, $_SERVER['REQUEST_METHOD'] ?? 'GET');
+    }
+
     public function all(): array
     {
-        return strtoupper($this->method()) === 'GET' ? $_GET : $_POST;
+        return $this->getMethod() === 'GET' ? $this->get : $this->post;
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function getMethod(): string
     {
-        return $this->all()[$key] ?? $default;
+        return strtoupper($this->method);
     }
 
-    public function method(): string
+    public function getFormData(string $formName): array
     {
-        return strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
-    }
-
-    public function files(): array
-    {
-        return $_FILES;
+        $source = $this->all();
+        $value = $source[$formName] ?? [];
+        return is_array($value) ? $value : [];
     }
 }

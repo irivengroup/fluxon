@@ -1,18 +1,16 @@
-# Architecture V3
+# Architecture
 
 ## Couches
 
-- `Application` : orchestration et factories
-- `Domain` : contrats, formes, champs, contraintes, validation, value objects
-- `Infrastructure` : requêtes, mapping, CSRF
-- `Presentation` : vues, rendu HTML, thèmes
+- `Application`: factory, registry, orchestration
+- `Domain`: contrats, formulaires, champs, contraintes, événements
+- `Infrastructure`: HTTP, mapping, CSRF
+- `Presentation`: rendu HTML
 
-## Pipeline
+## Décisions
 
-1. construction du formulaire via `FormBuilder`
-2. soumission via `handleRequest()`
-3. extraction des données requête
-4. mapping vers tableau ou objet
-5. validation champ par champ
-6. création de `FormView`
-7. rendu HTML via `HtmlRenderer`
+- les formulaires sont des agrégats qui gèrent état, données, validation et vue
+- les champs sont décrits par des `FieldTypeInterface`
+- le rendu HTML passe par une `FormView`
+- la validation est indépendante du renderer
+- le mapping est injectable

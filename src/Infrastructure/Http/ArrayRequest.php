@@ -11,7 +11,6 @@ final class ArrayRequest implements RequestInterface
     public function __construct(
         private readonly array $data = [],
         private readonly string $method = 'POST',
-        private readonly array $files = []
     ) {
     }
 
@@ -20,18 +19,14 @@ final class ArrayRequest implements RequestInterface
         return $this->data;
     }
 
-    public function get(string $key, mixed $default = null): mixed
-    {
-        return $this->data[$key] ?? $default;
-    }
-
-    public function method(): string
+    public function getMethod(): string
     {
         return strtoupper($this->method);
     }
 
-    public function files(): array
+    public function getFormData(string $formName): array
     {
-        return $this->files;
+        $value = $this->data[$formName] ?? [];
+        return is_array($value) ? $value : [];
     }
 }

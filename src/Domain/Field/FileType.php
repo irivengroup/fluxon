@@ -6,13 +6,8 @@ namespace Iriven\PhpFormGenerator\Domain\Field;
 
 final class FileType extends AbstractFieldType
 {
-    public function name(): string
+    public function getBlockPrefix(): string
     {
         return 'file';
-    }
-
-    public function configureOptions(array $options = []): array
-    {
-        return parent::configureOptions(array_merge(['type' => 'file'], $options));
     }
 }

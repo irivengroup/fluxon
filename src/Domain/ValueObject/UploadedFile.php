@@ -11,7 +11,7 @@ final class UploadedFile
         public readonly string $mimeType,
         public readonly int $size,
         public readonly string $tmpPath,
-        public readonly int $error
+        public readonly int $error = 0
     ) {
     }
 }

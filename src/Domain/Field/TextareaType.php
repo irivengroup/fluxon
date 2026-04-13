@@ -4,15 +4,6 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-final class TextareaType extends AbstractFieldType
+final class TextAreaType extends TextareaType
 {
-    public function name(): string
-    {
-        return 'textarea';
-    }
-
-    public function configureOptions(array $options = []): array
-    {
-        return parent::configureOptions(array_merge(['type' => 'textarea'], $options));
-    }
 }

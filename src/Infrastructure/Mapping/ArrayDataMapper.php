@@ -5,25 +5,29 @@ declare(strict_types=1);
 namespace Iriven\PhpFormGenerator\Infrastructure\Mapping;
 
 use Iriven\PhpFormGenerator\Domain\Contract\DataMapperInterface;
+use Iriven\PhpFormGenerator\Domain\Form\Field;
 
 final class ArrayDataMapper implements DataMapperInterface
 {
-    public function mapDataToFields(mixed $data, array $fieldNames): array
+    public function mapDataToFields(mixed $data, array $fields): void
     {
-        if (!is_array($data)) {
-            return [];
+        $data = is_array($data) ? $data : [];
+        foreach ($fields as $name => $field) {
+            $value = $data[$name] ?? ($field->getOptions()['default'] ?? null);
+            foreach ($field->getOptions()['transformers'] ?? [] as $transformer) {
+                $value = $transformer->transform($value);
+            }
+            $field->setData($field->getType()->transformFromModel($value, $field->getOptions()));
         }
-
-        $mapped = [];
-        foreach ($fieldNames as $name) {
-            $mapped[$name] = $data[$name] ?? null;
-        }
-
-        return $mapped;
     }
 
-    public function mapFieldsToData(array $submitted, mixed $target = null): mixed
+    public function mapFieldsToData(array $fields, mixed $data): mixed
     {
-        return array_merge(is_array($target) ? $target : [], $submitted);
+        $target = is_array($data) ? $data : [];
+        foreach ($fields as $name => $field) {
+            $target[$name] = $field->getData();
+        }
+
+        return $target;
     }
 }

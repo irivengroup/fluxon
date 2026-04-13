@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iriven\PhpFormGenerator\Application\Type;
+namespace Iriven\PhpFormGenerator\Application\Example;
 
 use Iriven\PhpFormGenerator\Domain\Constraint\Email;
 use Iriven\PhpFormGenerator\Domain\Constraint\Length;
@@ -22,7 +22,7 @@ final class ContactType implements FormTypeInterface
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
-                'constraints' => [new Required(), new Length(min: 2)],
+                'constraints' => [new Required(), new Length(min: 2, max: 120)],
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email',
@@ -43,9 +43,9 @@ final class ContactType implements FormTypeInterface
     public function configureOptions(array $options = []): array
     {
         return [
-            'method' => 'POST',
-            'csrf_protection' => false,
             'name' => 'contact',
+            'method' => 'POST',
+            'csrf_protection' => true,
         ];
     }
 }

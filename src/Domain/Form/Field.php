@@ -9,40 +9,39 @@ use Iriven\PhpFormGenerator\Domain\Validation\ValidationError;
 
 final class Field
 {
-    /** @var list<ValidationError> */
-    private array $errors = [];
-
-    /** @param array<string, mixed> $options */
+    /**
+     * @param list<ValidationError> $errors
+     */
     public function __construct(
         private readonly string $name,
         private readonly FieldTypeInterface $type,
         private array $options = [],
-        private mixed $data = null
+        private mixed $data = null,
+        private array $errors = [],
     ) {
     }
 
-    public function name(): string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function type(): FieldTypeInterface
+    public function getType(): FieldTypeInterface
     {
         return $this->type;
     }
 
-    /** @return array<string, mixed> */
-    public function options(): array
+    public function getOptions(): array
     {
         return $this->options;
     }
 
-    public function option(string $name, mixed $default = null): mixed
+    public function setOption(string $name, mixed $value): void
     {
-        return $this->options[$name] ?? $default;
+        $this->options[$name] = $value;
     }
 
-    public function data(): mixed
+    public function getData(): mixed
     {
         return $this->data;
     }
@@ -52,15 +51,24 @@ final class Field
         $this->data = $data;
     }
 
-    /** @param list<ValidationError> $errors */
+    /**
+     * @return list<ValidationError>
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @param list<ValidationError> $errors
+     */
     public function setErrors(array $errors): void
     {
         $this->errors = $errors;
     }
 
-    /** @return list<ValidationError> */
-    public function errors(): array
+    public function clearErrors(): void
     {
-        return $this->errors;
+        $this->errors = [];
     }
 }

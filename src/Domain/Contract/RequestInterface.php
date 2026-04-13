@@ -7,10 +7,6 @@ namespace Iriven\PhpFormGenerator\Domain\Contract;
 interface RequestInterface
 {
     public function all(): array;
-
-    public function get(string $key, mixed $default = null): mixed;
-
-    public function method(): string;
-
-    public function files(): array;
+    public function getMethod(): string;
+    public function getFormData(string $formName): array;
 }

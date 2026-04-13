@@ -6,8 +6,8 @@ namespace Iriven\PhpFormGenerator\Presentation\Html;
 
 final class Escaper
 {
-    public function escape(string $value): string
+    public function escape(mixed $value): string
     {
-        return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 }

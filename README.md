@@ -794,3 +794,9 @@ A new hardening pass was applied to remove analyzer ambiguities around:
 - nullable captcha expectations in tests
 
 This keeps runtime behavior unchanged while improving compatibility with stricter CI analyzers.
+
+### Refactoring and maintainability
+
+Core hotspots were decomposed to improve maintainability:
+- `FormBuilder::add()` now delegates resolution, normalization, extension application, captcha setup, file setup, and fieldset attachment to dedicated methods.
+- `HtmlRenderer::renderWidget()` now delegates rendering to smaller widget-specific methods.

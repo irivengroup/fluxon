@@ -11,9 +11,9 @@ final class FormView
 
     /**
      * @param array<string, mixed> $vars
-     * @param list<FormView> $children
-     * @param list<string> $errors
-     * @param list<Fieldset> $fieldsets
+     * @param array<int, FormView> $children
+     * @param array<int, string> $errors
+     * @param array<int, Fieldset> $fieldsets
      */
     public function __construct(
         public readonly string $name,

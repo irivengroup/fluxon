@@ -9,8 +9,8 @@ use Iriven\PhpFormGenerator\Domain\Contract\FormTypeInterface;
 final class TypeResolver
 {
     /**
-     * @param class-string|string $typeClass
-     * @return class-string|string
+     * @param string $typeClass
+     * @return string
      */
     public static function resolveFieldType(string $typeClass): string
     {
@@ -24,8 +24,8 @@ final class TypeResolver
     }
 
     /**
-     * @param class-string<FormTypeInterface>|string $typeClass
-     * @return class-string<FormTypeInterface>|string
+     * @param string $typeClass
+     * @return string
      */
     public static function resolveFormType(string $typeClass): string
     {
@@ -35,7 +35,7 @@ final class TypeResolver
 
         $shortName = self::shortName($typeClass);
 
-        /** @var class-string<FormTypeInterface>|string $resolved */
+        /** @var string $resolved */
         $resolved = BuiltinTypeRegistry::formTypes()[$shortName] ?? $typeClass;
 
         return $resolved;

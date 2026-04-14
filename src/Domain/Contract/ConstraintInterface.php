@@ -8,7 +8,7 @@ interface ConstraintInterface
 {
     /**
      * @param array<string, mixed> $context
-     * @return list<string>
+     * @return array<int, string>
      */
     public function validate(mixed $value, array $context = []): array;
 }

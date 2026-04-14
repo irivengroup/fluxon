@@ -8,14 +8,17 @@ use Iriven\PhpFormGenerator\Domain\Contract\ConstraintInterface;
 
 final class Choice implements ConstraintInterface
 {
-    /** @param list<string|int> $choices */
+    /** @param array<int, string|int> $choices */
     public function __construct(
         private readonly array $choices,
         private readonly string $message = 'This value is not a valid choice.',
     ) {
     }
 
-    /** @param array<string, mixed> $context @return list<string> */
+    /**
+     * @param array<string, mixed> $context
+     * @return array<int, string>
+     */
     public function validate(mixed $value, array $context = []): array
     {
         if ($value === null || $value === '') {

@@ -138,7 +138,7 @@ final class FormGenerator
     public function getForm(): Form { return $this->builder->getForm(); }
 
     /**
-     * @param class-string $typeClass
+     * @param string $typeClass
      * @param array<string, mixed> $options
      */
     private function add(string $name, string $typeClass, array $options = []): self

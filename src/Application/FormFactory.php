@@ -40,7 +40,7 @@ final class FormFactory
     }
 
     /**
-     * @param class-string<FormTypeInterface>|string $typeClass
+     * @param string $typeClass
      * @param array<string, mixed> $options
      */
     public function create(string $typeClass, mixed $data = null, array $options = []): Form

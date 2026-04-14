@@ -291,7 +291,7 @@ class CountryType extends SelectType
     }
 
     /**
-     * @return list<string>
+     * @return array<int, string>
      */
     private static function regionCodes(string $region): array
     {

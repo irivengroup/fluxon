@@ -8,14 +8,17 @@ use Iriven\PhpFormGenerator\Domain\Contract\ConstraintInterface;
 
 final class MimeType implements ConstraintInterface
 {
-    /** @param list<string> $allowed */
+    /** @param array<int, string> $allowed */
     public function __construct(
         private readonly array $allowed,
         private readonly string $message = 'The uploaded file has an invalid MIME type.',
     ) {
     }
 
-    /** @param array<string, mixed> $context @return list<string> */
+    /**
+     * @param array<string, mixed> $context
+     * @return array<int, string>
+     */
     public function validate(mixed $value, array $context = []): array
     {
         if (!is_array($value)) {

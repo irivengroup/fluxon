@@ -7,7 +7,7 @@ namespace Iriven\PhpFormGenerator\Domain\Contract;
 interface ValidationGroupAwareInterface
 {
     /**
-     * @return list<string>
+     * @return array<int, string>
      */
     public function groups(): array;
 }

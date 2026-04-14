@@ -7,7 +7,7 @@ namespace Iriven\PhpFormGenerator\Domain\Contract;
 interface FieldTypeExtensionInterface
 {
     /**
-     * @return class-string
+     * @return string
      */
     public static function getExtendedType(): string;
 
@@ -18,16 +18,16 @@ interface FieldTypeExtensionInterface
     public function extendOptions(array $options): array;
 
     /**
- * @param list<ConstraintInterface> $constraints
+ * @param array<int, ConstraintInterface> $constraints
  * @param array<string, mixed> $options
- * @return list<ConstraintInterface>
+ * @return array<int, ConstraintInterface>
  */
 public function extendConstraints(array $constraints, array $options): array;
 
     /**
- * @param list<DataTransformerInterface> $transformers
+ * @param array<int, DataTransformerInterface> $transformers
  * @param array<string, mixed> $options
- * @return list<DataTransformerInterface>
+ * @return array<int, DataTransformerInterface>
  */
 public function extendTransformers(array $transformers, array $options): array;
 }

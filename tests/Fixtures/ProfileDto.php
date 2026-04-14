@@ -8,7 +8,7 @@ final class ProfileDto
 {
     public string $name = '';
     public AddressDto $address;
-    /** @var list<AddressDto> */
+    /** @var array<int, AddressDto> */
     public array $addresses = [];
     public bool $active = false;
 

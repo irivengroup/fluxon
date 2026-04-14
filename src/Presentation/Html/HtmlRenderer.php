@@ -254,7 +254,7 @@ final class HtmlRenderer
         return '<input' . $this->renderAttributes($attr) . '>';
     }
 
-    /** @param list<string> $errors */
+    /** @param array<int, string> $errors */
     private function renderErrors(array $errors): string
     {
         $html = '';

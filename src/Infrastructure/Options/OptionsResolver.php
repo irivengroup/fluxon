@@ -12,13 +12,13 @@ final class OptionsResolver implements OptionsResolverInterface
     /** @var array<string, mixed> */
     private array $defaults = [];
 
-    /** @var list<string> */
+    /** @var array<int, string> */
     private array $required = [];
 
-    /** @var array<string, list<string>> */
+    /** @var array<string, array<int, string>> */
     private array $allowedTypes = [];
 
-    /** @var array<string, callable|list<mixed>> */
+    /** @var array<string, callable|array<int, mixed>> */
     private array $allowedValues = [];
 
     /** @param array<string, mixed> $defaults */
@@ -28,21 +28,21 @@ final class OptionsResolver implements OptionsResolverInterface
         return $this;
     }
 
-    /** @param list<string> $required */
+    /** @param array<int, string> $required */
     public function setRequired(array $required): self
     {
         $this->required = array_values(array_unique(array_merge($this->required, $required)));
         return $this;
     }
 
-    /** @param string|list<string> $types */
+    /** @param string|array<int, string> $types */
     public function setAllowedTypes(string $option, string|array $types): self
     {
         $this->allowedTypes[$option] = array_values((array) $types);
         return $this;
     }
 
-    /** @param callable|list<mixed> $values */
+    /** @param callable|array<int, mixed> $values */
     public function setAllowedValues(string $option, callable|array $values): self
     {
         $this->allowedValues[$option] = $values;
@@ -97,7 +97,7 @@ final class OptionsResolver implements OptionsResolverInterface
         return $resolved;
     }
 
-    /** @param list<string> $types */
+    /** @param array<int, string> $types */
     private function matchesAllowedTypes(mixed $value, array $types): bool
     {
         foreach ($types as $type) {

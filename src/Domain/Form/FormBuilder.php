@@ -25,13 +25,13 @@ final class FormBuilder
     /** @var array<string, FieldConfig> */
     private array $fields = [];
 
-    /** @var list<Fieldset> */
+    /** @var array<int, Fieldset> */
     private array $fieldsets = [];
 
-    /** @var list<string> */
+    /** @var array<int, string> */
     private array $fieldsetStack = [];
 
-    /** @var list<ConstraintInterface> */
+    /** @var array<int, ConstraintInterface> */
     private array $formConstraints = [];
 
     private EventDispatcherInterface $eventDispatcher;
@@ -64,20 +64,23 @@ final class FormBuilder
     }
 
     /**
-     * @param class-string|non-empty-string $typeClass
+     * @param string $typeClass
      * @param array<string, mixed> $options
      */
     public function add(string $name, string $typeClass, array $options = []): self
     {
         $typeClass = TypeResolver::resolveFieldType($typeClass);
-        /** @var list<ConstraintInterface> $constraints */
+        if (!is_string($typeClass) || $typeClass === '') {
+            throw new \InvalidArgumentException('Resolved field type must be a non-empty string.');
+        }
+        /** @var array<int, ConstraintInterface> $constraints */
         $constraints = is_array($options['constraints'] ?? null) ? $options['constraints'] : [];
         $options['validation_groups'] = $options['validation_groups'] ?? ['Default'];
-        /** @var list<DataTransformerInterface> $transformers */
+        /** @var array<int, DataTransformerInterface> $transformers */
         $transformers = is_array($options['transformers'] ?? null) ? $options['transformers'] : [];
 
         if (method_exists($typeClass, 'defaultTransformers')) {
-            /** @var list<DataTransformerInterface> $defaults */
+            /** @var array<int, DataTransformerInterface> $defaults */
             $defaults = $typeClass::defaultTransformers();
             $transformers = array_merge($defaults, $transformers);
         }
@@ -146,7 +149,7 @@ final class FormBuilder
             $options['attr'] = $fieldAttr;
 
             if (method_exists($typeClass, 'allowedMimeTypes')) {
-                /** @var list<string> $allowedMimeTypes */
+                /** @var array<int, string> $allowedMimeTypes */
                 $allowedMimeTypes = $typeClass::allowedMimeTypes();
                 if ($allowedMimeTypes !== []) {
                     $hasMimeConstraint = false;

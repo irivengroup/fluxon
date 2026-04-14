@@ -9,10 +9,10 @@ use Iriven\PhpFormGenerator\Domain\Contract\FormExtensionInterface;
 
 final class ExtensionRegistry
 {
-    /** @var list<FieldTypeExtensionInterface> */
+    /** @var array<int, FieldTypeExtensionInterface> */
     private array $fieldExtensions = [];
 
-    /** @var list<FormExtensionInterface> */
+    /** @var array<int, FormExtensionInterface> */
     private array $formExtensions = [];
 
     public function addFieldTypeExtension(FieldTypeExtensionInterface $extension): void
@@ -26,8 +26,8 @@ final class ExtensionRegistry
     }
 
     /**
-     * @param class-string $typeClass
-     * @return list<FieldTypeExtensionInterface>
+     * @param string $typeClass
+     * @return array<int, FieldTypeExtensionInterface>
      */
     public function fieldExtensionsFor(string $typeClass): array
     {
@@ -38,7 +38,7 @@ final class ExtensionRegistry
     }
 
     /**
-     * @return list<FormExtensionInterface>
+     * @return array<int, FormExtensionInterface>
      */
     public function formExtensions(): array
     {

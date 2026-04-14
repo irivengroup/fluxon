@@ -756,3 +756,13 @@ Current behavior:
 This applies to:
 - `SessionCsrfManager`
 - `SessionCaptchaManager`
+
+### Static-analysis compatibility pass
+
+A full compatibility pass was applied to normalize project annotations for stricter analyzers.
+
+Highlights:
+- unsupported `list<...>` annotations were normalized to `array<int, ...>`
+- unsupported `class-string` style annotations were simplified where necessary
+- builder and resolver contracts now use parser-friendly string annotations
+- related constraint and extension annotations were normalized consistently across the project

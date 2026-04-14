@@ -15,7 +15,7 @@ final class Length implements ConstraintInterface
     ) {
     }
 
-    /** @param array<string, mixed> $context @return list<string> */
+    /** @param array<string, mixed> $context @return array<int, string> */
     public function validate(mixed $value, array $context = []): array
     {
         if ($value === null) {

@@ -11,7 +11,7 @@ use Iriven\PhpFormGenerator\Domain\Contract\DataTransformerInterface;
 final class EnumTransformer implements DataTransformerInterface
 {
     /**
-     * @param class-string<BackedEnum> $enumClass
+     * @param string $enumClass
      */
     public function __construct(private readonly string $enumClass)
     {

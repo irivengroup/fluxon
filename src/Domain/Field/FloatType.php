@@ -9,7 +9,7 @@ use Iriven\PhpFormGenerator\Domain\Transformer\FloatTransformer;
 
 class FloatType extends NumberType
 {
-    /** @return list<DataTransformerInterface> */
+    /** @return array<int, DataTransformerInterface> */
     public static function defaultTransformers(): array
     {
         return [new FloatTransformer()];

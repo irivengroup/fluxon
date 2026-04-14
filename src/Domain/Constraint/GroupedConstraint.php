@@ -10,7 +10,7 @@ use Iriven\PhpFormGenerator\Domain\Contract\ValidationGroupAwareInterface;
 final class GroupedConstraint implements ConstraintInterface, ValidationGroupAwareInterface
 {
     /**
-     * @param list<string> $groups
+     * @param array<int, string> $groups
      */
     public function __construct(
         private readonly ConstraintInterface $inner,
@@ -19,7 +19,7 @@ final class GroupedConstraint implements ConstraintInterface, ValidationGroupAwa
     }
 
     /**
-     * @return list<string>
+     * @return array<int, string>
      */
     public function validate(mixed $value, array $context = []): array
     {
@@ -27,7 +27,7 @@ final class GroupedConstraint implements ConstraintInterface, ValidationGroupAwa
     }
 
     /**
-     * @return list<string>
+     * @return array<int, string>
      */
     public function groups(): array
     {

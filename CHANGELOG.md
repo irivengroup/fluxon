@@ -13,6 +13,7 @@
 - Additional README usage scenarios and end-to-end examples.
 
 ### Changed
+- Applied a project-wide static-analysis compatibility pass: normalized unsupported `list<...>` and `class-string` annotations, and tightened builder/type resolver string guarantees.
 - Hardened `SessionCsrfManager` and `SessionCaptchaManager`: removed suppressed `session_start()`, added explicit failure handling, and initialize session storage only after a verified active session.
 - Added explicit `array<string, scalar|null>` PHPDoc typing to translator parameters for PHPStan compliance.
 - Added precise PHPDoc array value types for field type extension contracts and implementations to keep PHPStan green.

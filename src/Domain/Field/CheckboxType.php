@@ -14,7 +14,7 @@ class CheckboxType extends AbstractFieldType
         return 'checkbox';
     }
 
-    /** @return list<DataTransformerInterface> */
+    /** @return array<int, DataTransformerInterface> */
     public static function defaultTransformers(): array
     {
         return [new BooleanTransformer()];

@@ -6,7 +6,7 @@ namespace Iriven\PhpFormGenerator\Domain\Field;
 
 class VideoType extends FileType
 {
-    /** @return list<string> */
+    /** @return array<int, string> */
     public static function allowedMimeTypes(): array
     {
         return [

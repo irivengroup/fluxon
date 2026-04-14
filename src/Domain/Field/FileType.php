@@ -11,7 +11,7 @@ class FileType extends AbstractFieldType
         return 'file';
     }
 
-    /** @return list<string> */
+    /** @return array<int, string> */
     public static function allowedMimeTypes(): array
     {
         return [];

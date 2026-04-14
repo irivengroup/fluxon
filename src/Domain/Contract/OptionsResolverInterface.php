@@ -9,13 +9,13 @@ interface OptionsResolverInterface
     /** @param array<string, mixed> $defaults */
     public function setDefaults(array $defaults): self;
 
-    /** @param list<string> $required */
+    /** @param array<int, string> $required */
     public function setRequired(array $required): self;
 
-    /** @param string|list<string> $types */
+    /** @param string|array<int, string> $types */
     public function setAllowedTypes(string $option, string|array $types): self;
 
-    /** @param callable|list<mixed> $values */
+    /** @param callable|array<int, mixed> $values */
     public function setAllowedValues(string $option, callable|array $values): self;
 
     /**

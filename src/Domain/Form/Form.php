@@ -28,24 +28,24 @@ final class Form
     /** @var array<string, mixed> */
     private array $values = [];
 
-    /** @var array<string, list<string>> */
+    /** @var array<string, array<int, string>> */
     private array $errors = [];
 
-    /** @var list<ConstraintInterface> */
+    /** @var array<int, ConstraintInterface> */
     private array $formConstraints = [];
 
     private PropertyAccessor $accessor;
 
     /**
      * @param array<string, FieldConfig> $fields
-     * @param list<Fieldset> $fieldsets
-     * @param list<ConstraintInterface> $formConstraints
+     * @param array<int, Fieldset> $fieldsets
+     * @param array<int, ConstraintInterface> $formConstraints
      */
     /**
      * @param array<string, FieldConfig> $fields
      * @param array<string, mixed> $options
-     * @param list<Fieldset> $fieldsets
-     * @param list<ConstraintInterface> $formConstraints
+     * @param array<int, Fieldset> $fieldsets
+     * @param array<int, ConstraintInterface> $formConstraints
      */
     public function __construct(
         private readonly string $name,
@@ -199,7 +199,7 @@ final class Form
 
     /**
      * @param array<int|string, mixed> $raw
-     * @return list<mixed>
+     * @return array<int, mixed>
      */
     private function submitCollection(FieldConfig $field, array $raw, string $path): array
     {
@@ -245,7 +245,7 @@ final class Form
         return $items;
     }
 
-    /** @param list<ConstraintInterface> $constraints */
+    /** @param array<int, ConstraintInterface> $constraints */
     private function applyConstraintErrors(string $path, mixed $value, array $constraints): void
     {
         $errors = (new Validator())->validate($value, $constraints, [
@@ -343,7 +343,7 @@ final class Form
         return $this->submitted && $this->valid;
     }
 
-    /** @return array<string, list<string>> */
+    /** @return array<string, array<int, string>> */
     public function getErrors(): array
     {
         return $this->errors;

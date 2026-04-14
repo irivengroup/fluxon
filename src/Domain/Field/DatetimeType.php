@@ -14,7 +14,7 @@ class DatetimeType extends AbstractFieldType
         return 'datetime-local';
     }
 
-    /** @return list<DataTransformerInterface> */
+    /** @return array<int, DataTransformerInterface> */
     public static function defaultTransformers(): array
     {
         return [new DateTimeTransformer()];

@@ -9,9 +9,9 @@ use Iriven\PhpFormGenerator\Domain\Contract\ConstraintInterface;
 final class Validator
 {
     /**
-     * @param list<ConstraintInterface> $constraints
+     * @param array<int, ConstraintInterface> $constraints
      * @param array<string, mixed> $context
-     * @return list<string>
+     * @return array<int, string>
      */
     public function validate(mixed $value, array $constraints, array $context = []): array
     {

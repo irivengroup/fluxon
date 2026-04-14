@@ -11,11 +11,11 @@ final class FieldConfig
 {
     /**
      * @param array<string, mixed> $options
-     * @param list<ConstraintInterface> $constraints
-     * @param list<DataTransformerInterface> $transformers
+     * @param array<int, ConstraintInterface> $constraints
+     * @param array<int, DataTransformerInterface> $transformers
      * @param array<string, FieldConfig> $children
      * @param array<string, mixed> $entryOptions
-     * @param list<Fieldset> $fieldsets
+     * @param array<int, Fieldset> $fieldsets
      */
     public function __construct(
         public string $name,

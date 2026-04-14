@@ -9,7 +9,7 @@ use Iriven\PhpFormGenerator\Domain\Transformer\IntegerTransformer;
 
 class IntegerType extends NumberType
 {
-    /** @return list<DataTransformerInterface> */
+    /** @return array<int, DataTransformerInterface> */
     public static function defaultTransformers(): array
     {
         return [new IntegerTransformer()];

@@ -9,7 +9,7 @@ use Iriven\PhpFormGenerator\Domain\Contract\EventSubscriberInterface;
 
 final class EventDispatcher implements EventDispatcherInterface
 {
-    /** @var array<string, list<callable>> */
+    /** @var array<string, array<int, callable>> */
     private array $listeners = [];
 
     public function addListener(string $eventName, callable $listener): void

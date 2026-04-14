@@ -6,7 +6,7 @@ namespace Iriven\PhpFormGenerator\Domain\Validation;
 
 final class ValidationResult
 {
-    /** @param list<string> $errors */
+    /** @param array<int, string> $errors */
     public function __construct(
         public readonly bool $valid,
         public readonly array $errors = [],

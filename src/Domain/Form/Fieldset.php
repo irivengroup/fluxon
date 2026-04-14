@@ -8,8 +8,8 @@ final class Fieldset
 {
     /**
      * @param array<string, mixed> $options
-     * @param list<string> $fields
-     * @param list<Fieldset> $children
+     * @param array<int, string> $fields
+     * @param array<int, Fieldset> $children
      */
     public function __construct(
         public string $id,

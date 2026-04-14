@@ -13,7 +13,7 @@ final class When implements ConstraintInterface
     private Closure $condition;
 
     /**
-     * @param list<ConstraintInterface> $constraints
+     * @param array<int, ConstraintInterface> $constraints
      * @param callable(mixed, array<string, mixed>): bool $condition
      */
     public function __construct(
@@ -25,7 +25,7 @@ final class When implements ConstraintInterface
 
     /**
      * @param array<string, mixed> $context
-     * @return list<string>
+     * @return array<int, string>
      */
     public function validate(mixed $value, array $context = []): array
     {

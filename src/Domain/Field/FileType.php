@@ -6,5 +6,19 @@ namespace Iriven\PhpFormGenerator\Domain\Field;
 
 class FileType extends AbstractFieldType
 {
-    public static function htmlType(): string { return 'file'; }
+    public static function htmlType(): string
+    {
+        return 'file';
+    }
+
+    /** @return list<string> */
+    public static function allowedMimeTypes(): array
+    {
+        return [];
+    }
+
+    public static function acceptAttribute(): ?string
+    {
+        return null;
+    }
 }

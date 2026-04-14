@@ -11,6 +11,7 @@ use Iriven\PhpFormGenerator\Domain\Contract\EventSubscriberInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\FormTypeInterface;
 use Iriven\PhpFormGenerator\Domain\Field\CaptchaType;
 use Iriven\PhpFormGenerator\Domain\Field\CollectionType;
+use Iriven\PhpFormGenerator\Domain\Constraint\MimeType;
 use Iriven\PhpFormGenerator\Domain\Field\FileType;
 use Iriven\PhpFormGenerator\Infrastructure\Event\EventDispatcher;
 use Iriven\PhpFormGenerator\Infrastructure\Options\OptionsResolver;
@@ -116,6 +117,37 @@ final class FormBuilder
 
             if (!isset($this->options['method'])) {
                 $this->options['method'] = 'POST';
+            }
+
+            /** @var array<string, mixed> $fieldAttr */
+            $fieldAttr = is_array($options['attr'] ?? null) ? $options['attr'] : [];
+            if (method_exists($typeClass, 'acceptAttribute') && !isset($fieldAttr['accept'])) {
+                $accept = $typeClass::acceptAttribute();
+                if (is_string($accept) && $accept !== '') {
+                    $fieldAttr['accept'] = $accept;
+                }
+            }
+            $options['attr'] = $fieldAttr;
+
+            if (method_exists($typeClass, 'allowedMimeTypes')) {
+                /** @var list<string> $allowedMimeTypes */
+                $allowedMimeTypes = $typeClass::allowedMimeTypes();
+                if ($allowedMimeTypes !== []) {
+                    $hasMimeConstraint = false;
+                    foreach ($constraints as $constraint) {
+                        if ($constraint instanceof MimeType) {
+                            $hasMimeConstraint = true;
+                            break;
+                        }
+                    }
+
+                    if (!$hasMimeConstraint) {
+                        $constraints[] = new MimeType(
+                            $allowedMimeTypes,
+                            sprintf('The uploaded file must be a valid %s file.', strtolower((new \ReflectionClass($typeClass))->getShortName())),
+                        );
+                    }
+                }
             }
         }
 

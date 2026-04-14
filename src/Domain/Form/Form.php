@@ -349,212 +349,45 @@ final class Form
         return $this->errors;
     }
 
-    public function createView(): FormView
-    {
-        $children = [];
-        foreach ($this->fields as $name => $field) {
-            $fullName = $this->name . '[' . $name . ']';
-            $children[] = $this->createFieldView($name, $field, $fullName, 'form_' . $name, $this->values[$name] ?? null, $name);
-        }
+public function createView(): FormView
+{
+    return (new FormViewBuilder())->build($this);
+}
 
-        $vars = [
-            'method' => strtoupper((string) ($this->options['method'] ?? 'POST')),
-            'action' => (string) ($this->options['action'] ?? ''),
-            'attr' => $this->options['attr'] ?? [],
-            'csrf_protection' => (bool) ($this->options['csrf_protection'] ?? false),
-        ];
+/** @return array<string, FieldConfig> */
+public function fields(): array
+{
+    return $this->fields;
+}
 
-        if (($this->options['csrf_protection'] ?? false) === true) {
-            $csrfManager = $this->options['csrf_manager'] ?? null;
-            $tokenField = (string) ($this->options['csrf_field_name'] ?? '_token');
-            $tokenId = (string) ($this->options['csrf_token_id'] ?? $this->name);
-            if ($csrfManager !== null) {
-                $children[] = new FormView(
-                    $tokenField,
-                    $this->name . '[' . $tokenField . ']',
-                    'form_' . $tokenField,
-                    'hidden',
-                    $csrfManager->generateToken($tokenId),
-                    ['label' => $tokenField, 'type_class' => 'hidden'],
-                    [],
-                    $this->errors[$tokenField] ?? [],
-                );
-            }
-        }
+/** @return array<string, mixed> */
+public function options(): array
+{
+    return $this->options;
+}
 
-        return new FormView(
-            $this->name,
-            $this->name,
-            $this->name,
-            'form',
-            null,
-            $vars,
-            $children,
-            $this->errors['_form'] ?? [],
-            $this->fieldsets,
-            $this->submitted,
-            $this->valid,
-        );
-    }
+/** @return array<int, Fieldset> */
+public function fieldsets(): array
+{
+    return $this->fieldsets;
+}
 
-    private function createFieldView(string $name, FieldConfig $field, string $fullName, string $id, mixed $value, string $errorPath): FormView
-    {
-        $vars = $field->options;
-        $vars['label'] = $field->options['label'] ?? ucfirst($name);
-        $vars['attr'] = $field->options['attr'] ?? [];
-        $vars['type_class'] = $field->typeClass;
+/** @return array<string, mixed> */
+public function submittedValues(): array
+{
+    return $this->values;
+}
 
-        if (is_a($field->typeClass, 'Iriven\\PhpFormGenerator\\Domain\\Field\\CaptchaType', true)) {
-            $captchaManager = $this->options['captcha_manager'] ?? null;
-            if ($captchaManager instanceof CaptchaManagerInterface) {
-                $minLength = max(5, (int) ($field->options['min_length'] ?? 5));
-                $maxLength = min(8, max($minLength, (int) ($field->options['max_length'] ?? 8)));
-                $captchaKey = $this->name . '.' . $name;
-                $code = $captchaManager->generateCode($captchaKey, $minLength, $maxLength);
-                $vars['captcha_key'] = $captchaKey;
-                $vars['captcha_svg'] = $this->buildCaptchaSvg($code, $id . '_captcha');
-                $vars['help'] = $field->options['help'] ?? sprintf('Enter the case-sensitive code shown above (%d to %d characters).', $minLength, $maxLength);
-            }
-        }
+/** @return array<string, array<int, string>> */
+public function errors(): array
+{
+    return $this->errors;
+}
 
-        if ($field->collection) {
-            $children = [];
-            if (is_array($value)) {
-                foreach ($value as $index => $row) {
-                    $entryChildren = [];
-                    if ($field->entryType !== null && is_subclass_of($field->entryType, FormTypeInterface::class)) {
-                        $builder = new FormBuilder($name . '_entry', null, $field->entryOptions + ['event_dispatcher' => $this->eventDispatcher]);
-                        /** @var string $entryTypeClass */
-                        $entryTypeClass = $field->entryType;
-                        $entry = new $entryTypeClass();
-                        $resolver = new OptionsResolver();
-                        $entry->configureOptions($resolver);
-                        $resolved = $resolver->resolve($field->entryOptions);
-                        $entry->buildForm($builder, $resolved);
-
-                        foreach ($builder->all() as $childName => $child) {
-                            $entryChildren[] = $this->createFieldView(
-                                $childName,
-                                $child,
-                                $fullName . '[' . $index . '][' . $childName . ']',
-                                $id . '_' . $index . '_' . $childName,
-                                $row[$childName] ?? null,
-                                $errorPath . '.' . (string) $index . '.' . $childName,
-                            );
-                        }
-                    }
-
-                    $children[] = new FormView(
-                        (string) $index,
-                        $fullName . '[' . $index . ']',
-                        $id . '_' . $index,
-                        'collection_entry',
-                        $row,
-                        ['label' => (string) $index],
-                        $entryChildren,
-                        $this->errors[$errorPath . '.' . (string) $index] ?? [],
-                    );
-                }
-            }
-
-            if (($field->options['prototype'] ?? false) === true && $field->entryType !== null && is_subclass_of($field->entryType, FormTypeInterface::class)) {
-                $builder = new FormBuilder($name . '_prototype', null, $field->entryOptions + ['event_dispatcher' => $this->eventDispatcher]);
-                /** @var string $entryTypeClass */
-                        $entryTypeClass = $field->entryType;
-                        $entry = new $entryTypeClass();
-                $resolver = new OptionsResolver();
-                $entry->configureOptions($resolver);
-                $resolved = $resolver->resolve($field->entryOptions);
-                $entry->buildForm($builder, $resolved);
-                $prototypeChildren = [];
-                foreach ($builder->all() as $childName => $child) {
-                    $prototypeChildren[] = $this->createFieldView(
-                        $childName,
-                        $child,
-                        $fullName . '[__name__][' . $childName . ']',
-                        $id . '__name__' . '_' . $childName,
-                        null,
-                        $errorPath . '.__name__.' . $childName,
-                    );
-                }
-                $vars['prototype_view'] = new FormView('__name__', $fullName . '[__name__]', $id . '__name__', 'collection_entry', null, [], $prototypeChildren, []);
-            }
-
-            return new FormView($name, $fullName, $id, 'collection', $value, $vars, $children, $this->errors[$errorPath] ?? []);
-        }
-
-        if ($field->compound) {
-            $children = [];
-            foreach ($field->children as $childName => $child) {
-                $children[] = $this->createFieldView(
-                    $childName,
-                    $child,
-                    $fullName . '[' . $childName . ']',
-                    $id . '_' . $childName,
-                    is_array($value) ? ($value[$childName] ?? null) : null,
-                    $errorPath . '.' . $childName,
-                );
-            }
-
-            return new FormView($name, $fullName, $id, 'compound', $value, $vars, $children, $this->errors[$errorPath] ?? []);
-        }
-
-        return new FormView($name, $fullName, $id, $field->typeClass, $value, $vars, [], $this->errors[$errorPath] ?? []);
-    }
-
-    private function buildCaptchaSvg(string $code, string $id): string
-    {
-        $width = 170;
-        $height = 56;
-        $chars = preg_split('//u', $code, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-        $parts = [];
-        foreach ($chars as $index => $char) {
-            $x = 18 + ($index * 18);
-            $y = random_int(32, 42);
-            $rotate = random_int(-22, 22);
-            $fontSize = random_int(20, 28);
-            $parts[] = sprintf(
-                '<text x="%d" y="%d" font-size="%d" transform="rotate(%d %d %d)" fill="#1f2937">%s</text>',
-                $x,
-                $y,
-                $fontSize,
-                $rotate,
-                $x,
-                $y,
-                htmlspecialchars($char, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
-            );
-        }
-
-        $noise = '';
-        for ($i = 0; $i < 6; $i++) {
-            $noise .= sprintf(
-                '<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#9ca3af" stroke-width="1" opacity="0.65" />',
-                random_int(0, $width),
-                random_int(0, $height),
-                random_int(0, $width),
-                random_int(0, $height)
-            );
-        }
-        for ($i = 0; $i < 20; $i++) {
-            $noise .= sprintf(
-                '<circle cx="%d" cy="%d" r="%d" fill="#d1d5db" opacity="0.45" />',
-                random_int(0, $width),
-                random_int(0, $height),
-                random_int(1, 2)
-            );
-        }
-
-        return sprintf(
-            '<svg id="%s" xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %d %d" role="img" aria-label="Captcha challenge"><rect width="100%%" height="100%%" rx="6" fill="#f3f4f6" />%s<g font-family="monospace" font-weight="700" letter-spacing="2">%s</g></svg>',
-            htmlspecialchars($id, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
-            $width,
-            $height,
-            $width,
-            $height,
-            $noise,
-            implode('', $parts)
-        );
-    }
+public function eventDispatcher(): EventDispatcherInterface
+{
+    return $this->eventDispatcher;
+}
 
     public function dispatch(string $eventName, object $event): void
     {

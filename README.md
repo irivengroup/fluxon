@@ -813,3 +813,17 @@ Recent fixes include:
 ### Final analyzer compatibility pass
 
 This pass removes remaining analyzer-specific issues around enum handling, date parsing branches, and complex array-shape docblocks, while continuing the gradual extraction of responsibilities from `Form` and `HtmlRenderer`.
+
+### Décomposition réelle des classes complexes
+
+La décomposition structurelle a été engagée sur les deux classes les plus chargées :
+
+- `HtmlRenderer` est maintenant une façade qui délègue à :
+  - `HtmlFieldsetRenderer`
+  - `HtmlRowRenderer`
+  - `HtmlWidgetRenderer`
+- `Form` délègue maintenant toute la construction de vue à :
+  - `FormViewBuilder`
+  - `FormViewFactory`
+
+Cela réduit la responsabilité directe des classes façade et prépare les prochaines extractions côté soumission et validation.

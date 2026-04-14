@@ -13,6 +13,7 @@
 - Additional README usage scenarios and end-to-end examples.
 
 ### Changed
+- Performed a real structural decomposition: `HtmlRenderer` now delegates to dedicated fieldset/row/widget renderers, and `Form` now delegates view construction to `FormViewBuilder` and `FormViewFactory`.
 - Refactored `FormBuilder::add()` and `HtmlRenderer::renderWidget()` into smaller dedicated methods to reduce complexity and improve analyzer stability.
 - Applied a project-wide static-analysis compatibility pass: normalized unsupported `list<...>` and `class-string` annotations, and tightened builder/type resolver string guarantees.
 - Hardened `SessionCsrfManager` and `SessionCaptchaManager`: removed suppressed `session_start()`, added explicit failure handling, and initialize session storage only after a verified active session.

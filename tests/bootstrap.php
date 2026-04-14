@@ -9,5 +9,3 @@ if (is_file($vendorAutoload)) {
 }
 
 require_once dirname(__DIR__) . '/src/autoload.php';
-
-//test

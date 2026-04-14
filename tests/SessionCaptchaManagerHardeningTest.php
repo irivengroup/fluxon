@@ -40,7 +40,7 @@ final class SessionCaptchaManagerHardeningTest extends TestCase
         $manager = new SessionCaptchaManager(30, 5);
         $code = $manager->generateCode('captcha.expired', 5, 5);
 
-        $_SESSION['_pfg_captcha']['captcha.expired']['expires_at'] = time() - 1;
+        $_SESSION['_pfg_captcha_meta']['captcha.expired']['expires_at'] = time() - 1;
 
         self::assertFalse($manager->isCodeValid('captcha.expired', $code));
     }

@@ -15,6 +15,7 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
     ) {
         $this->ensureSessionStarted();
         $_SESSION['_pfg_captcha'] ??= [];
+        $_SESSION['_pfg_captcha_meta'] ??= [];
     }
 
     public function generateCode(string $key, int $minLength = 5, int $maxLength = 8): string
@@ -25,8 +26,11 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
         $length = random_int($minLength, $maxLength);
         $code = $this->generateCaseSensitiveCode($length);
 
-        $_SESSION['_pfg_captcha'][$key] = [
-            'code' => $code,
+        // Legacy-compatible plain string storage
+        $_SESSION['_pfg_captcha'][$key] = $code;
+
+        // Hardened metadata storage
+        $_SESSION['_pfg_captcha_meta'][$key] = [
             'expires_at' => time() + max(30, $this->ttlSeconds),
             'attempts_left' => max(1, $this->maxAttempts),
         ];
@@ -40,42 +44,49 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
             return false;
         }
 
-        $challenge = $_SESSION['_pfg_captcha'][$key] ?? null;
-        if (!is_array($challenge)) {
+        $expected = $_SESSION['_pfg_captcha'][$key] ?? null;
+        $meta = $_SESSION['_pfg_captcha_meta'][$key] ?? null;
+
+        if (!is_string($expected)) {
+            unset($_SESSION['_pfg_captcha'][$key], $_SESSION['_pfg_captcha_meta'][$key]);
             return false;
         }
 
-        $expected = $challenge['code'] ?? null;
-        $expiresAt = $challenge['expires_at'] ?? null;
-        $attemptsLeft = $challenge['attempts_left'] ?? null;
+        if (is_array($meta)) {
+            $expiresAt = $meta['expires_at'] ?? null;
+            $attemptsLeft = $meta['attempts_left'] ?? null;
 
-        if (!is_string($expected) || !is_int($expiresAt) || !is_int($attemptsLeft)) {
-            unset($_SESSION['_pfg_captcha'][$key]);
-            return false;
-        }
+            if (!is_int($expiresAt) || !is_int($attemptsLeft)) {
+                unset($_SESSION['_pfg_captcha'][$key], $_SESSION['_pfg_captcha_meta'][$key]);
+                return false;
+            }
 
-        if ($expiresAt < time()) {
-            unset($_SESSION['_pfg_captcha'][$key]);
-            return false;
-        }
+            if ($expiresAt < time()) {
+                unset($_SESSION['_pfg_captcha'][$key], $_SESSION['_pfg_captcha_meta'][$key]);
+                return false;
+            }
 
-        if ($attemptsLeft <= 0) {
-            unset($_SESSION['_pfg_captcha'][$key]);
-            return false;
+            if ($attemptsLeft <= 0) {
+                unset($_SESSION['_pfg_captcha'][$key], $_SESSION['_pfg_captcha_meta'][$key]);
+                return false;
+            }
         }
 
         $isValid = hash_equals($expected, $input);
 
         if ($isValid) {
-            unset($_SESSION['_pfg_captcha'][$key]);
+            unset($_SESSION['_pfg_captcha'][$key], $_SESSION['_pfg_captcha_meta'][$key]);
             return true;
         }
 
-        $challenge['attempts_left'] = $attemptsLeft - 1;
-        if ($challenge['attempts_left'] <= 0) {
-            unset($_SESSION['_pfg_captcha'][$key]);
-        } else {
-            $_SESSION['_pfg_captcha'][$key] = $challenge;
+        if (is_array($meta)) {
+            $meta['attempts_left'] = ((int) ($meta['attempts_left'] ?? 1)) - 1;
+
+            if ($meta['attempts_left'] <= 0) {
+                unset($_SESSION['_pfg_captcha'][$key], $_SESSION['_pfg_captcha_meta'][$key]);
+            } else {
+                $_SESSION['_pfg_captcha_meta'][$key] = $meta;
+            }
         }
 
         return false;

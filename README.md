@@ -859,3 +859,5 @@ $manager = new \Iriven\PhpFormGenerator\Infrastructure\Security\SessionCaptchaMa
     maxAttempts: 3,
 );
 ```
+
+Captcha session storage remains backward-compatible: the challenge code is still exposed under `$_SESSION['_pfg_captcha'][<key>]` as a string, while hardening metadata is stored separately under `$_SESSION['_pfg_captcha_meta']`.

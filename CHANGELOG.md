@@ -28,6 +28,7 @@
 ## Unreleased
 
 ### Fixed
+- Restored backward compatibility for captcha session storage by keeping the raw challenge string in `$_SESSION['_pfg_captcha']` and moving TTL/attempt metadata to `$_SESSION['_pfg_captcha_meta']`.
 - Removed remaining analyzer issues in `DateTimeTransformer`, `EnumTransformer`, and `FormBuilder` docs, and continued decomposing `Form`/`HtmlRenderer` responsibilities with helper extraction.
 - Fixed parser-incompatible annotations in `BuiltinTypeRegistry` and `FormBuilder`, updated enum reflection handling, corrected `DateTimeTransformer` fallback logic, and began decomposing complex classes with helper extraction.
 - Hardened builder/type resolution, dynamic nested form instantiation, enum transformation, and captcha test guards to eliminate remaining analyzer ambiguities.

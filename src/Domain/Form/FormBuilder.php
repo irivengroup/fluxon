@@ -50,6 +50,9 @@ final class FormBuilder
     /** @param array<string, mixed> $options */
     public function mergeOptions(array $options): self
     {
+        if (!array_key_exists('csrf_protection', $options) && !array_key_exists('csrf_protection', $this->options)) {
+            $options['csrf_protection'] = true;
+        }
         $this->options = array_replace_recursive($this->options, $options);
 
         return $this;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Iriven\PhpFormGenerator\Tests;
 
 use Iriven\PhpFormGenerator\Application\FormFactory;
+use Iriven\PhpFormGenerator\Application\FormGenerator;
 use Iriven\PhpFormGenerator\Application\FormType\ContactType;
 use Iriven\PhpFormGenerator\Application\FormType\InvoiceType;
 use Iriven\PhpFormGenerator\Application\FormType\RegistrationType;
@@ -24,6 +25,26 @@ final class ApplicationFormTypesTest extends TestCase
         $form = (new FormFactory())->create(ContactType::class);
         $view = $form->createView();
 
-        self::assertTrue($view->options['csrf_protection'] === true);
+        self::assertTrue(($view->options['csrf_protection'] ?? false) === true);
+    }
+
+    public function testBuilderUsesCsrfProtectionByDefault(): void
+    {
+        $form = (new FormFactory())->createBuilder('contact')->getForm();
+        $view = $form->createView();
+
+        self::assertTrue(($view->options['csrf_protection'] ?? false) === true);
+    }
+
+    public function testFluentFormGeneratorUsesCsrfProtectionByDefault(): void
+    {
+        $form = (new FormGenerator('contact'))
+            ->open()
+            ->addText('name')
+            ->getForm();
+
+        $view = $form->createView();
+
+        self::assertTrue(($view->options['csrf_protection'] ?? false) === true);
     }
 }

@@ -361,6 +361,7 @@ final class Form
             'method' => strtoupper((string) ($this->options['method'] ?? 'POST')),
             'action' => (string) ($this->options['action'] ?? ''),
             'attr' => $this->options['attr'] ?? [],
+            'csrf_protection' => (bool) ($this->options['csrf_protection'] ?? false),
         ];
 
         if (($this->options['csrf_protection'] ?? false) === true) {

@@ -321,3 +321,5 @@ It also adds a form-level validation rule to verify password confirmation.
 - submit button
 
 The line items use `InvoiceLineType`, and the customer section uses `CustomerType`.
+
+The generated `FormView` now exposes the root options through both `vars` and `options` for backward-compatible inspection in tests, integrations, and custom renderers.

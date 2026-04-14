@@ -6,6 +6,9 @@ namespace Iriven\PhpFormGenerator\Domain\Form;
 
 final class FormView
 {
+    /** @var array<string, mixed> */
+    public readonly array $options;
+
     /**
      * @param array<string, mixed> $vars
      * @param list<FormView> $children
@@ -25,5 +28,6 @@ final class FormView
         public readonly bool $submitted = false,
         public readonly bool $valid = true,
     ) {
+        $this->options = $this->vars;
     }
 }

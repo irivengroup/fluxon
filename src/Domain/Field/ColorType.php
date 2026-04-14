@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-final class ColorType extends TextType {}
+class ColorType extends TextType {}

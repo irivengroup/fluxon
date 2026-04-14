@@ -4,4 +4,10 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-final class RadioType extends TextType {}
+class RadioType extends AbstractFieldType
+{
+    public static function htmlType(): string
+    {
+        return 'radio';
+    }
+}

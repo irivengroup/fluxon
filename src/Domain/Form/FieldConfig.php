@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Form;
 
+use Iriven\PhpFormGenerator\Domain\Contract\ConstraintInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\DataTransformerInterface;
 
 final class FieldConfig
 {
-    /** @param list<object> $constraints */
-    /** @param list<DataTransformerInterface> $transformers */
+    /**
+     * @param list<ConstraintInterface> $constraints
+     * @param list<DataTransformerInterface> $transformers
+     * @param array<string, FieldConfig> $children
+     * @param list<Fieldset> $fieldsets
+     */
     public function __construct(
         public string $name,
         public string $typeClass,

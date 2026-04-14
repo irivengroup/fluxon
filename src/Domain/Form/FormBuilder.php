@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Form;
 
+use Iriven\PhpFormGenerator\Domain\Contract\ConstraintInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\FormTypeInterface;
+use Iriven\PhpFormGenerator\Domain\Event\FormEvents;
 use Iriven\PhpFormGenerator\Domain\Field\CollectionType;
+use Iriven\PhpFormGenerator\Infrastructure\Security\NullCsrfManager;
 
 final class FormBuilder
 {
@@ -18,6 +21,12 @@ final class FormBuilder
     /** @var list<string> */
     private array $fieldsetStack = [];
 
+    /** @var array<string, list<callable>> */
+    private array $eventListeners = [];
+
+    /** @var list<ConstraintInterface> */
+    private array $formConstraints = [];
+
     public function __construct(
         private readonly string $name = 'form',
         private mixed $data = null,
@@ -29,9 +38,11 @@ final class FormBuilder
     {
         $constraints = $options['constraints'] ?? [];
         $transformers = $options['transformers'] ?? [];
+
         if (method_exists($typeClass, 'defaultTransformers')) {
             $transformers = array_merge($typeClass::defaultTransformers(), $transformers);
         }
+
         unset($options['constraints'], $options['transformers']);
 
         $compound = false;
@@ -42,9 +53,9 @@ final class FormBuilder
 
         if (is_subclass_of($typeClass, FormTypeInterface::class)) {
             $subBuilder = new self($name, null, $options);
-            /** @var FormTypeInterface $type */
             $type = new $typeClass();
-            $type->buildForm($subBuilder, $options);
+            $resolved = $type->configureOptions($options);
+            $type->buildForm($subBuilder, $resolved + $options);
             $compound = true;
             $children = $subBuilder->all();
         }
@@ -73,9 +84,9 @@ final class FormBuilder
         $this->fields[$name] = $config;
 
         if ($this->fieldsetStack !== []) {
-            $fieldsetId = end($this->fieldsetStack);
+            $currentId = $this->fieldsetStack[array_key_last($this->fieldsetStack)];
             foreach ($this->fieldsets as $fieldset) {
-                if ($fieldset->id === $fieldsetId) {
+                if ($fieldset->id === $currentId) {
                     $fieldset->fields[] = $name;
                     break;
                 }
@@ -87,9 +98,22 @@ final class FormBuilder
 
     public function addFieldset(array $options = []): self
     {
-        $id = 'fs_' . (count($this->fieldsets) + 1) . '_' . substr(md5((string) microtime(true)), 0, 6);
-        $this->fieldsets[] = new Fieldset($id, $options, []);
-        $this->fieldsetStack[] = $id;
+        $fieldset = new Fieldset('fs_' . (count($this->fieldsets) + 1), $options, []);
+
+        if ($this->fieldsetStack !== []) {
+            $parentId = $this->fieldsetStack[array_key_last($this->fieldsetStack)];
+            foreach ($this->fieldsets as $existing) {
+                if ($existing->id === $parentId) {
+                    $existing->children[] = $fieldset;
+                    break;
+                }
+            }
+        } else {
+            $this->fieldsets[] = $fieldset;
+        }
+
+        $this->fieldsetStack[] = $fieldset->id;
+
         return $this;
     }
 
@@ -99,20 +123,47 @@ final class FormBuilder
         return $this;
     }
 
+    /** @param ConstraintInterface $constraint */
+    public function addFormConstraint(ConstraintInterface $constraint): self
+    {
+        $this->formConstraints[] = $constraint;
+        return $this;
+    }
+
+    /** @param callable $listener */
+    public function addEventListener(string $eventName, callable $listener): self
+    {
+        $this->eventListeners[$eventName] ??= [];
+        $this->eventListeners[$eventName][] = $listener;
+
+        return $this;
+    }
+
     /** @return array<string, FieldConfig> */
     public function all(): array
     {
         return $this->fields;
     }
 
-    /** @return list<Fieldset> */
-    public function fieldsets(): array
-    {
-        return $this->fieldsets;
-    }
-
     public function getForm(): Form
     {
-        return new Form($this->name, $this->fields, $this->data, $this->options, $this->fieldsets);
+        $options = $this->options + [
+            'method' => 'POST',
+            'action' => '',
+            'csrf_protection' => false,
+            'csrf_field_name' => '_token',
+            'csrf_token_id' => $this->name,
+            'csrf_manager' => new NullCsrfManager(),
+        ];
+
+        return new Form(
+            $this->name,
+            $this->fields,
+            $this->data,
+            $options,
+            $this->fieldsets,
+            $this->eventListeners,
+            $this->formConstraints,
+        );
     }
 }

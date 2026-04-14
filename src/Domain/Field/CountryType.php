@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-class CountryType extends AbstractFieldType
+class CountryType extends SelectType
 {
-    public static function htmlType(): string { return 'select'; }
-
+    /** @return array<string, string> */
     public static function choices(): array
     {
         return [
-            'France' => 'FR',
-            'Germany' => 'DE',
-            'Spain' => 'ES',
-            'Italy' => 'IT',
-            'United Kingdom' => 'GB',
-            'United States' => 'US',
-            'Canada' => 'CA',
-            'Japan' => 'JP',
+            'FR' => 'France',
+            'BE' => 'Belgium',
+            'CH' => 'Switzerland',
+            'CA' => 'Canada',
+            'DE' => 'Germany',
+            'ES' => 'Spain',
+            'GB' => 'United Kingdom',
+            'IT' => 'Italy',
+            'US' => 'United States',
         ];
     }
 }

@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-final class YesNoType extends CountryType
+class YesNoType extends SelectType
 {
-    public static function choices(): array { return ['Yes' => '1', 'No' => '0']; }
+    /** @return array<string, string> */
+    public static function choices(): array
+    {
+        return ['1' => 'Yes', '0' => 'No'];
+    }
 }

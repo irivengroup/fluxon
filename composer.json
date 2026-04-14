@@ -1,11 +1,12 @@
 {
   "name": "iriven/php-form-generator",
-  "description": "Enterprise form framework for PHP with nested forms, collections, transformers and themes",
+  "description": "Enterprise form framework for PHP with nested forms, collections, transformers, events and themes",
   "type": "library",
   "license": "MIT",
   "require": {
     "php": "^8.2",
-    "symfony/event-dispatcher": "^7.4"
+    "symfony/event-dispatcher": "^7.4",
+    "symfony/options-resolver": "^7.4"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.95",
@@ -26,8 +27,12 @@
   },
   "scripts": {
     "test": "vendor/bin/phpunit --colors=never",
+    "test:coverage": "vendor/bin/phpunit --coverage-text",
     "analyse": "vendor/bin/phpstan analyse src tests",
-    "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff"
+    "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+    "cs:fix": "vendor/bin/php-cs-fixer fix",
+    "refactor": "vendor/bin/rector process",
+    "mutate": "vendor/bin/infection --threads=max --min-msi=70 --min-covered-msi=80"
   },
   "config": {
     "sort-packages": true,

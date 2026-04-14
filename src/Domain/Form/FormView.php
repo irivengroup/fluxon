@@ -6,21 +6,24 @@ namespace Iriven\PhpFormGenerator\Domain\Form;
 
 final class FormView
 {
-    /** @param list<FormView> $children */
-    /** @param list<string> $errors */
-    /** @param list<Fieldset> $fieldsets */
+    /**
+     * @param array<string, mixed> $vars
+     * @param list<FormView> $children
+     * @param list<string> $errors
+     * @param list<Fieldset> $fieldsets
+     */
     public function __construct(
-        public string $name,
-        public string $fullName,
-        public string $id,
-        public string $type,
-        public mixed $value,
-        public array $vars = [],
-        public array $children = [],
-        public array $errors = [],
-        public array $fieldsets = [],
-        public bool $submitted = false,
-        public bool $valid = true,
+        public readonly string $name,
+        public readonly string $fullName,
+        public readonly string $id,
+        public readonly string $type,
+        public readonly mixed $value,
+        public readonly array $vars = [],
+        public readonly array $children = [],
+        public readonly array $errors = [],
+        public readonly array $fieldsets = [],
+        public readonly bool $submitted = false,
+        public readonly bool $valid = true,
     ) {
     }
 }

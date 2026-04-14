@@ -18,6 +18,6 @@ final class Email implements ConstraintInterface
             return [];
         }
 
-        return filter_var($value, FILTER_VALIDATE_EMAIL) ? [] : [$this->message];
+        return filter_var((string) $value, FILTER_VALIDATE_EMAIL) !== false ? [] : [$this->message];
     }
 }

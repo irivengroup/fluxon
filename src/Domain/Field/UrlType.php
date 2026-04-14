@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-final class UrlType extends TextType {}
+class UrlType extends TextType {}

@@ -10,7 +10,7 @@ final class NullCsrfManager implements CsrfManagerInterface
 {
     public function generateToken(string $tokenId): string
     {
-        return 'disabled';
+        return 'csrf-disabled';
     }
 
     public function isTokenValid(string $tokenId, ?string $token): bool

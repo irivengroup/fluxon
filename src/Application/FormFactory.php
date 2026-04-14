@@ -18,16 +18,20 @@ final class FormFactory
 
     public function createBuilder(string $name = 'form', mixed $data = null, array $options = []): FormBuilder
     {
+        $options['csrf_manager'] = $options['csrf_manager'] ?? $this->csrfManager ?? new NullCsrfManager();
+
         return new FormBuilder($name, $data, $options);
     }
 
     /** @param class-string<FormTypeInterface> $typeClass */
     public function create(string $typeClass, mixed $data = null, array $options = []): Form
     {
+        $options['csrf_manager'] = $options['csrf_manager'] ?? $this->csrfManager ?? new NullCsrfManager();
         $builder = new FormBuilder($options['name'] ?? 'form', $data, $options);
         $type = new $typeClass();
         $resolved = $type->configureOptions($options);
         $type->buildForm($builder, $resolved + $options);
+
         return $builder->getForm();
     }
 }

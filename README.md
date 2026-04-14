@@ -1,43 +1,32 @@
-# PhpFormGenerator V3.4
+# PhpFormGenerator V3.5
 
-Framework de formulaires PHP orienté enterprise.
+Enterprise-grade PHP form framework with:
 
-## Capacités V3.4
-
-- formulaires imbriqués
-- collections récursives
+- nested `FormType` support
+- recursive `CollectionType`
 - fieldsets
-- transformers réels
-- validation
-- mapping array / objet
-- thèmes HTML `default`, `bootstrap5`, `tailwind`
-- compatibilité avec les field types historiques principaux
+- object and array data mapping
+- form and field constraints
+- event lifecycle (`PRE_SET_DATA`, `PRE_SUBMIT`, `SUBMIT`, `POST_SUBMIT`, `VALIDATION_ERROR`)
+- CSRF abstraction
+- HTML themes (`Default`, `Bootstrap5`, `Tailwind`)
+- JSON schema export for frontend integration
+- legacy field types preserved
 
-## Exemple
+## Quick example
 
 ```php
 use Iriven\PhpFormGenerator\Application\FormFactory;
-use Iriven\PhpFormGenerator\Infrastructure\Http\ArrayRequest;
-use Iriven\PhpFormGenerator\Infrastructure\Security\NullCsrfManager;
-use Iriven\PhpFormGenerator\Presentation\Html\HtmlRenderer;
-use Iriven\PhpFormGenerator\Presentation\Html\Theme\Bootstrap5Theme;
-use Iriven\PhpFormGenerator\Tests\Fixtures\InvoiceType;
+use App\Form\ProfileType;
 
-$factory = new FormFactory(csrfManager: new NullCsrfManager());
-$form = $factory->create(InvoiceType::class, [
-    'customer' => ['name' => 'Alice'],
+$form = (new FormFactory())->create(ProfileType::class, $dto, [
+    'name' => 'profile',
+    'csrf_protection' => true,
 ]);
 
-$form->handleRequest(new ArrayRequest('POST', [
-    'form' => [
-        'customer' => ['name' => 'Alice'],
-        'issuedAt' => '2026-04-13 10:30',
-        'items' => [
-            ['label' => 'Design', 'quantity' => '2', 'price' => '100.50']
-        ],
-    ]
-]));
+$form->handleRequest($request);
 
-$renderer = new HtmlRenderer(new Bootstrap5Theme());
-echo $renderer->renderForm($form->createView());
+if ($form->isSubmitted() && $form->isValid()) {
+    $data = $form->getData();
+}
 ```

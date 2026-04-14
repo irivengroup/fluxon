@@ -11,6 +11,7 @@ final class Length implements ConstraintInterface
     public function __construct(
         private readonly ?int $min = null,
         private readonly ?int $max = null,
+        private readonly string $message = 'This value has an invalid length.',
     ) {
     }
 
@@ -21,16 +22,15 @@ final class Length implements ConstraintInterface
         }
 
         $length = mb_strlen((string) $value);
-        $errors = [];
 
         if ($this->min !== null && $length < $this->min) {
-            $errors[] = sprintf('This value is too short. Minimum is %d characters.', $this->min);
+            return [$this->message];
         }
 
         if ($this->max !== null && $length > $this->max) {
-            $errors[] = sprintf('This value is too long. Maximum is %d characters.', $this->max);
+            return [$this->message];
         }
 
-        return $errors;
+        return [];
     }
 }

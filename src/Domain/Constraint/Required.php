@@ -14,7 +14,7 @@ final class Required implements ConstraintInterface
 
     public function validate(mixed $value, array $context = []): array
     {
-        if ($value === null || $value === '' || $value === []) {
+        if ($value === null || $value === '' || $value === [] || $value === false) {
             return [$this->message];
         }
 

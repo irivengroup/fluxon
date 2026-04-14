@@ -4,4 +4,10 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-final class ButtonType extends TextType {}
+class ButtonType extends AbstractFieldType
+{
+    public static function htmlType(): string
+    {
+        return 'button';
+    }
+}

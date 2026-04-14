@@ -4,11 +4,17 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Form;
 
+use Iriven\PhpFormGenerator\Domain\Contract\ConstraintInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\RequestInterface;
-use Iriven\PhpFormGenerator\Domain\Transformer\BooleanTransformer;
+use Iriven\PhpFormGenerator\Domain\Event\PostSubmitEvent;
+use Iriven\PhpFormGenerator\Domain\Event\PreSetDataEvent;
+use Iriven\PhpFormGenerator\Domain\Event\PreSubmitEvent;
+use Iriven\PhpFormGenerator\Domain\Event\SubmitEvent;
+use Iriven\PhpFormGenerator\Domain\Event\ValidationErrorEvent;
 use Iriven\PhpFormGenerator\Domain\Validation\Validator;
 use Iriven\PhpFormGenerator\Infrastructure\Mapping\ArrayDataMapper;
 use Iriven\PhpFormGenerator\Infrastructure\Mapping\ObjectDataMapper;
+use Iriven\PhpFormGenerator\Infrastructure\PropertyAccess\PropertyAccessor;
 
 final class Form
 {
@@ -21,30 +27,57 @@ final class Form
     /** @var array<string, list<string>> */
     private array $errors = [];
 
+    /** @var array<string, list<callable>> */
+    private array $eventListeners = [];
+
+    /** @var list<ConstraintInterface> */
+    private array $formConstraints = [];
+
+    private PropertyAccessor $accessor;
+
+    /**
+     * @param array<string, FieldConfig> $fields
+     * @param list<Fieldset> $fieldsets
+     * @param array<string, list<callable>> $eventListeners
+     * @param list<ConstraintInterface> $formConstraints
+     */
     public function __construct(
         private readonly string $name,
-        /** @var array<string, FieldConfig> */
         private readonly array $fields,
         private mixed $data = null,
         private readonly array $options = [],
-        /** @var list<Fieldset> */
         private readonly array $fieldsets = [],
+        array $eventListeners = [],
+        array $formConstraints = [],
     ) {
+        $this->eventListeners = $eventListeners;
+        $this->formConstraints = $formConstraints;
+        $this->accessor = new PropertyAccessor();
+        $this->dispatch('form.pre_set_data', new PreSetDataEvent($this, $this->data));
         $this->initializeValues();
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     private function initializeValues(): void
     {
         foreach ($this->fields as $name => $field) {
+            $raw = $this->readDataValue($name, $field);
+
             if ($field->collection) {
-                $this->values[$name] = is_array($this->readDataValue($name)) ? $this->readDataValue($name) : [];
+                $this->values[$name] = is_array($raw) ? $raw : [];
                 continue;
             }
+
             if ($field->compound) {
-                $this->values[$name] = is_array($this->readDataValue($name)) ? $this->readDataValue($name) : [];
+                $this->values[$name] = is_array($raw) ? $raw : [];
                 continue;
             }
-            $value = $this->readDataValue($name);
+
+            $value = $raw;
             foreach ($field->transformers as $transformer) {
                 $value = $transformer->transform($value);
             }
@@ -52,122 +85,190 @@ final class Form
         }
     }
 
-    private function readDataValue(string $name): mixed
+    private function readDataValue(string $name, FieldConfig $field): mixed
     {
+        if (array_key_exists('data', $field->options)) {
+            return $field->options['data'];
+        }
+
         if (is_array($this->data)) {
-            return $this->data[$name] ?? ($this->fields[$name]->options['data'] ?? null);
+            return $this->data[$name] ?? null;
         }
-        if (is_object($this->data) && isset($this->data->{$name})) {
-            return $this->data->{$name};
+
+        if (is_object($this->data)) {
+            return $this->accessor->getValue($this->data, $name);
         }
-        return $this->fields[$name]->options['data'] ?? null;
+
+        return null;
     }
 
     public function handleRequest(RequestInterface $request): void
     {
+        if (strtoupper((string) ($this->options['method'] ?? 'POST')) !== $request->getMethod()) {
+            return;
+        }
+
         $payload = $request->get($this->name, []);
         if (!is_array($payload)) {
             return;
         }
+
         $this->submitted = true;
-        $validator = new Validator();
+
+        $preSubmit = new PreSubmitEvent($this, $payload);
+        $this->dispatch('form.pre_submit', $preSubmit);
+        $payload = is_array($preSubmit->getData()) ? $preSubmit->getData() : $payload;
+
+        if (($this->options['csrf_protection'] ?? false) === true) {
+            $tokenField = (string) ($this->options['csrf_field_name'] ?? '_token');
+            $tokenId = (string) ($this->options['csrf_token_id'] ?? $this->name);
+            $csrfManager = $this->options['csrf_manager'] ?? null;
+
+            if ($csrfManager !== null && !$csrfManager->isTokenValid($tokenId, is_string($payload[$tokenField] ?? null) ? $payload[$tokenField] : null)) {
+                $this->errors['_form'][] = 'Invalid CSRF token.';
+                $this->valid = false;
+            }
+        }
 
         foreach ($this->fields as $name => $field) {
             $raw = $payload[$name] ?? null;
-
-            if ($field->collection) {
-                $items = [];
-                if (is_array($raw)) {
-                    foreach ($raw as $row) {
-                        $items[] = $this->submitEntry($field, is_array($row) ? $row : []);
-                    }
-                }
-                $this->values[$name] = $items;
-                continue;
-            }
-
-            if ($field->compound) {
-                $this->values[$name] = $this->submitCompound($field, is_array($raw) ? $raw : []);
-                continue;
-            }
-
-            if (($field->typeClass === 'Iriven\\PhpFormGenerator\\Domain\\Field\\CheckboxType') && $raw === null) {
-                $raw = false;
-            }
-
-            $value = $raw;
-            foreach ($field->transformers as $transformer) {
-                $value = $transformer->reverseTransform($value);
-            }
-            $this->values[$name] = $value;
-            $this->errors[$name] = $validator->validate($value, $field->constraints);
+            $path = $name;
+            $this->values[$name] = $this->submitField($field, $raw, $path);
         }
 
-        foreach ($this->errors as $messages) {
-            if ($messages !== []) {
-                $this->valid = false;
-                break;
-            }
-        }
+        $this->validateFormConstraints();
+
+        $this->dispatch('form.submit', new SubmitEvent($this, $this->values, ['payload' => $payload]));
 
         if ($this->valid) {
             $this->mapData();
         }
+
+        $this->dispatch('form.post_submit', new PostSubmitEvent($this, $this->data, ['valid' => $this->valid]));
     }
 
-    private function submitCompound(FieldConfig $field, array $raw): array
+    private function submitField(FieldConfig $field, mixed $raw, string $path): mixed
+    {
+        if ($field->collection) {
+            return $this->submitCollection($field, is_array($raw) ? $raw : [], $path);
+        }
+
+        if ($field->compound) {
+            return $this->submitCompound($field, is_array($raw) ? $raw : [], $path);
+        }
+
+        if ($field->typeClass === 'Iriven\\PhpFormGenerator\\Domain\\Field\\CheckboxType' && $raw === null) {
+            $raw = false;
+        }
+
+        $value = $raw;
+        foreach ($field->transformers as $transformer) {
+            $value = $transformer->reverseTransform($value);
+        }
+
+        $this->applyConstraintErrors($path, $value, $field->constraints);
+
+        return $value;
+    }
+
+    /** @param array<string, mixed> $raw */
+    private function submitCompound(FieldConfig $field, array $raw, string $path): array
     {
         $result = [];
         foreach ($field->children as $childName => $child) {
-            $value = $raw[$childName] ?? null;
-            foreach ($child->transformers as $transformer) {
-                $value = $transformer->reverseTransform($value);
-            }
-            $result[$childName] = $value;
-            $messages = (new Validator())->validate($value, $child->constraints);
-            if ($messages !== []) {
-                $this->errors[$field->name . '.' . $childName] = $messages;
-                $this->valid = false;
-            }
+            $childPath = $path . '.' . $childName;
+            $result[$childName] = $this->submitField($child, $raw[$childName] ?? null, $childPath);
         }
+
+        $this->applyConstraintErrors($path, $result, $field->constraints);
+
         return $result;
     }
 
-    private function submitEntry(FieldConfig $field, array $row): array
+    /** @param array<int|string, mixed> $raw */
+    private function submitCollection(FieldConfig $field, array $raw, string $path): array
     {
+        $items = [];
         $entryType = $field->entryType;
-        if ($entryType === null) {
-            return $row;
-        }
 
-        if (class_exists($entryType) && method_exists($entryType, 'buildForm')) {
-            $builder = new FormBuilder($field->name . '_entry');
-            $entry = new $entryType();
-            $entry->buildForm($builder, $field->entryOptions);
-            $result = [];
-            foreach ($builder->all() as $childName => $child) {
-                $value = $row[$childName] ?? null;
-                foreach ($child->transformers as $transformer) {
-                    $value = $transformer->reverseTransform($value);
-                }
-                $result[$childName] = $value;
-                $messages = (new Validator())->validate($value, $child->constraints);
-                if ($messages !== []) {
-                    $this->errors[$field->name . '[]' . '.' . $childName] = $messages;
-                    $this->valid = false;
-                }
+        foreach ($raw as $index => $row) {
+            if (!is_array($row)) {
+                $row = ['value' => $row];
             }
-            return $result;
+
+            if ($entryType !== null && is_subclass_of($entryType, 'Iriven\\PhpFormGenerator\\Domain\\Contract\\FormTypeInterface')) {
+                $builder = new FormBuilder($field->name . '_entry', null, $field->entryOptions);
+                $type = new $entryType();
+                $resolved = $type->configureOptions($field->entryOptions);
+                $type->buildForm($builder, $resolved + $field->entryOptions);
+                $entryValues = [];
+                foreach ($builder->all() as $childName => $child) {
+                    $entryValues[$childName] = $this->submitField($child, $row[$childName] ?? null, $path . '.' . (string) $index . '.' . $childName);
+                }
+                $items[] = $entryValues;
+                continue;
+            }
+
+            if ($entryType !== null && class_exists($entryType)) {
+                $entryField = new FieldConfig((string) $index, $entryType, $field->entryOptions, $field->constraints, method_exists($entryType, 'defaultTransformers') ? $entryType::defaultTransformers() : []);
+                $items[] = $this->submitField($entryField, $row, $path . '.' . (string) $index);
+                continue;
+            }
+
+            $items[] = $row;
         }
 
-        return $row;
+        if (($field->options['allow_delete'] ?? false) !== true) {
+            $items = array_values($items);
+        }
+
+        $this->applyConstraintErrors($path, $items, $field->constraints);
+
+        return $items;
+    }
+
+    /** @param list<ConstraintInterface> $constraints */
+    private function applyConstraintErrors(string $path, mixed $value, array $constraints): void
+    {
+        $errors = (new Validator())->validate($value, $constraints, [
+            'values' => $this->values,
+            'path' => $path,
+            'data' => $this->data,
+            'form' => $this,
+        ]);
+
+        if ($errors === []) {
+            return;
+        }
+
+        $this->errors[$path] = $errors;
+        $this->valid = false;
+        $this->dispatch('form.validation_error', new ValidationErrorEvent($this, $value, ['path' => $path, 'errors' => $errors]));
+    }
+
+    private function validateFormConstraints(): void
+    {
+        if ($this->formConstraints === []) {
+            return;
+        }
+
+        $errors = (new Validator())->validate($this->values, $this->formConstraints, [
+            'values' => $this->values,
+            'data' => $this->data,
+            'form' => $this,
+        ]);
+
+        if ($errors !== []) {
+            $this->errors['_form'] = array_merge($this->errors['_form'] ?? [], $errors);
+            $this->valid = false;
+        }
     }
 
     private function mapData(): void
     {
         if (is_array($this->data) || $this->data === null) {
             $mapper = new ArrayDataMapper();
-            $this->data = $mapper->map($this->data ?? [], $this->values);
+            $this->data = $mapper->map(is_array($this->data) ? $this->data : [], $this->values);
             return;
         }
 
@@ -179,7 +280,13 @@ final class Form
 
     public function getData(): mixed
     {
-        return $this->data;
+        return $this->data ?? $this->values;
+    }
+
+    /** @return array<string, mixed> */
+    public function getSubmittedValues(): array
+    {
+        return $this->values;
     }
 
     public function isSubmitted(): bool
@@ -203,7 +310,31 @@ final class Form
         $children = [];
         foreach ($this->fields as $name => $field) {
             $fullName = $this->name . '[' . $name . ']';
-            $children[] = $this->createFieldView($name, $field, $fullName, 'form_' . $name, $this->values[$name] ?? null);
+            $children[] = $this->createFieldView($name, $field, $fullName, 'form_' . $name, $this->values[$name] ?? null, $name);
+        }
+
+        $vars = [
+            'method' => strtoupper((string) ($this->options['method'] ?? 'POST')),
+            'action' => (string) ($this->options['action'] ?? ''),
+            'attr' => $this->options['attr'] ?? [],
+        ];
+
+        if (($this->options['csrf_protection'] ?? false) === true) {
+            $csrfManager = $this->options['csrf_manager'] ?? null;
+            $tokenField = (string) ($this->options['csrf_field_name'] ?? '_token');
+            $tokenId = (string) ($this->options['csrf_token_id'] ?? $this->name);
+            if ($csrfManager !== null) {
+                $children[] = new FormView(
+                    $tokenField,
+                    $this->name . '[' . $tokenField . ']',
+                    'form_' . $tokenField,
+                    'hidden',
+                    $csrfManager->generateToken($tokenId),
+                    ['label' => $tokenField, 'type_class' => 'hidden'],
+                    [],
+                    $this->errors[$tokenField] ?? [],
+                );
+            }
         }
 
         return new FormView(
@@ -212,16 +343,16 @@ final class Form
             $this->name,
             'form',
             null,
-            ['method' => strtoupper((string) ($this->options['method'] ?? 'POST')), 'action' => (string) ($this->options['action'] ?? '')],
+            $vars,
             $children,
-            [],
+            $this->errors['_form'] ?? [],
             $this->fieldsets,
             $this->submitted,
             $this->valid,
         );
     }
 
-    private function createFieldView(string $name, FieldConfig $field, string $fullName, string $id, mixed $value): FormView
+    private function createFieldView(string $name, FieldConfig $field, string $fullName, string $id, mixed $value, string $errorPath): FormView
     {
         $vars = $field->options;
         $vars['label'] = $field->options['label'] ?? ucfirst($name);
@@ -233,24 +364,57 @@ final class Form
             if (is_array($value)) {
                 foreach ($value as $index => $row) {
                     $entryChildren = [];
-                    if ($field->entryType !== null) {
-                        $builder = new FormBuilder($name . '_entry');
+                    if ($field->entryType !== null && is_subclass_of($field->entryType, 'Iriven\\PhpFormGenerator\\Domain\\Contract\\FormTypeInterface')) {
+                        $builder = new FormBuilder($name . '_entry', null, $field->entryOptions);
                         $entry = new ($field->entryType)();
-                        $entry->buildForm($builder, $field->entryOptions);
+                        $resolved = $entry->configureOptions($field->entryOptions);
+                        $entry->buildForm($builder, $resolved + $field->entryOptions);
+
                         foreach ($builder->all() as $childName => $child) {
                             $entryChildren[] = $this->createFieldView(
                                 $childName,
                                 $child,
-                                $fullName . '[' . $index . ']' . '[' . $childName . ']',
+                                $fullName . '[' . $index . '][' . $childName . ']',
                                 $id . '_' . $index . '_' . $childName,
                                 $row[$childName] ?? null,
+                                $errorPath . '.' . (string) $index . '.' . $childName,
                             );
                         }
                     }
-                    $children[] = new FormView((string) $index, $fullName . '[' . $index . ']', $id . '_' . $index, 'collection_entry', $row, [], $entryChildren, []);
+
+                    $children[] = new FormView(
+                        (string) $index,
+                        $fullName . '[' . $index . ']',
+                        $id . '_' . $index,
+                        'collection_entry',
+                        $row,
+                        ['label' => (string) $index],
+                        $entryChildren,
+                        $this->errors[$errorPath . '.' . (string) $index] ?? [],
+                    );
                 }
             }
-            return new FormView($name, $fullName, $id, 'collection', $value, $vars, $children, $this->errors[$name] ?? []);
+
+            if (($field->options['prototype'] ?? false) === true && $field->entryType !== null && is_subclass_of($field->entryType, 'Iriven\\PhpFormGenerator\\Domain\\Contract\\FormTypeInterface')) {
+                $builder = new FormBuilder($name . '_prototype', null, $field->entryOptions);
+                $entry = new ($field->entryType)();
+                $resolved = $entry->configureOptions($field->entryOptions);
+                $entry->buildForm($builder, $resolved + $field->entryOptions);
+                $prototypeChildren = [];
+                foreach ($builder->all() as $childName => $child) {
+                    $prototypeChildren[] = $this->createFieldView(
+                        $childName,
+                        $child,
+                        $fullName . '[__name__][' . $childName . ']',
+                        $id . '__name__' . '_' . $childName,
+                        null,
+                        $errorPath . '.__name__.' . $childName,
+                    );
+                }
+                $vars['prototype_view'] = new FormView('__name__', $fullName . '[__name__]', $id . '__name__', 'collection_entry', null, [], $prototypeChildren, []);
+            }
+
+            return new FormView($name, $fullName, $id, 'collection', $value, $vars, $children, $this->errors[$errorPath] ?? []);
         }
 
         if ($field->compound) {
@@ -262,11 +426,20 @@ final class Form
                     $fullName . '[' . $childName . ']',
                     $id . '_' . $childName,
                     is_array($value) ? ($value[$childName] ?? null) : null,
+                    $errorPath . '.' . $childName,
                 );
             }
-            return new FormView($name, $fullName, $id, 'compound', $value, $vars, $children, $this->errors[$name] ?? []);
+
+            return new FormView($name, $fullName, $id, 'compound', $value, $vars, $children, $this->errors[$errorPath] ?? []);
         }
 
-        return new FormView($name, $fullName, $id, $field->typeClass, $value, $vars, [], $this->errors[$name] ?? []);
+        return new FormView($name, $fullName, $id, $field->typeClass, $value, $vars, [], $this->errors[$errorPath] ?? []);
+    }
+
+    public function dispatch(string $eventName, object $event): void
+    {
+        foreach ($this->eventListeners[$eventName] ?? [] as $listener) {
+            $listener($event);
+        }
     }
 }

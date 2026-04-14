@@ -6,7 +6,10 @@ namespace Iriven\PhpFormGenerator\Domain\Field;
 
 use Iriven\PhpFormGenerator\Domain\Transformer\IntegerTransformer;
 
-final class IntegerType extends NumberType
+class IntegerType extends NumberType
 {
-    public static function defaultTransformers(): array { return [new IntegerTransformer()]; }
+    public static function defaultTransformers(): array
+    {
+        return [new IntegerTransformer()];
+    }
 }

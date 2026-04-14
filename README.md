@@ -272,3 +272,48 @@ Les contraintes intégrées incluent notamment :
 - les noms canoniques sont `addDatetime()` et `addTextarea()`
 - `multipart/form-data` est géré automatiquement
 - le projet est autonome et ne repose sur aucun framework externe
+
+
+## Additional built-in business form types
+
+The project now ships with reusable application-level form types under `src/Application/FormType`.
+
+### InvoiceType
+
+`InvoiceType` demonstrates a realistic business form with:
+- nested `CustomerType`
+- `DatetimeType` invoice date field
+- `CollectionType` of `InvoiceLineType`
+- fieldset grouping
+- submit button
+
+Typical usage:
+
+```php
+use Iriven\PhpFormGenerator\Application\FormFactory;
+use Iriven\PhpFormGenerator\Application\FormType\InvoiceType;
+
+$form = (new FormFactory())->create(InvoiceType::class, [], [
+    'name' => 'invoice',
+]);
+```
+
+### RegistrationType
+
+`RegistrationType` demonstrates a secure registration workflow with:
+- email field with `Required` and `Email`
+- password and confirmation fields
+- terms checkbox with server-side validation
+- built-in alphanumeric captcha
+- form-level password confirmation validation
+
+Typical usage:
+
+```php
+use Iriven\PhpFormGenerator\Application\FormFactory;
+use Iriven\PhpFormGenerator\Application\FormType\RegistrationType;
+
+$form = (new FormFactory())->create(RegistrationType::class, [], [
+    'name' => 'registration',
+]);
+```

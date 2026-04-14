@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-final class YesNoType extends ChoiceType
+final class YesNoType extends SelectType
 {
     /**
      * @return array<string, string>

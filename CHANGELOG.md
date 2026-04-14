@@ -6,10 +6,10 @@
 
 
 ### Added
-- Added missing `ChoiceType` for legacy compatibility with `YesNoType` and related field hierarchies.
 - Added reusable application form types: `ContactType`, `InvoiceType`, `RegistrationType`, `CustomerType`, and `InvoiceLineType`.
 
 ### Changed
+- Simplified the select field hierarchy: `CountryType` now extends `SelectType` directly, `ChoiceType` was removed, and internal references were normalized.
 - `CountryType` now supports optional sorting, placeholder rendering, and region-based filtering.
 - `CountryType` now uses the full built-in country choice list with normalized uppercase codes and trimmed labels.
 

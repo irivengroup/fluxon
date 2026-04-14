@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Tests;
 
-use Iriven\PhpFormGenerator\Domain\Field\ChoiceType;
 use Iriven\PhpFormGenerator\Domain\Field\CountryType;
+use Iriven\PhpFormGenerator\Domain\Field\SelectType;
 use PHPUnit\Framework\TestCase;
 
-final class CountryTypeAndChoiceTypeTest extends TestCase
+final class CountryTypeAndSelectTypeTest extends TestCase
 {
-    public function testChoiceTypeExistsForLegacyCompatibility(): void
+    public function testCountryTypeExtendsSelectType(): void
     {
-        self::assertTrue(class_exists(ChoiceType::class));
+        self::assertTrue(is_subclass_of(CountryType::class, SelectType::class));
     }
 
     public function testCountryTypeCanBeRegionFilteredAndSorted(): void

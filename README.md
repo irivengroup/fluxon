@@ -369,4 +369,11 @@ $builder->add('country', \Iriven\PhpFormGenerator\Domain\Field\CountryType::clas
 ]);
 ```
 
-Legacy compatibility is also preserved through the presence of `ChoiceType`.
+Legacy compatibility is preserved through the `SelectType` hierarchy.
+
+### SelectType hierarchy optimization
+
+`CountryType` now extends `SelectType` directly.
+
+`ChoiceType` has been removed, and all internal references were normalized to the `SelectType` hierarchy.
+This keeps the field model simpler while preserving the expected behavior for country and yes/no select-style fields.

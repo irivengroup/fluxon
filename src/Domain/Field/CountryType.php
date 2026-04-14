@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Field;
 
-class CountryType extends ChoiceType
+class CountryType extends SelectType
 {
     /**
      * Returns the built-in country choice list.

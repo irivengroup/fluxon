@@ -18,7 +18,10 @@
   "autoload": {
     "psr-4": {
       "Iriven\\PhpFormGenerator\\": "src/"
-    }
+    },
+    "files": [
+      "src/legacy_aliases.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {

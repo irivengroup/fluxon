@@ -982,3 +982,11 @@ Choice-based helpers are also exercised with the new explicit signature:
 - `addCheckbox($name, $choices, $attributes)`
 - `addSelect($name, $choices, $attributes)`
 - `addDatalist($name, $choices, $attributes)`
+
+### FormGenerator decomposition and test cleanup
+
+`FormGenerator` has been decomposed into:
+- `FormGeneratorFieldFacade`
+- `FormGeneratorOpenNormalizer`
+
+The dedicated legacy API compatibility test suite has been removed. The test directory now targets the new public API only.

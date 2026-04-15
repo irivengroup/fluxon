@@ -1017,3 +1017,11 @@ Further internal refactors were applied to:
 - `CaptchaSvgRenderer::render()`
 
 This pass continues reducing Scrutinizer complexity without changing public behavior.
+
+### Form submission decomposition
+
+`FormSubmissionProcessor` is now split into:
+- `FormSubmissionProcessor` as orchestration layer
+- `FormFieldSubmissionProcessor` for field, compound, and collection submission logic
+
+This reduces class-level complexity without changing the public API.

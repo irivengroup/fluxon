@@ -14,6 +14,7 @@
 - Additional README usage scenarios and end-to-end examples.
 
 ### Changed
+- Decomposed `FormSubmissionProcessor` into an orchestrator plus `FormFieldSubmissionProcessor` for field and collection submission logic.
 - Applied a second consolidation pass to reduce complexity in `PropertyAccessor::getValue()`, `FormSubmissionProcessor`, `HtmlRowRenderer`, and `CaptchaSvgRenderer`.
 - Applied additional scrutiny-driven refactors to reduce method complexity in attribute building, file field normalization, captcha validation, object assignment, and captcha test structure.
 - Reduced internal complexity by decomposing `OptionsResolver::matchesAllowedTypes()` and `PropertyAccessor::setValue()` into smaller private helpers.

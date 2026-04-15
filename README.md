@@ -1007,3 +1007,13 @@ The following methods were refactored into smaller units:
 - `SessionCaptchaManager::isCodeValid()`
 - `ObjectDataMapper::assign()`
 - `CaptchaTypeTest::testCaptchaRendersAndValidatesCaseSensitively()`
+
+### Additional consolidation pass
+
+Further internal refactors were applied to:
+- `PropertyAccessor::getValue()`
+- `FormSubmissionProcessor`
+- `HtmlRowRenderer::render()`
+- `CaptchaSvgRenderer::render()`
+
+This pass continues reducing Scrutinizer complexity without changing public behavior.

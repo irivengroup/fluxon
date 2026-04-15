@@ -23,36 +23,80 @@ final class FormSubmissionProcessor
 
     public function handleRequest(Form $form, RequestInterface $request): void
     {
-        if (strtoupper((string) ($form->options()['method'] ?? 'POST')) !== $request->getMethod()) {
+        if (!$this->requestMatchesFormMethod($form, $request)) {
             return;
         }
 
-        $payload = $request->get($form->getName(), []);
-        if (!is_array($payload)) {
+        $payload = $this->extractPayload($form, $request);
+        if ($payload === null) {
             return;
         }
 
         $form->setSubmitted(true);
+        $payload = $this->dispatchPreSubmit($form, $payload);
+        $this->validateCsrf($form, $payload);
+        $this->submitAllFields($form, $payload);
+        $this->validationProcessor->validateFormConstraints($form);
+        $this->dispatchSubmit($form, $payload);
+        $this->mapIfValid($form);
+        $this->dispatchPostSubmit($form);
+    }
 
+    private function requestMatchesFormMethod(Form $form, RequestInterface $request): bool
+    {
+        return strtoupper((string) ($form->options()['method'] ?? 'POST')) === $request->getMethod();
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function extractPayload(Form $form, RequestInterface $request): ?array
+    {
+        $payload = $request->get($form->getName(), []);
+
+        return is_array($payload) ? $payload : null;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     * @return array<string, mixed>
+     */
+    private function dispatchPreSubmit(Form $form, array $payload): array
+    {
         $preSubmit = new PreSubmitEvent($form, $payload);
         $form->dispatch('form.pre_submit', $preSubmit);
-        $payload = is_array($preSubmit->getData()) ? $preSubmit->getData() : $payload;
 
-        $this->validateCsrf($form, $payload);
+        return is_array($preSubmit->getData()) ? $preSubmit->getData() : $payload;
+    }
 
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function submitAllFields(Form $form, array $payload): void
+    {
         foreach ($form->fields() as $name => $field) {
             $raw = $payload[$name] ?? null;
             $form->setSubmittedValue($name, $this->submitField($form, $field, $raw, $name));
         }
+    }
 
-        $this->validationProcessor->validateFormConstraints($form);
-
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function dispatchSubmit(Form $form, array $payload): void
+    {
         $form->dispatch('form.submit', new SubmitEvent($form, $form->submittedValues(), ['payload' => $payload]));
+    }
 
+    private function mapIfValid(Form $form): void
+    {
         if ($form->isCurrentlyValid()) {
             $this->mappingProcessor->map($form);
         }
+    }
 
+    private function dispatchPostSubmit(Form $form): void
+    {
         $form->dispatch('form.post_submit', new PostSubmitEvent($form, $form->rawData(), ['valid' => $form->isCurrentlyValid()]));
     }
 
@@ -85,19 +129,28 @@ final class FormSubmissionProcessor
             return $this->submitCompound($form, $field, is_array($raw) ? $raw : [], $path);
         }
 
-        if ($field->typeClass === 'Iriven\\PhpFormGenerator\\Domain\\Field\\CheckboxType' && $raw === null) {
-            $raw = false;
-        }
-
-        $value = $this->reverseTransform($field->transformers, $raw);
-
-        if (is_a($field->typeClass, 'Iriven\\PhpFormGenerator\\Domain\\Field\\CaptchaType', true)) {
-            $this->validationProcessor->validateCaptchaField($form, $field, is_string($raw) ? $raw : null, $path);
-        }
-
+        $normalizedRaw = $this->normalizeScalarFieldRawValue($field, $raw);
+        $value = $this->reverseTransform($field->transformers, $normalizedRaw);
+        $this->validateSpecializedField($form, $field, $normalizedRaw, $path);
         $this->validationProcessor->applyConstraintErrors($form, $path, $value, $field->constraints);
 
         return $value;
+    }
+
+    private function normalizeScalarFieldRawValue(FieldConfig $field, mixed $raw): mixed
+    {
+        if ($field->typeClass === 'Iriven\PhpFormGenerator\Domain\Field\CheckboxType' && $raw === null) {
+            return false;
+        }
+
+        return $raw;
+    }
+
+    private function validateSpecializedField(Form $form, FieldConfig $field, mixed $raw, string $path): void
+    {
+        if (is_a($field->typeClass, 'Iriven\PhpFormGenerator\Domain\Field\CaptchaType', true)) {
+            $this->validationProcessor->validateCaptchaField($form, $field, is_string($raw) ? $raw : null, $path);
+        }
     }
 
     /**
@@ -136,27 +189,8 @@ final class FormSubmissionProcessor
     private function submitCollection(Form $form, FieldConfig $field, array $raw, string $path): array
     {
         $items = [];
-        $entryType = $field->entryType;
-
         foreach ($raw as $index => $row) {
-            if (!is_array($row)) {
-                $row = ['value' => $row];
-            }
-
-            if ($entryType !== null && is_subclass_of($entryType, FormTypeInterface::class)) {
-                $items[] = $this->submitFormTypeCollectionEntry($form, $field, $row, $path, (string) $index);
-                continue;
-            }
-
-            if ($entryType !== null && class_exists($entryType)) {
-                /** @var array<int, DataTransformerInterface> $transformers */
-                $transformers = method_exists($entryType, 'defaultTransformers') ? $entryType::defaultTransformers() : [];
-                $entryField = new FieldConfig((string) $index, $entryType, $field->entryOptions, $field->constraints, $transformers);
-                $items[] = $this->submitField($form, $entryField, $row, $path . '.' . (string) $index);
-                continue;
-            }
-
-            $items[] = $row;
+            $items[] = $this->submitCollectionItem($form, $field, $row, $path, (string) $index);
         }
 
         if (($field->options['allow_delete'] ?? false) !== true) {
@@ -166,6 +200,28 @@ final class FormSubmissionProcessor
         $this->validationProcessor->applyConstraintErrors($form, $path, $items, $field->constraints);
 
         return $items;
+    }
+
+    private function submitCollectionItem(Form $form, FieldConfig $field, mixed $row, string $path, string $index): mixed
+    {
+        if (!is_array($row)) {
+            $row = ['value' => $row];
+        }
+
+        $entryType = $field->entryType;
+        if ($entryType !== null && is_subclass_of($entryType, FormTypeInterface::class)) {
+            return $this->submitFormTypeCollectionEntry($form, $field, $row, $path, $index);
+        }
+
+        if ($entryType !== null && class_exists($entryType)) {
+            /** @var array<int, DataTransformerInterface> $transformers */
+            $transformers = method_exists($entryType, 'defaultTransformers') ? $entryType::defaultTransformers() : [];
+            $entryField = new FieldConfig((string) $index, $entryType, $field->entryOptions, $field->constraints, $transformers);
+
+            return $this->submitField($form, $entryField, $row, $path . '.' . $index);
+        }
+
+        return $row;
     }
 
     /**
@@ -189,7 +245,6 @@ final class FormSubmissionProcessor
 
         return $entryValues;
     }
-
 
     /**
      * @param array<string, scalar|null> $parameters

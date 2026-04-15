@@ -18,37 +18,11 @@ final class PropertyAccessor
         $current = $source;
 
         foreach ($segments as $segment) {
-            if (is_array($current)) {
-                if (!array_key_exists($segment, $current)) {
-                    return $default;
-                }
-                $current = $current[$segment];
-                continue;
-            }
-
-            if (!is_object($current)) {
+            $resolved = $this->readSegment($current, $segment, $default);
+            if ($resolved === $default && !$this->segmentExists($current, $segment)) {
                 return $default;
             }
-
-            $getter = 'get' . ucfirst($segment);
-            $isser = 'is' . ucfirst($segment);
-
-            if (method_exists($current, $getter)) {
-                $current = $current->{$getter}();
-                continue;
-            }
-
-            if (method_exists($current, $isser)) {
-                $current = $current->{$isser}();
-                continue;
-            }
-
-            if (property_exists($current, $segment)) {
-                $current = $current->{$segment};
-                continue;
-            }
-
-            return $default;
+            $current = $resolved;
         }
 
         return $current;
@@ -71,6 +45,54 @@ final class PropertyAccessor
         }
 
         $this->writeFinalSegment($current, $last, $value, $path);
+    }
+
+    private function readSegment(mixed $current, string $segment, mixed $default): mixed
+    {
+        if (is_array($current)) {
+            return $current[$segment] ?? $default;
+        }
+
+        if (!is_object($current)) {
+            return $default;
+        }
+
+        return $this->readObjectSegment($current, $segment, $default);
+    }
+
+    private function readObjectSegment(object $current, string $segment, mixed $default): mixed
+    {
+        $getter = 'get' . ucfirst($segment);
+        $isser = 'is' . ucfirst($segment);
+
+        if (method_exists($current, $getter)) {
+            return $current->{$getter}();
+        }
+
+        if (method_exists($current, $isser)) {
+            return $current->{$isser}();
+        }
+
+        if (property_exists($current, $segment)) {
+            return $current->{$segment};
+        }
+
+        return $default;
+    }
+
+    private function segmentExists(mixed $current, string $segment): bool
+    {
+        if (is_array($current)) {
+            return array_key_exists($segment, $current);
+        }
+
+        if (!is_object($current)) {
+            return false;
+        }
+
+        return method_exists($current, 'get' . ucfirst($segment))
+            || method_exists($current, 'is' . ucfirst($segment))
+            || property_exists($current, $segment);
     }
 
     private function advanceWritableTarget(mixed &$current, string $segment, string $path): void

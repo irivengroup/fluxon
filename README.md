@@ -1095,3 +1095,8 @@ Les helpers extraits lors des optimisations sont désormais regroupés par respo
 Les points d’entrée publics supportés sont `FormGenerator`, `FormFactory`, `FormTypeInterface` et, à partir de V4.1.0, la base plugins-ready (`PluginInterface`, registries, `FormPluginKernel`).
 
 La documentation détaillée d’exploitation et d’extension est désormais centralisée dans `docs/index.md`.
+
+
+## Runtime plugins V4.1.1
+
+La base plugins-ready est désormais connectée au runtime : `FormFactory` peut consommer un `FormPluginKernel`, et la résolution des aliases plugin est prise en compte pendant la création des formulaires et l'ajout des champs.

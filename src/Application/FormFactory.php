@@ -7,16 +7,15 @@ namespace Iriven\PhpFormGenerator\Application;
 use Iriven\PhpFormGenerator\Domain\Contract\CaptchaManagerInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\CsrfManagerInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\EventDispatcherInterface;
-use Iriven\PhpFormGenerator\Domain\Contract\FormTypeInterface;
 use Iriven\PhpFormGenerator\Domain\Form\Form;
 use Iriven\PhpFormGenerator\Domain\Form\FormBuilder;
 use Iriven\PhpFormGenerator\Infrastructure\Event\EventDispatcher;
 use Iriven\PhpFormGenerator\Infrastructure\Extension\ExtensionRegistry;
 use Iriven\PhpFormGenerator\Infrastructure\Options\OptionsResolver;
-use Iriven\PhpFormGenerator\Infrastructure\Type\TypeResolver;
 use Iriven\PhpFormGenerator\Infrastructure\Security\NullCsrfManager;
 use Iriven\PhpFormGenerator\Infrastructure\Security\SessionCaptchaManager;
 use Iriven\PhpFormGenerator\Infrastructure\Security\SessionCsrfManager;
+use Iriven\PhpFormGenerator\Infrastructure\Type\TypeResolver;
 
 final class FormFactory
 {
@@ -25,7 +24,9 @@ final class FormFactory
         private readonly ?EventDispatcherInterface $eventDispatcher = null,
         private readonly ?CaptchaManagerInterface $captchaManager = null,
         private readonly ?ExtensionRegistry $extensionRegistry = null,
+        private readonly ?FormPluginKernel $pluginKernel = null,
     ) {
+        $this->pluginKernel?->plugins();
     }
 
     /** @param array<string, mixed> $options */
@@ -35,7 +36,7 @@ final class FormFactory
         $options['event_dispatcher'] = $options['event_dispatcher'] ?? $this->eventDispatcher ?? new EventDispatcher();
         $options['captcha_manager'] = $options['captcha_manager'] ?? $this->captchaManager ?? new SessionCaptchaManager();
         $options['csrf_protection'] = $options['csrf_protection'] ?? true;
-        $options['extension_registry'] = $options['extension_registry'] ?? $this->extensionRegistry ?? new ExtensionRegistry();
+        $options['extension_registry'] = $options['extension_registry'] ?? $this->resolvedExtensionRegistry();
 
         return new FormBuilder($name, $data, $options);
     }
@@ -55,5 +56,18 @@ final class FormFactory
         $type->buildForm($builder, $resolved);
 
         return $builder->getForm();
+    }
+
+    private function resolvedExtensionRegistry(): ExtensionRegistry
+    {
+        if ($this->extensionRegistry instanceof ExtensionRegistry) {
+            return $this->extensionRegistry;
+        }
+
+        if ($this->pluginKernel instanceof FormPluginKernel) {
+            return $this->pluginKernel->extensions();
+        }
+
+        return new ExtensionRegistry();
     }
 }

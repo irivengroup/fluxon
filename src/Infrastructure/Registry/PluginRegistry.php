@@ -27,6 +27,21 @@ final class PluginRegistry
         $this->plugins[] = $plugin;
     }
 
+    public function fieldTypes(): InMemoryFieldTypeRegistry
+    {
+        return $this->fieldTypeRegistry;
+    }
+
+    public function formTypes(): InMemoryFormTypeRegistry
+    {
+        return $this->formTypeRegistry;
+    }
+
+    public function extensions(): ExtensionRegistry
+    {
+        return $this->extensionRegistry;
+    }
+
     /**
      * @return array<int, PluginInterface>
      */

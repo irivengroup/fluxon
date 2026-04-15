@@ -18,3 +18,4 @@
 - [Migration 3.x vers 4.x](migration-v4.md)
 
 > Ce wiki est évolutif : toute nouvelle fonctionnalité doit ajouter ou enrichir une rubrique sans casser la structure existante.
+> V4.1.1 branche désormais réellement les plugins dans le runtime.

@@ -50,6 +50,6 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V4.1.0 extensibilite officielle complete (plugins-ready)"
+    "release_name": "V4.1.1 branchement runtime complet des plugins"
   }
 }

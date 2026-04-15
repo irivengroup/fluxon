@@ -1,3 +1,14 @@
+## V4.1.1
+
+### Added
+- Branchement runtime complet des plugins : résolution des aliases de `FieldType` et `FormType` depuis les registries plugin.
+- Intégration de `FormPluginKernel` dans `FormFactory`.
+- Documentation runtime des plugins dans le wiki `docs/`.
+
+### Changed
+- `TypeResolver` supporte désormais les registries runtime en plus des builtins.
+- Le runtime propage aussi les extensions plugin via `ExtensionRegistry`.
+
 ## V4.1.0
 
 ### Added

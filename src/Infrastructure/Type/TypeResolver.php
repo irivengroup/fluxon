@@ -4,14 +4,30 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Infrastructure\Type;
 
-use Iriven\PhpFormGenerator\Domain\Contract\FormTypeInterface;
+use Iriven\PhpFormGenerator\Infrastructure\Registry\InMemoryFieldTypeRegistry;
+use Iriven\PhpFormGenerator\Infrastructure\Registry\InMemoryFormTypeRegistry;
 
 final class TypeResolver
 {
-    /**
-     * @param string $typeClass
-     * @return string
-     */
+    private static ?InMemoryFieldTypeRegistry $fieldTypeRegistry = null;
+    private static ?InMemoryFormTypeRegistry $formTypeRegistry = null;
+
+    public static function useFieldTypeRegistry(?InMemoryFieldTypeRegistry $registry): void
+    {
+        self::$fieldTypeRegistry = $registry;
+    }
+
+    public static function useFormTypeRegistry(?InMemoryFormTypeRegistry $registry): void
+    {
+        self::$formTypeRegistry = $registry;
+    }
+
+    public static function useRegistries(?InMemoryFieldTypeRegistry $fieldRegistry, ?InMemoryFormTypeRegistry $formRegistry): void
+    {
+        self::$fieldTypeRegistry = $fieldRegistry;
+        self::$formTypeRegistry = $formRegistry;
+    }
+
     public static function resolveFieldType(string $typeClass): string
     {
         if (class_exists($typeClass) || interface_exists($typeClass)) {
@@ -19,14 +35,11 @@ final class TypeResolver
         }
 
         $shortName = self::shortName($typeClass);
+        $runtimeResolved = self::$fieldTypeRegistry?->resolve($shortName);
 
-        return BuiltinTypeRegistry::fieldTypes()[$shortName] ?? $typeClass;
+        return $runtimeResolved ?? BuiltinTypeRegistry::fieldTypes()[$shortName] ?? $typeClass;
     }
 
-    /**
-     * @param string $typeClass
-     * @return string
-     */
     public static function resolveFormType(string $typeClass): string
     {
         if (class_exists($typeClass) || interface_exists($typeClass)) {
@@ -34,16 +47,14 @@ final class TypeResolver
         }
 
         $shortName = self::shortName($typeClass);
+        $runtimeResolved = self::$formTypeRegistry?->resolve($shortName);
 
-        /** @var string $resolved */
-        $resolved = BuiltinTypeRegistry::formTypes()[$shortName] ?? $typeClass;
-
-        return $resolved;
+        return $runtimeResolved ?? BuiltinTypeRegistry::formTypes()[$shortName] ?? $typeClass;
     }
 
     private static function shortName(string $typeClass): string
     {
-        $position = strrpos($typeClass, '\\');
+        $position = strrpos($typeClass, '\');
 
         return $position === false ? $typeClass : substr($typeClass, $position + 1);
     }

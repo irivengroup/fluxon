@@ -2,7 +2,8 @@
 
 ## Objectif
 
-PhpFormGenerator V4.1.0 expose désormais une base officielle orientée extension et plugins.
+PhpFormGenerator V4.1.0 expose une base officielle orientée extension et plugins.
+À partir de V4.1.1, cette base est réellement branchée dans le runtime.
 
 ## Points d’extension
 
@@ -19,8 +20,6 @@ final class SlugType extends TextType
 {
 }
 ```
-
-Puis l’enregistrer via un plugin.
 
 ## Créer un FormType personnalisé
 
@@ -58,4 +57,15 @@ final class DemoPlugin implements PluginInterface
     {
     }
 }
+```
+
+## Utilisation runtime
+
+```php
+$kernel = (new FormPluginKernel())
+    ->register(new DemoPlugin());
+
+$factory = new FormFactory(pluginKernel: $kernel);
+
+$form = $factory->create('newsletter');
 ```

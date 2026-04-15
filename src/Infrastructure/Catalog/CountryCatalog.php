@@ -6,10 +6,8 @@ namespace Iriven\PhpFormGenerator\Infrastructure\Catalog;
 
 final class CountryCatalog
 {
-    /** @return array<string, string> */
-    public function all(): array
-    {
-        return [
+    /** @var array<string, string> */
+    private const COUNTRIES = [
             'AF' => 'Afghanistan',
             'AX' => 'Aland Islands',
             'AL' => 'Albania',
@@ -256,6 +254,10 @@ final class CountryCatalog
             'ZM' => 'Zambia',
             'ZW' => 'Zimbabwe',
         ];
+    /** @return array<string, string> */
+    public function all(): array
+    {
+        return self::COUNTRIES;
     }
 
     /** @return array<int, string> */

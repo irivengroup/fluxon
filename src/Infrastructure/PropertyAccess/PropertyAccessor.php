@@ -14,42 +14,13 @@ final class PropertyAccessor
             return $source;
         }
 
-        $segments = explode('.', $path);
         $current = $source;
-
-        foreach ($segments as $segment) {
-            if (is_array($current)) {
-                if (!array_key_exists($segment, $current)) {
-                    return $default;
-                }
-
-                $current = $current[$segment];
-                continue;
-            }
-
-            if (!is_object($current)) {
+        foreach ($this->segments($path) as $segment) {
+            if (!$this->canReadSegment($current, $segment)) {
                 return $default;
             }
 
-            $getter = 'get' . ucfirst($segment);
-            $isser = 'is' . ucfirst($segment);
-
-            if (method_exists($current, $getter)) {
-                $current = $current->{$getter}();
-                continue;
-            }
-
-            if (method_exists($current, $isser)) {
-                $current = $current->{$isser}();
-                continue;
-            }
-
-            if (property_exists($current, $segment)) {
-                $current = $current->{$segment};
-                continue;
-            }
-
-            return $default;
+            $current = $this->readSegment($current, $segment, $default);
         }
 
         return $current;
@@ -63,7 +34,7 @@ final class PropertyAccessor
             return;
         }
 
-        $segments = explode('.', $path);
+        $segments = $this->segments($path);
         $last = (string) array_pop($segments);
         $current =& $target;
 
@@ -72,6 +43,65 @@ final class PropertyAccessor
         }
 
         $this->writeFinalSegment($current, $last, $value, $path);
+    }
+
+    /** @return array<int,string> */
+    private function segments(string $path): array
+    {
+        return explode('.', $path);
+    }
+
+    private function canReadSegment(mixed $current, string $segment): bool
+    {
+        if (is_array($current)) {
+            return array_key_exists($segment, $current);
+        }
+
+        if (!is_object($current)) {
+            return false;
+        }
+
+        return $this->hasObjectSegment($current, $segment);
+    }
+
+    private function readSegment(mixed $current, string $segment, mixed $default): mixed
+    {
+        if (is_array($current)) {
+            return $current[$segment] ?? $default;
+        }
+
+        if (!is_object($current)) {
+            return $default;
+        }
+
+        return $this->readObjectSegment($current, $segment, $default);
+    }
+
+    private function hasObjectSegment(object $current, string $segment): bool
+    {
+        return method_exists($current, $this->getterName($segment))
+            || method_exists($current, $this->isserName($segment))
+            || property_exists($current, $segment);
+    }
+
+    private function readObjectSegment(object $current, string $segment, mixed $default): mixed
+    {
+        $getter = $this->getterName($segment);
+        $isser = $this->isserName($segment);
+
+        if (method_exists($current, $getter)) {
+            return $current->{$getter}();
+        }
+
+        if (method_exists($current, $isser)) {
+            return $current->{$isser}();
+        }
+
+        if (property_exists($current, $segment)) {
+            return $current->{$segment};
+        }
+
+        return $default;
     }
 
     private function advanceWritableTarget(mixed &$current, string $segment, string $path): void
@@ -105,40 +135,61 @@ final class PropertyAccessor
 
     private function advanceObjectTarget(object &$current, string $segment): void
     {
-        if (property_exists($current, $segment)) {
-            if (!$this->isNavigableValue($current->{$segment})) {
-                $current->{$segment} = [];
-            }
-
+        if ($this->hasConcreteObjectProperty($current, $segment)) {
+            $this->ensureNavigableObjectProperty($current, $segment);
             $current =& $current->{$segment};
 
             return;
         }
 
-        $getter = 'get' . ucfirst($segment);
-        $setter = 'set' . ucfirst($segment);
+        $this->advanceObjectViaAccessor($current, $segment);
+    }
 
-        if (method_exists($current, $getter)) {
-            $child = $current->{$getter}();
+    private function hasConcreteObjectProperty(object $current, string $segment): bool
+    {
+        return property_exists($current, $segment);
+    }
 
-            if (!$this->isNavigableValue($child)) {
-                $child = [];
+    private function ensureNavigableObjectProperty(object $current, string $segment): void
+    {
+        if (!$this->isNavigableValue($current->{$segment})) {
+            $current->{$segment} = [];
+        }
+    }
 
-                if (method_exists($current, $setter)) {
-                    $current->{$setter}($child);
-                } else {
-                    $current->{$segment} = $child;
-                }
-            }
+    private function advanceObjectViaAccessor(object &$current, string $segment): void
+    {
+        $getter = $this->getterName($segment);
 
-            $current->{$segment} = $current->{$getter}();
+        if (!method_exists($current, $getter)) {
+            $current->{$segment} = [];
             $current =& $current->{$segment};
 
             return;
         }
 
-        $current->{$segment} = [];
+        $this->ensureAccessorTargetIsNavigable($current, $segment, $getter);
+        $current->{$segment} = $current->{$getter}();
         $current =& $current->{$segment};
+    }
+
+    private function ensureAccessorTargetIsNavigable(object $current, string $segment, string $getter): void
+    {
+        $child = $current->{$getter}();
+        if ($this->isNavigableValue($child)) {
+            return;
+        }
+
+        $child = [];
+        $setter = $this->setterName($segment);
+
+        if (method_exists($current, $setter)) {
+            $current->{$setter}($child);
+
+            return;
+        }
+
+        $current->{$segment} = $child;
     }
 
     private function writeFinalSegment(mixed &$current, string $last, mixed $value, string $path): void
@@ -150,7 +201,7 @@ final class PropertyAccessor
         }
 
         if (is_object($current)) {
-            $setter = 'set' . ucfirst($last);
+            $setter = $this->setterName($last);
 
             if (method_exists($current, $setter)) {
                 $current->{$setter}($value);
@@ -164,6 +215,21 @@ final class PropertyAccessor
         }
 
         throw new RuntimeException('Unable to write property path "' . $path . '".');
+    }
+
+    private function getterName(string $segment): string
+    {
+        return 'get' . ucfirst($segment);
+    }
+
+    private function isserName(string $segment): string
+    {
+        return 'is' . ucfirst($segment);
+    }
+
+    private function setterName(string $segment): string
+    {
+        return 'set' . ucfirst($segment);
     }
 
     private function isNavigableValue(mixed $value): bool

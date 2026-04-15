@@ -1051,3 +1051,14 @@ Scrutinizer is now configured to collect PHPUnit coverage through `coverage.clov
 The public API remains unchanged.
 
 Helper classes created during optimization passes are now grouped by responsibility in dedicated sub-namespaces rather than mixed into field types or top-level application classes.
+
+### Additional long-method optimization pass
+
+This pass further reduces method size in:
+- `Infrastructure\Catalog\CountryCatalog::all()`
+- `PropertyAccess\PropertyAccessor::getValue()`
+- `Application\FormGenerator\AttributeNormalizer::normalize()`
+- `Infrastructure\Security\SessionCaptchaManager::isCodeValid()`
+- `Domain\Transformer\EnumTransformer::reverseTransform()`
+- `Domain\Form\Submission\FieldSubmissionProcessor::submitCollectionItem()`
+- `Presentation\Html\HtmlRenderer::renderForm()`

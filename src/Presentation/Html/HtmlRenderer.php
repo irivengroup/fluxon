@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Presentation\Html;
 
-use Iriven\PhpFormGenerator\Presentation\Html\Support\HtmlAttributeRenderer;
-
 use Iriven\PhpFormGenerator\Domain\Form\FormView;
+use Iriven\PhpFormGenerator\Presentation\Html\Support\HtmlAttributeRenderer;
 use Iriven\PhpFormGenerator\Presentation\Html\Theme\DefaultTheme;
 use Iriven\PhpFormGenerator\Presentation\Html\Theme\ThemeInterface;
 
@@ -27,36 +26,13 @@ final class HtmlRenderer
 
     public function renderForm(FormView $view): string
     {
-        $method = $this->e((string) ($view->vars['method'] ?? 'POST'));
-        $action = $this->e((string) ($view->vars['action'] ?? ''));
-        $attr = $this->attributeRenderer->render(is_array($view->vars['attr'] ?? null) ? $view->vars['attr'] : []);
-
-        $html = sprintf(
-            '<form method="%s" action="%s" class="%s"%s>',
-            $method,
-            $action,
-            $this->e($this->theme->formClass()),
-            $attr
-        );
+        $html = $this->renderOpeningTag($view);
         $html .= $this->renderErrors($view->errors);
 
-        /** @var array<string, FormView> $grouped */
-        $grouped = [];
-        foreach ($view->children as $child) {
-            $grouped[$child->name] = $child;
-        }
-
-        /** @var array<string, bool> $used */
+        $grouped = $this->groupChildrenByName($view);
         $used = [];
-        foreach ($view->fieldsets as $fieldset) {
-            $html .= $this->fieldsetRenderer->render($fieldset, $grouped, $used);
-        }
-
-        foreach ($view->children as $child) {
-            if (!isset($used[$child->name])) {
-                $html .= $this->rowRenderer->render($child);
-            }
-        }
+        $html .= $this->renderFieldsets($view, $grouped, $used);
+        $html .= $this->renderUngroupedRows($view, $used);
 
         return $html . '</form>';
     }
@@ -69,6 +45,65 @@ final class HtmlRenderer
     public function renderWidget(FormView $view): string
     {
         return $this->widgetRenderer->render($view);
+    }
+
+    private function renderOpeningTag(FormView $view): string
+    {
+        $method = $this->e((string) ($view->vars['method'] ?? 'POST'));
+        $action = $this->e((string) ($view->vars['action'] ?? ''));
+        $attr = $this->attributeRenderer->render(is_array($view->vars['attr'] ?? null) ? $view->vars['attr'] : []);
+
+        return sprintf(
+            '<form method="%s" action="%s" class="%s"%s>',
+            $method,
+            $action,
+            $this->e($this->theme->formClass()),
+            $attr
+        );
+    }
+
+    /**
+     * @return array<string, FormView>
+     */
+    private function groupChildrenByName(FormView $view): array
+    {
+        $grouped = [];
+        foreach ($view->children as $child) {
+            $grouped[$child->name] = $child;
+        }
+
+        return $grouped;
+    }
+
+    /**
+     * @param array<string, FormView> $grouped
+     * @param array<string, bool> $used
+     */
+    private function renderFieldsets(FormView $view, array $grouped, array &$used): string
+    {
+        $html = '';
+        foreach ($view->fieldsets as $fieldset) {
+            $html .= $this->fieldsetRenderer->render($fieldset, $grouped, $used);
+        }
+
+        return $html;
+    }
+
+    /**
+     * @param array<string, bool> $used
+     */
+    private function renderUngroupedRows(FormView $view, array $used): string
+    {
+        $html = '';
+        foreach ($view->children as $child) {
+            if (isset($used[$child->name])) {
+                continue;
+            }
+
+            $html .= $this->rowRenderer->render($child);
+        }
+
+        return $html;
     }
 
     /** @param array<int, string> $errors */

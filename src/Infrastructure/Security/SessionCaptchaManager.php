@@ -37,26 +37,26 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
 
     public function isCodeValid(string $key, ?string $input): bool
     {
-        if ($input === null || $input === '') {
+        if ($this->isMissingInput($input)) {
             return false;
         }
 
         $expected = $_SESSION['_pfg_captcha'][$key] ?? null;
         $meta = $this->metaForKey($key);
 
-        if (!is_string($expected) || $meta === null) {
+        if (!$this->hasUsableChallenge($expected, $meta)) {
             $this->clearChallenge($key);
 
             return false;
         }
 
-        if ($this->isExpired($meta) || $this->hasNoAttemptsLeft($meta)) {
+        if ($this->shouldExpireChallenge($meta)) {
             $this->clearChallenge($key);
 
             return false;
         }
 
-        if (hash_equals($expected, $input)) {
+        if ($this->matchesExpectedCode($expected, $input)) {
             $this->clearChallenge($key);
 
             return true;
@@ -66,6 +66,33 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
 
         return false;
     }
+
+
+private function isMissingInput(?string $input): bool
+{
+    return $input === null || $input === '';
+}
+
+/**
+ * @param array{expires_at:int,attempts_left:int}|null $meta
+ */
+private function hasUsableChallenge(mixed $expected, ?array $meta): bool
+{
+    return is_string($expected) && $meta !== null;
+}
+
+/**
+ * @param array{expires_at:int,attempts_left:int} $meta
+ */
+private function shouldExpireChallenge(array $meta): bool
+{
+    return $this->isExpired($meta) || $this->hasNoAttemptsLeft($meta);
+}
+
+private function matchesExpectedCode(string $expected, string $input): bool
+{
+    return hash_equals($expected, $input);
+}
 
     private function ensureSessionStarted(): void
     {

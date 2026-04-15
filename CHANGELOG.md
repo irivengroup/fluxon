@@ -14,6 +14,7 @@
 - Additional README usage scenarios and end-to-end examples.
 
 ### Changed
+- Applied an additional long-method optimization pass across country catalog access, property access, attribute normalization, captcha validation, enum reverse transformation, collection item submission, and form rendering.
 - Enabled Scrutinizer coverage ingestion via PHPUnit Clover coverage and decomposed `FormGeneratorFieldFacade` into basic fields, choice fields, and attribute normalization collaborators.
 - Added `CountryCatalog`, centralized HTML attribute rendering, refactored `NativeRequest` file normalization, simplified `Count` and `Choice` constraints, and cleaned fixture form type structure for the V3.9.4 quality pass.
 - Decomposed `FormSubmissionProcessor` into an orchestrator plus `Domain\Form\Submission\FieldSubmissionProcessor` for field and collection submission logic.

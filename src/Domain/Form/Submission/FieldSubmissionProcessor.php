@@ -87,25 +87,51 @@ final class FieldSubmissionProcessor
 
     private function submitCollectionItem(Form $form, FieldConfig $field, mixed $row, string $path, string $index): mixed
     {
-        if (!is_array($row)) {
-            $row = ['value' => $row];
-        }
-
+        $row = $this->normalizeCollectionRow($row);
         $entryType = $field->entryType;
-        if ($entryType !== null && is_subclass_of($entryType, FormTypeInterface::class)) {
+
+        if ($this->isFormTypeEntry($entryType)) {
             return $this->submitFormTypeCollectionEntry($form, $field, $row, $path, $index);
         }
 
-        if ($entryType !== null && class_exists($entryType)) {
-            /** @var array<int, DataTransformerInterface> $transformers */
-            $transformers = method_exists($entryType, 'defaultTransformers') ? $entryType::defaultTransformers() : [];
-            $entryField = new FieldConfig((string) $index, $entryType, $field->entryOptions, $field->constraints, $transformers);
-
-            return $this->submitField($form, $entryField, $row, $path . '.' . $index);
+        if ($this->isFieldTypeEntry($entryType)) {
+            return $this->submitFieldTypeCollectionEntry($form, $field, $row, $path, $index, $entryType);
         }
 
         return $row;
     }
+
+
+/**
+ * @return array<string, mixed>
+ */
+private function normalizeCollectionRow(mixed $row): array
+{
+    return is_array($row) ? $row : ['value' => $row];
+}
+
+private function isFormTypeEntry(?string $entryType): bool
+{
+    return $entryType !== null && is_subclass_of($entryType, FormTypeInterface::class);
+}
+
+private function isFieldTypeEntry(?string $entryType): bool
+{
+    return $entryType !== null && class_exists($entryType);
+}
+
+/**
+ * @param class-string $entryType
+ * @param array<string, mixed> $row
+ */
+private function submitFieldTypeCollectionEntry(Form $form, FieldConfig $field, array $row, string $path, string $index, string $entryType): mixed
+{
+    /** @var array<int, DataTransformerInterface> $transformers */
+    $transformers = method_exists($entryType, 'defaultTransformers') ? $entryType::defaultTransformers() : [];
+    $entryField = new FieldConfig((string) $index, $entryType, $field->entryOptions, $field->constraints, $transformers);
+
+    return $this->submitField($form, $entryField, $row, $path . '.' . $index);
+}
 
     /**
      * @param array<string, mixed> $row

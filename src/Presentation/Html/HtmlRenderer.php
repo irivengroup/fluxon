@@ -10,12 +10,15 @@ use Iriven\PhpFormGenerator\Presentation\Html\Theme\ThemeInterface;
 
 final class HtmlRenderer
 {
+    private HtmlAttributeRenderer $attributeRenderer;
+
     private HtmlWidgetRenderer $widgetRenderer;
     private HtmlRowRenderer $rowRenderer;
     private HtmlFieldsetRenderer $fieldsetRenderer;
 
     public function __construct(private readonly ThemeInterface $theme = new DefaultTheme())
     {
+        $this->attributeRenderer = new HtmlAttributeRenderer();
         $this->widgetRenderer = new HtmlWidgetRenderer($this->theme);
         $this->rowRenderer = new HtmlRowRenderer($this->theme, $this->widgetRenderer);
         $this->fieldsetRenderer = new HtmlFieldsetRenderer($this->theme, $this->rowRenderer);
@@ -25,7 +28,7 @@ final class HtmlRenderer
     {
         $method = $this->e((string) ($view->vars['method'] ?? 'POST'));
         $action = $this->e((string) ($view->vars['action'] ?? ''));
-        $attr = $this->renderAttributes(is_array($view->vars['attr'] ?? null) ? $view->vars['attr'] : []);
+        $attr = $this->attributeRenderer->render(is_array($view->vars['attr'] ?? null) ? $view->vars['attr'] : []);
 
         $html = sprintf('<form method="%s" action="%s" class="%s"%s>', $method, $action, $this->e($this->theme->formClass()), $attr);
         $html .= $this->renderErrors($view->errors);
@@ -71,15 +74,6 @@ final class HtmlRenderer
 
         return $html;
     }
-
-    /** @param array<string, mixed> $attributes */
-    private function renderAttributes(array $attributes): string
-    {
-        $html = '';
-        foreach ($attributes as $name => $value) {
-            if ($name === 'choices' || $name === 'prototype_view' || $value === false || $value === null) {
-                continue;
-            }
             if ($value === true) {
                 $html .= ' ' . $this->e((string) $name);
                 continue;

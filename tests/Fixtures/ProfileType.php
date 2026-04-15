@@ -9,16 +9,24 @@ use Iriven\PhpFormGenerator\Domain\Constraint\Required;
 use Iriven\PhpFormGenerator\Domain\Contract\FormTypeInterface;
 use Iriven\PhpFormGenerator\Domain\Contract\OptionsResolverInterface;
 use Iriven\PhpFormGenerator\Domain\Event\FormEvents;
+use Iriven\PhpFormGenerator\Domain\Event\PreSubmitEvent;
 use Iriven\PhpFormGenerator\Domain\Field\CheckboxType;
 use Iriven\PhpFormGenerator\Domain\Field\CollectionType;
 use Iriven\PhpFormGenerator\Domain\Field\TextType;
 use Iriven\PhpFormGenerator\Domain\Form\FormBuilder;
-use Iriven\PhpFormGenerator\Domain\Event\PreSubmitEvent;
 
 final class ProfileType implements FormTypeInterface
 {
     /** @param array<string, mixed> $options */
     public function buildForm(FormBuilder $builder, array $options = []): void
+    {
+        $this->buildCoreFields($builder);
+        $builder
+            ->addFormConstraint(new Callback($this->profileNameValidator(...)))
+            ->addEventListener(FormEvents::PRE_SUBMIT, $this->trimNameOnPreSubmit(...));
+    }
+
+    private function buildCoreFields(FormBuilder $builder): void
     {
         $builder
             ->add('name', TextType::class, [
@@ -38,25 +46,32 @@ final class ProfileType implements FormTypeInterface
             ])
             ->add('active', CheckboxType::class, [
                 'label' => 'Active',
-            ])
-            ->addFormConstraint(new Callback(function (mixed $value): array {
-                if (!is_array($value)) {
-                    return ['Invalid form data.'];
-                }
+            ]);
+    }
 
-                return ($value['name'] ?? '') === 'forbidden' ? ['This profile name is forbidden.'] : [];
-            }))
-            ->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event): void {
-                $data = $event->getData();
-                if (!is_array($data)) {
-                    return;
-                }
+    /** @return array<int, string> */
+    private function profileNameValidator(mixed $value): array
+    {
+        if (!is_array($value)) {
+            return ['Invalid form data.'];
+        }
 
-                if (isset($data['name']) && is_string($data['name'])) {
-                    $data['name'] = trim($data['name']);
-                    $event->setData($data);
-                }
-            });
+        return ($value['name'] ?? '') === 'forbidden'
+            ? ['This profile name is forbidden.']
+            : [];
+    }
+
+    private function trimNameOnPreSubmit(PreSubmitEvent $event): void
+    {
+        $data = $event->getData();
+        if (!is_array($data)) {
+            return;
+        }
+
+        if (isset($data['name']) && is_string($data['name'])) {
+            $data['name'] = trim($data['name']);
+            $event->setData($data);
+        }
     }
 
     public function configureOptions(OptionsResolverInterface $resolver): void

@@ -11,8 +11,11 @@ use Iriven\PhpFormGenerator\Presentation\Html\Theme\ThemeInterface;
 
 final class HtmlSelectWidgetRenderer
 {
+    private HtmlAttributeRenderer $attributeRenderer;
+
     public function __construct(private readonly ThemeInterface $theme)
     {
+        $this->attributeRenderer = new HtmlAttributeRenderer();
     }
 
     /**
@@ -32,7 +35,7 @@ final class HtmlSelectWidgetRenderer
             ? array_map('strval', $view->value)
             : [(string) $view->value];
 
-        $html = '<select' . $this->renderAttributes($attr) . '>';
+        $html = '<select' . $this->attributeRenderer->render($attr) . '>';
         $html .= $this->renderSelectPlaceholder($view);
 
         foreach ($choices as $choiceValue => $label) {
@@ -71,15 +74,6 @@ final class HtmlSelectWidgetRenderer
 
         return '<option value=""' . $selected . '>' . $this->e($view->vars['placeholder']) . '</option>';
     }
-
-    /** @param array<string, mixed> $attributes */
-    private function renderAttributes(array $attributes): string
-    {
-        $html = '';
-        foreach ($attributes as $name => $value) {
-            if ($name === 'choices' || $name === 'prototype_view' || $value === false || $value === null) {
-                continue;
-            }
             if ($value === true) {
                 $html .= ' ' . $this->e((string) $name);
                 continue;

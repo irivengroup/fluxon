@@ -1025,3 +1025,12 @@ This pass continues reducing Scrutinizer complexity without changing public beha
 - `FormFieldSubmissionProcessor` for field, compound, and collection submission logic
 
 This reduces class-level complexity without changing the public API.
+
+### V3.9.4 core finish and quality pass
+
+This pass adds:
+- `CountryProvider` extracted from `CountryType`
+- shared `HtmlAttributeRenderer`
+- refactored `NativeRequest` file normalization
+- leaner `Count` and `Choice` constraints
+- cleaner fixture form type structure for tests

@@ -19,22 +19,39 @@ final class Count implements ConstraintInterface
     /** @param array<string, mixed> $context @return array<int, string> */
     public function validate(mixed $value, array $context = []): array
     {
-        if ($value === null) {
-            $count = 0;
-        } elseif (is_array($value) || $value instanceof Countable) {
-            $count = count($value);
-        } else {
+        $count = $this->countValue($value);
+
+        if ($count === null) {
             return [$this->message];
         }
 
-        if ($this->min !== null && $count < $this->min) {
-            return [$this->message];
-        }
-
-        if ($this->max !== null && $count > $this->max) {
+        if ($this->violatesMin($count) || $this->violatesMax($count)) {
             return [$this->message];
         }
 
         return [];
+    }
+
+    private function countValue(mixed $value): ?int
+    {
+        if ($value === null) {
+            return 0;
+        }
+
+        if (is_array($value) || $value instanceof Countable) {
+            return count($value);
+        }
+
+        return null;
+    }
+
+    private function violatesMin(int $count): bool
+    {
+        return $this->min !== null && $count < $this->min;
+    }
+
+    private function violatesMax(int $count): bool
+    {
+        return $this->max !== null && $count > $this->max;
     }
 }

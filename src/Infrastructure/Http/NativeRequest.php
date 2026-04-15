@@ -25,9 +25,7 @@ final class NativeRequest implements RequestInterface
         return strtoupper($this->method);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function all(): array
     {
         return array_replace_recursive($this->request, $this->normalizeFiles($this->files));
@@ -47,36 +45,64 @@ final class NativeRequest implements RequestInterface
     private function normalizeFiles(array $files): array
     {
         $normalized = [];
+
         foreach ($files as $field => $spec) {
-            if (!is_array($spec) || !isset($spec['name'], $spec['type'], $spec['tmp_name'], $spec['error'], $spec['size'])) {
-                $normalized[$field] = $spec;
-                continue;
-            }
-
-            if (is_array($spec['name'])) {
-                $items = [];
-                foreach (array_keys($spec['name']) as $index) {
-                    $items[] = new UploadedFile(
-                        (string) $spec['name'][$index],
-                        (string) $spec['type'][$index],
-                        (int) $spec['size'][$index],
-                        (string) $spec['tmp_name'][$index],
-                        (int) $spec['error'][$index],
-                    );
-                }
-                $normalized[$field] = $items;
-                continue;
-            }
-
-            $normalized[$field] = new UploadedFile(
-                (string) $spec['name'],
-                (string) $spec['type'],
-                (int) $spec['size'],
-                (string) $spec['tmp_name'],
-                (int) $spec['error'],
-            );
+            $normalized[$field] = $this->normalizeFileSpec($spec);
         }
 
         return $normalized;
+    }
+
+    private function normalizeFileSpec(mixed $spec): mixed
+    {
+        if (!$this->isUploadedFileSpec($spec)) {
+            return $spec;
+        }
+
+        if (is_array($spec['name'])) {
+            return $this->normalizeMultipleUploadedFiles($spec);
+        }
+
+        return $this->uploadedFileFromScalarSpec($spec);
+    }
+
+    private function isUploadedFileSpec(mixed $spec): bool
+    {
+        return is_array($spec)
+            && isset($spec['name'], $spec['type'], $spec['tmp_name'], $spec['error'], $spec['size']);
+    }
+
+    /**
+     * @param array{name:mixed,type:mixed,tmp_name:mixed,error:mixed,size:mixed} $spec
+     * @return array<int, UploadedFile>
+     */
+    private function normalizeMultipleUploadedFiles(array $spec): array
+    {
+        $items = [];
+        foreach (array_keys($spec['name']) as $index) {
+            $items[] = new UploadedFile(
+                (string) $spec['name'][$index],
+                (string) $spec['type'][$index],
+                (int) $spec['size'][$index],
+                (string) $spec['tmp_name'][$index],
+                (int) $spec['error'][$index],
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param array{name:mixed,type:mixed,tmp_name:mixed,error:mixed,size:mixed} $spec
+     */
+    private function uploadedFileFromScalarSpec(array $spec): UploadedFile
+    {
+        return new UploadedFile(
+            (string) $spec['name'],
+            (string) $spec['type'],
+            (int) $spec['size'],
+            (string) $spec['tmp_name'],
+            (int) $spec['error'],
+        );
     }
 }

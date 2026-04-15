@@ -9,8 +9,11 @@ use Iriven\PhpFormGenerator\Presentation\Html\Theme\ThemeInterface;
 
 final class HtmlSimpleWidgetRenderer
 {
+    private HtmlAttributeRenderer $attributeRenderer;
+
     public function __construct(private readonly ThemeInterface $theme)
     {
+        $this->attributeRenderer = new HtmlAttributeRenderer();
     }
 
     /**
@@ -20,7 +23,7 @@ final class HtmlSimpleWidgetRenderer
     {
         $attr['class'] = trim(($attr['class'] ?? '') . ' ' . $this->theme->inputClass());
 
-        return '<textarea' . $this->renderAttributes($attr) . '>' . $this->e((string) ($view->value ?? '')) . '</textarea>';
+        return '<textarea' . $this->attributeRenderer->render($attr) . '>' . $this->e((string) ($view->value ?? '')) . '</textarea>';
     }
 
     /**
@@ -38,7 +41,7 @@ final class HtmlSimpleWidgetRenderer
             if ((string) $view->value === (string) $choiceValue) {
                 $radioAttr['checked'] = 'checked';
             }
-            $html .= '<label class="' . $this->e($this->theme->labelClass()) . '"><input' . $this->renderAttributes($radioAttr) . '> ' . $this->e((string) $label) . '</label>';
+            $html .= '<label class="' . $this->e($this->theme->labelClass()) . '"><input' . $this->attributeRenderer->render($radioAttr) . '> ' . $this->e((string) $label) . '</label>';
         }
 
         return $html;
@@ -54,7 +57,7 @@ final class HtmlSimpleWidgetRenderer
         $attr['list'] = $listId;
         $attr['class'] = trim(($attr['class'] ?? '') . ' ' . $this->theme->inputClass());
 
-        $html = '<input' . $this->renderAttributes($attr + ['value' => (string) ($view->value ?? '')]) . '>';
+        $html = '<input' . $this->attributeRenderer->render($attr + ['value' => (string) ($view->value ?? '')]) . '>';
         $html .= '<datalist id="' . $this->e($listId) . '">';
 
         $choices = is_array($view->vars['choices'] ?? null) ? $view->vars['choices'] : [];
@@ -73,7 +76,7 @@ final class HtmlSimpleWidgetRenderer
         $attr['type'] = $view->vars['button_type'] ?? 'button';
         $attr['class'] = trim(($attr['class'] ?? '') . ' ' . $this->theme->inputClass());
 
-        return '<button' . $this->renderAttributes($attr) . '>' . $this->e((string) ($view->vars['label'] ?? $view->name)) . '</button>';
+        return '<button' . $this->attributeRenderer->render($attr) . '>' . $this->e((string) ($view->vars['label'] ?? $view->name)) . '</button>';
     }
 
     /**
@@ -93,17 +96,8 @@ final class HtmlSimpleWidgetRenderer
         }
         $attr['class'] = trim(($attr['class'] ?? '') . ' ' . $this->theme->inputClass());
 
-        return '<input' . $this->renderAttributes($attr) . '>';
+        return '<input' . $this->attributeRenderer->render($attr) . '>';
     }
-
-    /** @param array<string, mixed> $attributes */
-    private function renderAttributes(array $attributes): string
-    {
-        $html = '';
-        foreach ($attributes as $name => $value) {
-            if ($name === 'choices' || $name === 'prototype_view' || $value === false || $value === null) {
-                continue;
-            }
             if ($value === true) {
                 $html .= ' ' . $this->e((string) $name);
                 continue;

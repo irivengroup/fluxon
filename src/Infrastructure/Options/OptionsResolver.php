@@ -25,6 +25,7 @@ final class OptionsResolver implements OptionsResolverInterface
     public function setDefaults(array $defaults): self
     {
         $this->defaults = $defaults + $this->defaults;
+
         return $this;
     }
 
@@ -32,6 +33,7 @@ final class OptionsResolver implements OptionsResolverInterface
     public function setRequired(array $required): self
     {
         $this->required = array_values(array_unique(array_merge($this->required, $required)));
+
         return $this;
     }
 
@@ -39,6 +41,7 @@ final class OptionsResolver implements OptionsResolverInterface
     public function setAllowedTypes(string $option, string|array $types): self
     {
         $this->allowedTypes[$option] = array_values((array) $types);
+
         return $this;
     }
 
@@ -46,6 +49,7 @@ final class OptionsResolver implements OptionsResolverInterface
     public function setAllowedValues(string $option, callable|array $values): self
     {
         $this->allowedValues[$option] = $values;
+
         return $this;
     }
 
@@ -109,8 +113,7 @@ final class OptionsResolver implements OptionsResolverInterface
                 continue;
             }
 
-            $value = $resolved[$name];
-            if (!$this->matchesAllowedValue($value, $allowed)) {
+            if (!$this->matchesAllowedValue($resolved[$name], $allowed)) {
                 throw new InvalidArgumentException(sprintf('The option "%s" has an invalid value.', $name));
             }
         }

@@ -58,6 +58,7 @@ final class PropertyAccessor
     {
         if ($path === '') {
             $target = $value;
+
             return;
         }
 
@@ -76,11 +77,13 @@ final class PropertyAccessor
     {
         if (is_array($current)) {
             $this->advanceArrayTarget($current, $segment);
+
             return;
         }
 
         if (is_object($current)) {
             $this->advanceObjectTarget($current, $segment);
+
             return;
         }
 
@@ -92,7 +95,7 @@ final class PropertyAccessor
      */
     private function advanceArrayTarget(array &$current, string $segment): void
     {
-        if (!isset($current[$segment]) || (!$this->isNavigableValue($current[$segment]))) {
+        if (!isset($current[$segment]) || !$this->isNavigableValue($current[$segment])) {
             $current[$segment] = [];
         }
 
@@ -106,6 +109,7 @@ final class PropertyAccessor
                 $current->{$segment} = [];
             }
             $current =& $current->{$segment};
+
             return;
         }
 
@@ -114,6 +118,7 @@ final class PropertyAccessor
 
         if (method_exists($current, $getter)) {
             $child = $current->{$getter}();
+
             if (!$this->isNavigableValue($child)) {
                 $child = [];
                 if (method_exists($current, $setter)) {
@@ -128,6 +133,7 @@ final class PropertyAccessor
             }
 
             $current =& $current->{$segment};
+
             return;
         }
 
@@ -139,6 +145,7 @@ final class PropertyAccessor
     {
         if (is_array($current)) {
             $current[$last] = $value;
+
             return;
         }
 
@@ -146,10 +153,12 @@ final class PropertyAccessor
             $setter = 'set' . ucfirst($last);
             if (method_exists($current, $setter)) {
                 $current->{$setter}($value);
+
                 return;
             }
 
             $current->{$last} = $value;
+
             return;
         }
 

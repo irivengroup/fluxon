@@ -12,33 +12,11 @@ final class HtmlWidgetAttributeBuilder
     /** @return array<string, mixed> */
     public function build(FormView $view): array
     {
-        $attr = is_array($view->vars['attr'] ?? null) ? $view->vars['attr'] : [];
-        $attr['id'] = $view->id;
-        $attr['name'] = $view->fullName;
-
-        if (($view->vars['required'] ?? false) === true) {
-            $attr['required'] = 'required';
-        }
-        if (($view->vars['placeholder'] ?? null) !== null) {
-            $attr['placeholder'] = (string) $view->vars['placeholder'];
-        }
-        if (($view->vars['multiple'] ?? false) === true) {
-            $attr['multiple'] = 'multiple';
-        }
-        if ($view->errors !== []) {
-            $attr['aria-invalid'] = 'true';
-        }
-
-        $describedBy = [];
-        if (($view->vars['help'] ?? null) !== null) {
-            $describedBy[] = $view->id . '_help';
-        }
-        if ($view->errors !== []) {
-            $describedBy[] = $view->id . '_errors';
-        }
-        if ($describedBy !== []) {
-            $attr['aria-describedby'] = implode(' ', $describedBy);
-        }
+        $attr = $this->baseAttributes($view);
+        $attr = $this->applyRequiredAttribute($attr, $view);
+        $attr = $this->applyPlaceholderAttribute($attr, $view);
+        $attr = $this->applyMultipleAttribute($attr, $view);
+        $attr = $this->applyAccessibilityAttributes($attr, $view);
 
         return $attr;
     }
@@ -64,5 +42,78 @@ final class HtmlWidgetAttributeBuilder
         return class_exists($typeClass) && is_subclass_of($typeClass, AbstractFieldType::class)
             ? $typeClass::htmlType()
             : 'text';
+    }
+
+    /** @return array<string, mixed> */
+    private function baseAttributes(FormView $view): array
+    {
+        $attr = is_array($view->vars['attr'] ?? null) ? $view->vars['attr'] : [];
+        $attr['id'] = $view->id;
+        $attr['name'] = $view->fullName;
+
+        return $attr;
+    }
+
+    /**
+     * @param array<string, mixed> $attr
+     * @return array<string, mixed>
+     */
+    private function applyRequiredAttribute(array $attr, FormView $view): array
+    {
+        if (($view->vars['required'] ?? false) === true) {
+            $attr['required'] = 'required';
+        }
+
+        return $attr;
+    }
+
+    /**
+     * @param array<string, mixed> $attr
+     * @return array<string, mixed>
+     */
+    private function applyPlaceholderAttribute(array $attr, FormView $view): array
+    {
+        if (($view->vars['placeholder'] ?? null) !== null) {
+            $attr['placeholder'] = (string) $view->vars['placeholder'];
+        }
+
+        return $attr;
+    }
+
+    /**
+     * @param array<string, mixed> $attr
+     * @return array<string, mixed>
+     */
+    private function applyMultipleAttribute(array $attr, FormView $view): array
+    {
+        if (($view->vars['multiple'] ?? false) === true) {
+            $attr['multiple'] = 'multiple';
+        }
+
+        return $attr;
+    }
+
+    /**
+     * @param array<string, mixed> $attr
+     * @return array<string, mixed>
+     */
+    private function applyAccessibilityAttributes(array $attr, FormView $view): array
+    {
+        if ($view->errors !== []) {
+            $attr['aria-invalid'] = 'true';
+        }
+
+        $describedBy = [];
+        if (($view->vars['help'] ?? null) !== null) {
+            $describedBy[] = $view->id . '_help';
+        }
+        if ($view->errors !== []) {
+            $describedBy[] = $view->id . '_errors';
+        }
+        if ($describedBy !== []) {
+            $attr['aria-describedby'] = implode(' ', $describedBy);
+        }
+
+        return $attr;
     }
 }

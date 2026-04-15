@@ -237,14 +237,33 @@ final class FormBuilderFieldDefinitionFactory
             return [$options, $constraints, $builderOptions];
         }
 
+        $builderOptions = $this->applyMultipartFormOptions($builderOptions);
+        $options = $this->applyFileFieldAttributes($typeClass, $options);
+        $constraints = $this->applyFileMimeConstraint($typeClass, $constraints);
+
+        return [$options, $constraints, $builderOptions];
+    }
+
+    /**
+     * @param array<string, mixed> $builderOptions
+     * @return array<string, mixed>
+     */
+    private function applyMultipartFormOptions(array $builderOptions): array
+    {
         $formAttr = is_array($builderOptions['attr'] ?? null) ? $builderOptions['attr'] : [];
         $formAttr['enctype'] = 'multipart/form-data';
         $builderOptions['attr'] = $formAttr;
+        $builderOptions['method'] = $builderOptions['method'] ?? 'POST';
 
-        if (!isset($builderOptions['method'])) {
-            $builderOptions['method'] = 'POST';
-        }
+        return $builderOptions;
+    }
 
+    /**
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
+    private function applyFileFieldAttributes(string $typeClass, array $options): array
+    {
         $fieldAttr = is_array($options['attr'] ?? null) ? $options['attr'] : [];
         if (method_exists($typeClass, 'acceptAttribute') && !isset($fieldAttr['accept'])) {
             $accept = $typeClass::acceptAttribute();
@@ -254,14 +273,23 @@ final class FormBuilderFieldDefinitionFactory
         }
         $options['attr'] = $fieldAttr;
 
+        return $options;
+    }
+
+    /**
+     * @param array<int, ConstraintInterface> $constraints
+     * @return array<int, ConstraintInterface>
+     */
+    private function applyFileMimeConstraint(string $typeClass, array $constraints): array
+    {
         if (!method_exists($typeClass, 'allowedMimeTypes')) {
-            return [$options, $constraints, $builderOptions];
+            return $constraints;
         }
 
         /** @var array<int, string> $allowedMimeTypes */
         $allowedMimeTypes = $typeClass::allowedMimeTypes();
         if ($allowedMimeTypes === [] || $this->hasMimeConstraint($constraints)) {
-            return [$options, $constraints, $builderOptions];
+            return $constraints;
         }
 
         $constraints[] = new MimeType(
@@ -272,7 +300,7 @@ final class FormBuilderFieldDefinitionFactory
             ),
         );
 
-        return [$options, $constraints, $builderOptions];
+        return $constraints;
     }
 
     /**

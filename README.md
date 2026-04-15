@@ -998,3 +998,12 @@ The following long/complex methods were decomposed:
 - `PropertyAccessor::setValue()`
 
 This reduces internal branching and improves maintainability without changing public behavior.
+
+### Additional scrutiny-driven optimization
+
+The following methods were refactored into smaller units:
+- `HtmlWidgetAttributeBuilder::build()`
+- `FormBuilderFieldDefinitionFactory::normalizeFileFieldOptions()`
+- `SessionCaptchaManager::isCodeValid()`
+- `ObjectDataMapper::assign()`
+- `CaptchaTypeTest::testCaptchaRendersAndValidatesCaseSensitively()`

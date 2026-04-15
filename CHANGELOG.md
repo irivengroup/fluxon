@@ -14,6 +14,7 @@
 - Additional README usage scenarios and end-to-end examples.
 
 ### Changed
+- Applied additional scrutiny-driven refactors to reduce method complexity in attribute building, file field normalization, captcha validation, object assignment, and captcha test structure.
 - Reduced internal complexity by decomposing `OptionsResolver::matchesAllowedTypes()` and `PropertyAccessor::setValue()` into smaller private helpers.
 - Decomposed `FormGenerator` into `FormGeneratorFieldFacade` and `FormGeneratorOpenNormalizer`, and removed the dedicated legacy API compatibility test suite so tests now target the new public API only.
 - Updated PHPStan-facing signatures for choice-based builder helpers and migrated remaining tests/examples from legacy `open([...])` usage to the new `open($attributes, $options)` standard.

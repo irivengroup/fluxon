@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Tests;
 
+use ArrayObject;
 use Iriven\PhpFormGenerator\Application\FormFactory;
 use Iriven\PhpFormGenerator\Application\FormHookKernel;
 use Iriven\PhpFormGenerator\Domain\Contract\FormHookInterface;
@@ -17,20 +18,18 @@ final class HookIndustrializationRuntimeTest extends TestCase
 {
     public function testMultipleHooksRunInRegistrationOrder(): void
     {
-        $messages = [];
+        $messages = new ArrayObject();
 
         $kernel = new FormHookKernel();
         $kernel->register(new class($messages) implements FormHookInterface {
-            /** @param array<int, string> $messages */
-            public function __construct(private array &$messages) {}
+            public function __construct(private ArrayObject $messages) {}
             public static function getName(): string { return 'post_submit'; }
-            public function __invoke(Form $form, array $context = []): void { $this->messages[] = 'first'; }
+            public function __invoke(Form $form, array $context = []): void { $this->messages->append('first'); }
         });
         $kernel->register(new class($messages) implements FormHookInterface {
-            /** @param array<int, string> $messages */
-            public function __construct(private array &$messages) {}
+            public function __construct(private ArrayObject $messages) {}
             public static function getName(): string { return 'post_submit'; }
-            public function __invoke(Form $form, array $context = []): void { $this->messages[] = 'second'; }
+            public function __invoke(Form $form, array $context = []): void { $this->messages->append('second'); }
         });
 
         $factory = new FormFactory(hookKernel: $kernel);
@@ -39,7 +38,7 @@ final class HookIndustrializationRuntimeTest extends TestCase
         $form = $builder->getForm();
         $form->handleRequest(new ArrayRequest('POST', ['demo' => ['name' => 'Alice']]));
 
-        self::assertSame(['first', 'second'], $messages);
+        self::assertSame(['first', 'second'], $messages->getArrayCopy());
     }
 
     public function testHookExceptionCanBubbleByDefault(): void

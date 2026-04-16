@@ -1,3 +1,14 @@
+## V4.1.4
+
+### Added
+- `docs/release-checklist.md`
+- `docs/plugin-publishing.md`
+- `RELEASE_NOTES_V4.1.4_RC.md`
+- scripts Composer `validate:full` et `rc:check`
+
+### Changed
+- Documentation de validation finale et de packaging renforcée pour la release candidate.
+
 ## V4.1.3
 
 ### Added

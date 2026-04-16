@@ -39,6 +39,14 @@
       "composer dump-autoload -o",
       "@phpstan analyse src tests",
       "@phpunit --colors=never"
+    ],
+    "validate:full": [
+      "composer dump-autoload -o",
+      "@phpstan analyse src tests",
+      "@phpunit --colors=never"
+    ],
+    "rc:check": [
+      "@validate:full"
     ]
   },
   "config": {
@@ -50,6 +58,6 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V4.1.3 consolidation plugins, non-régression et release candidate"
+    "release_name": "V4.1.4 validation complète, hardening final et tag release candidate"
   }
 }

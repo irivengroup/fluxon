@@ -19,3 +19,8 @@
 
 > Ce wiki est évolutif : toute nouvelle fonctionnalité doit ajouter ou enrichir une rubrique sans casser la structure existante.
 > V4.1.3 ajoute la consolidation plugins, les non-régressions runtime et la préparation release candidate.
+
+- [Checklist release](release-checklist.md)
+- [Publication d’un plugin](plugin-publishing.md)
+
+> V4.1.4 ajoute la checklist de release finale et la documentation de publication de plugin.

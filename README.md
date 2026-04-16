@@ -1110,3 +1110,13 @@ Le runtime plugin est désormais couvert par des tests d’intégration et les r
 ## V4.1.3 release candidate
 
 Cette étape consolide la couche plugins avec des tests de non-régression runtime, une documentation renforcée et une préparation explicite de release candidate.
+
+## Validation finale release candidate
+
+La validation finale du projet s’appuie sur :
+- `composer validate:full`
+- `composer test:coverage`
+- le build Scrutinizer
+- la checklist `docs/release-checklist.md`
+
+La documentation d’exploitation détaillée reste centralisée dans `docs/index.md`.

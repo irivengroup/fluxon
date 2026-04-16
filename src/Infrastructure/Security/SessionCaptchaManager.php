@@ -72,6 +72,10 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
 
         $this->decrementAttempts($key, $meta);
 
+        if ($this->remainingAttempts($key) <= 0) {
+            $this->clearChallenge($key);
+        }
+
         return false;
     }
 
@@ -169,6 +173,13 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
     private function decrementAttempts(string $key, array $meta): void
     {
         $_SESSION['_pfg_captcha_meta'][$key]['attempts_left'] = $meta['attempts_left'] - 1;
+    }
+
+    private function remainingAttempts(string $key): int
+    {
+        $attempts = $_SESSION['_pfg_captcha_meta'][$key]['attempts_left'] ?? null;
+
+        return is_int($attempts) ? $attempts : 0;
     }
 
     private function clearChallenge(string $key): void

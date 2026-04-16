@@ -1,3 +1,14 @@
+## V4.2.2
+
+### Fixed
+- Corrections issues runtime plugins (alias/extension)
+- Robustesse TypeResolver (gestion erreurs et alias)
+- Cohérence rendering HTML (attributes/labels/accessibilité)
+- Ajustements sécurité CSRF/Captcha
+
+### Tests
+- Ajout tests de non-régression ciblés
+
 ## V4.2.1
 
 ### Added

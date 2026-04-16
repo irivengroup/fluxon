@@ -64,4 +64,10 @@
 
 > V4.4.0 promeut la feature line en capacités avancées stables.
 
+
+- [Maintenance avancée](maintenance-advanced.md)
+- [Politique de non-régression](non-regression-policy.md)
+
+> V4.4.1 consolide la maintenance stable et la non-régression complète de la ligne avancée.
+
 [↑ Parent : racine docs](index.md)

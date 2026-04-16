@@ -1,3 +1,19 @@
+## V4.4.1
+
+### Added
+- `tests/ReleaseNotesIndexTest.php`
+- `tests/ThemeFallbackRegressionTest.php`
+- `tests/SchemaIndexRegressionTest.php`
+- `docs/maintenance-advanced.md`
+- `docs/non-regression-policy.md`
+- `releases.d/RELEASE_NOTES_V4.4.1.md`
+- `validations.d/VALIDATION_MANIFEST_V4.4.1.md`
+
+### Changed
+- Consolidation de la ligne avancée stable
+- Renforcement des index de publication/validation
+- Renforcement de la couverture de non-régression
+
 ## V4.4.0
 
 ### Added

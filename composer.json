@@ -63,7 +63,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V4.4.0 capacités avancées stables et promotion de la feature line",
-    "release_channel": "stable-advanced"
+    "release_name": "V4.4.1 maintenance stable et non-régression complète",
+    "release_channel": "stable-advanced-maintenance"
   }
 }

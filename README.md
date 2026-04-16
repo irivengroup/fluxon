@@ -1160,3 +1160,8 @@ Cette itération renforce l’export de schéma, complète la documentation feat
 ## V4.4.0 capacités avancées stables
 
 Cette version promeut les hooks, thèmes custom et l’export de schéma en capacités avancées stables, avec centralisation des notes et validations hors racine.
+
+
+## V4.4.1 maintenance stable et non-régression complète
+
+Cette version renforce la maintenance de la ligne avancée stable avec de nouveaux tests de non-régression et une cohérence accrue des index de publication/validation.

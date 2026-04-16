@@ -4,6 +4,7 @@
 
 ## Versions
 
+- [V4.4.1](releases.d/RELEASE_NOTES_V4.4.1.md)
 - [V4.4.0](releases.d/RELEASE_NOTES_V4.4.0.md)
 - [V4.3.5](releases.d/RELEASE_NOTES_V4.3.5.md)
 - [V4.3.4](releases.d/RELEASE_NOTES_V4.3.4.md)

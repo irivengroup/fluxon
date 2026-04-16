@@ -16,9 +16,13 @@ final class SessionCaptchaManager implements CaptchaManagerInterface
         $_SESSION['_pfg_captcha_meta'] ??= [];
     }
 
-    public function generateCode(string $key, int $length = 6): string
+    public function generateCode(string $key, int $minLength = 5, int $maxLength = 8): string
     {
         $this->ensureSessionStarted();
+
+        $minLength = max(1, $minLength);
+        $maxLength = max($minLength, $maxLength);
+        $length = random_int($minLength, $maxLength);
 
         $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
         $code = '';

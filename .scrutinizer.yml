@@ -19,17 +19,16 @@ build:
     analysis:
       environment:
         php:
-          version: 8.2
+          version: 8.3
 
       dependencies:
         override:
-          - composer install --no-interaction --prefer-dist --no-progress
+          - composer install --no-interaction --prefer-dist 
 
       tests:
         override:
           - command: vendor/bin/phpunit --colors=never --coverage-clover=coverage.clover
-
-tools:
-  external_code_coverage:
-    timeout: 1200
-    runs: 1
+            coverage:
+              file: coverage.clover
+              format: php-clover
+          - php-scrutinizer-run

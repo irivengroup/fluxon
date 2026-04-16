@@ -34,7 +34,7 @@ final class HookIndustrializationRuntimeTest extends TestCase
         });
 
         $factory = new FormFactory(hookKernel: $kernel);
-        $builder = $factory->createBuilder('demo');
+        $builder = $factory->createBuilder('demo', null, ['csrf_protection' => false]);
         $builder->add('name', 'TextType');
         $form = $builder->getForm();
         $form->handleRequest(new ArrayRequest('POST', ['demo' => ['name' => 'Alice']]));
@@ -45,7 +45,7 @@ final class HookIndustrializationRuntimeTest extends TestCase
     public function testHookExceptionCanBubbleByDefault(): void
     {
         $factory = new FormFactory(hookKernel: (new FormHookKernel())->register(new ThrowingHook()));
-        $builder = $factory->createBuilder('demo');
+        $builder = $factory->createBuilder('demo', null, ['csrf_protection' => false]);
         $builder->add('name', 'TextType');
         $form = $builder->getForm();
 
@@ -56,13 +56,13 @@ final class HookIndustrializationRuntimeTest extends TestCase
     public function testHookExceptionCanBeSwallowedWhenConfigured(): void
     {
         $factory = new FormFactory(hookKernel: (new FormHookKernel(true))->register(new ThrowingHook()));
-        $builder = $factory->createBuilder('demo');
+        $builder = $factory->createBuilder('demo', null, ['csrf_protection' => false]);
         $builder->add('name', 'TextType');
         $form = $builder->getForm();
 
         $form->handleRequest(new ArrayRequest('POST', ['demo' => ['name' => 'Alice']]));
 
         self::assertArrayHasKey('_form', $form->getErrors());
-        self::assertStringContainsString('Hook failure', $form->getErrors()['_form'][0]);
+        self::assertContains('Hook failure: Boom', $form->getErrors()['_form']);
     }
 }

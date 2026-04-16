@@ -1,3 +1,15 @@
+## V4.3.3
+
+### Added
+- Industrialization tests for hook ordering, failure handling and normalized context
+- Custom theme runtime tests
+- `RELEASE_NOTES_V4.3.3.md`
+
+### Changed
+- Hook kernel now supports configurable exception swallowing and normalized context
+- Documentation files now include parent links and breadcrumbs
+- Feature line documentation clarified for custom themes and lifecycle hooks
+
 ## V4.3.2
 
 ### Added

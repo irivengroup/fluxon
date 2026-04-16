@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Publication d’un plugin
+
 # Publication d’un plugin
 
 ## Recommandations
@@ -22,3 +26,5 @@ composer dump-autoload -o
 vendor/bin/phpstan analyse src tests
 vendor/bin/phpunit --colors=never
 ```
+
+[↑ Retour au sommaire docs](index.md)

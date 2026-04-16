@@ -1143,3 +1143,7 @@ Le détail est documenté dans `docs/`.
 ## V4.3.2 lifecycle hooks complet
 
 Cette itération intègre les hooks dans le cycle de vie complet du formulaire et confirme le branchement runtime des thèmes via une factory dédiée.
+
+## V4.3.3 industrialisation hooks & thèmes custom
+
+Cette étape stabilise la feature line V4.3.x avec hooks plus robustes, thèmes custom testés, fallback clarifié et documentation wiki normalisée avec breadcrumbs et liens parent.

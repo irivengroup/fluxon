@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Migration 3.x vers 4.x
+
 # Migration 3.x vers 4.x
 
 ## Principes
@@ -15,3 +19,5 @@
 ## À éviter
 - dépendre d’implémentations internes non documentées
 - reconstruire une compatibilité legacy
+
+[↑ Retour au sommaire docs](index.md)

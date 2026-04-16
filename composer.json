@@ -63,7 +63,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V4.3.2 intégration hooks dans lifecycle complet",
+    "release_name": "V4.3.3 industrialisation hooks, thèmes custom et stabilisation feature line",
     "release_channel": "feature-line"
   }
 }

@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Workflow de correction
+
 # Bugfix Workflow
 
 ## Étapes recommandées
@@ -12,3 +16,5 @@
 - ajouter ou adapter un test de non-régression
 - ne pas casser l’API publique
 - documenter uniquement la rubrique concernée dans `docs/`
+
+[↑ Retour au sommaire docs](index.md)

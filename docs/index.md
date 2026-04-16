@@ -1,3 +1,7 @@
+[↑ Parent : racine docs](index.md)
+
+> Breadcrumb: [Docs](index.md)
+
 # PhpFormGenerator Wiki
 
 ## Sommaire
@@ -41,3 +45,7 @@
 - [Schema](schema.md)
 
 > V4.3.2 intègre les hooks dans le cycle de vie complet du formulaire et confirme le branchement runtime des thèmes.
+
+[↑ Parent : racine docs](index.md)
+
+> V4.3.3 industrialise les hooks, confirme les thèmes custom et normalise toute la documentation avec breadcrumbs et liens parent.

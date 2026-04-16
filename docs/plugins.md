@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Plugins officiels
+
 # Plugins officiels
 
 ## Base plugins-ready
@@ -67,3 +71,5 @@ $builder->add('slug', 'slug');
 - documenter les collisions possibles
 - fournir des fixtures/tests pour chaque plugin
 - ajouter une rubrique dédiée dans `docs/` pour chaque plugin publié
+
+[↑ Retour au sommaire docs](index.md)

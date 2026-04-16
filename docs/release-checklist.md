@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Checklist release
+
 # Checklist release
 
 ## Validation technique
@@ -25,3 +29,5 @@
 - archive ZIP générée
 - manifest/checksums présents
 - notes de release prêtes
+
+[↑ Retour au sommaire docs](index.md)

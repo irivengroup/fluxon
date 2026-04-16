@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Politique de maintenance
+
 # Maintenance Policy
 
 ## Objectif
@@ -18,3 +22,5 @@ La ligne V4.2.x est une ligne de maintenance stable.
 
 ## Règle
 Toute modification doit préserver le contrat public documenté dans `docs/public-api.md`.
+
+[↑ Retour au sommaire docs](index.md)

@@ -14,12 +14,7 @@ final class InMemoryHookRegistry
 
     public function register(FormHookInterface $hook): void
     {
-        $name = strtolower(trim($hook::getName()));
-
-        if ($name === '') {
-            throw new InvalidArgumentException('Hook name cannot be empty.');
-        }
-
+        $name = $this->normalizeName($hook::getName());
         $this->hooks[$name] ??= [];
         $this->hooks[$name][] = $hook;
     }
@@ -29,7 +24,15 @@ final class InMemoryHookRegistry
      */
     public function for(string $name): array
     {
-        return $this->hooks[strtolower(trim($name))] ?? [];
+        return $this->hooks[$this->normalizeName($name)] ?? [];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function names(): array
+    {
+        return array_keys($this->hooks);
     }
 
     /**
@@ -38,5 +41,16 @@ final class InMemoryHookRegistry
     public function all(): array
     {
         return $this->hooks;
+    }
+
+    private function normalizeName(string $name): string
+    {
+        $name = strtolower(trim($name));
+
+        if ($name === '') {
+            throw new InvalidArgumentException('Hook name cannot be empty.');
+        }
+
+        return $name;
     }
 }

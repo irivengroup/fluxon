@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Extensibilité
+
 # Extensibilité
 
 ## Objectif
@@ -23,3 +27,5 @@ Le runtime supporte maintenant :
 - extensions plugin réelles
 - scénarios de collision contrôlés
 - plugins vides enregistrables sans effet de bord
+
+[↑ Retour au sommaire docs](index.md)

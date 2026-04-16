@@ -1,3 +1,7 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / API publique
+
 # Public API
 
 ## Officially supported public entry points
@@ -35,3 +39,5 @@ The following namespaces are considered implementation-oriented and may evolve i
 
 ## Recommendation
 Consumer code should target the public entry points and documented contracts only.
+
+[↑ Retour au sommaire docs](index.md)

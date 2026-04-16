@@ -1,11 +1,15 @@
+[↑ Retour au sommaire docs](index.md)
+
+> Breadcrumb: [Docs](index.md) / Hooks
+
 # Hooks
 
 ## Contrats introduits
 - `HookInterface`
 - `FormHookInterface`
 
-## Runtime V4.3.2
-La ligne V4.3.2 fournit :
+## Runtime V4.3.3
+La ligne V4.3.3 fournit :
 - `InMemoryHookRegistry`
 - `FormHookKernel`
 - dispatch des hooks dans le cycle de vie complet du formulaire
@@ -18,6 +22,12 @@ La ligne V4.3.2 fournit :
 - `post_submit`
 - `post_handle_request`
 
+## Industrialisation V4.3.3
+- ordre d’exécution conservé
+- stratégie claire en cas d’exception
+- contexte normalisé transmis aux hooks
+- support de hooks multiples sur un même nom
+
 ## Exemple
 ```php
 $hooks = (new FormHookKernel())
@@ -26,3 +36,5 @@ $hooks = (new FormHookKernel())
 $factory = new FormFactory(hookKernel: $hooks);
 $form = $factory->createBuilder('demo')->getForm();
 ```
+
+[↑ Retour au sommaire docs](index.md)

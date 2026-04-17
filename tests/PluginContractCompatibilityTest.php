@@ -23,6 +23,6 @@ final class PluginContractCompatibilityTest extends TestCase
 
         $registry->registerPlugin(new DemoPlugin());
 
-        self::assertNotEmpty($registry->all());
+        self::assertCount(1, $registry->all());
     }
 }

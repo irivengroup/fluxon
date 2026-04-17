@@ -100,4 +100,12 @@
 
 > V4.6.2 clôture la consolidation du runtime unifié avec des tests ciblés et une documentation de synthèse.
 
+
+- [Runtime Advanced](runtime-advanced.md)
+- [Hooks V2](hooks-v2.md)
+- [Runtime Payload](runtime-payload.md)
+- [Theme Inheritance](theme-inheritance.md)
+
+> V4.7.0 ouvre une ligne de capacités runtime avancées avec payload typé, hooks priorisés et schéma enrichi.
+
 [↑ Parent : racine docs](index.md)

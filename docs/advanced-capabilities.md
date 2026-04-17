@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Capacités avancées stables
+> Breadcrumb: [Docs](index.md) / advanced-capabilities.md
 
 # Capacités avancées stables
 

@@ -1195,3 +1195,8 @@ Cette version consolide le runtime unifié avec des annotations complètes, des 
 ## V4.6.2 bugfix runtime final et clôture de consolidation
 
 Cette version clôture la consolidation du runtime unifié avec des tests ciblés, une couverture export renforcée et une documentation de synthèse.
+
+
+## V4.7.0 capacités runtime avancées
+
+Cette version étend le runtime unifié avec un payload typé, des hooks priorisés et un schéma enrichi orienté front.

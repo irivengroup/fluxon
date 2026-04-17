@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Maintenance avancée
+> Breadcrumb: [Docs](index.md) / maintenance-advanced.md
 
 # Maintenance avancée
 

@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Maintenance du rendu avancé
+> Breadcrumb: [Docs](index.md) / advanced-rendering-maintenance.md
 
 # Maintenance du rendu avancé
 

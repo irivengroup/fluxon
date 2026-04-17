@@ -63,7 +63,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V4.6.2 bugfix runtime final et clôture de consolidation",
-    "release_channel": "advanced-runtime-bugfix"
+    "release_name": "V4.7.0 capacités runtime avancées",
+    "release_channel": "advanced-runtime-feature-line"
   }
 }

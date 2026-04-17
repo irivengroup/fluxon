@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Clôture de stabilisation
+> Breadcrumb: [Docs](index.md) / stabilization-closure.md
 
 # Clôture de stabilisation
 

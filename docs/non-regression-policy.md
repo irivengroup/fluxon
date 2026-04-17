@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Politique de non-régression
+> Breadcrumb: [Docs](index.md) / non-regression-policy.md
 
 # Politique de non-régression
 

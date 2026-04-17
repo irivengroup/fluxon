@@ -2,30 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Iriven\PhpFormGenerator\Application;
+namespace Iriven\PhpFormGenerator\Application\Runtime;
 
-use Iriven\PhpFormGenerator\Application\Runtime\RuntimePayload;
-use Iriven\PhpFormGenerator\Domain\Form\Form;
-
-final class FormRuntimeContext
+final class RuntimePayload
 {
-    private RuntimePayload $payload;
-
     /**
      * @param array<string, mixed> $metadata
      */
     public function __construct(
-        private readonly Form $form,
         private readonly ?string $theme = null,
         private readonly ?string $renderer = null,
         private readonly array $metadata = [],
     ) {
-        $this->payload = new RuntimePayload($theme, $renderer, $metadata);
-    }
-
-    public function form(): Form
-    {
-        return $this->form;
     }
 
     public function theme(): ?string
@@ -46,8 +34,16 @@ final class FormRuntimeContext
         return $this->metadata;
     }
 
-    public function payload(): RuntimePayload
+    public function metadataValue(string $key, mixed $default = null): mixed
     {
-        return $this->payload;
+        return $this->metadata[$key] ?? $default;
+    }
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
+    public function withMetadata(array $metadata): self
+    {
+        return new self($this->theme, $this->renderer, $metadata);
     }
 }

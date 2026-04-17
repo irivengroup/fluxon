@@ -1,3 +1,23 @@
+## V4.7.0
+
+### Added
+- `src/Application/Runtime/RuntimePayload.php`
+- `src/Application/Runtime/HookListenerDefinition.php`
+- `src/Application/Runtime/PrioritizedHookKernel.php`
+- `tests/RuntimePayloadTest.php`
+- `tests/PrioritizedHookKernelTest.php`
+- `tests/SchemaFrontendReadyTest.php`
+- `docs/runtime-advanced.md`
+- `docs/hooks-v2.md`
+- `docs/runtime-payload.md`
+- `docs/theme-inheritance.md`
+- `releases.d/RELEASE_NOTES_V4.7.0.md`
+- `validations.d/VALIDATION_MANIFEST_V4.7.0.md`
+
+### Changed
+- Enrichissement de `FormRuntimeContext`
+- Schéma exporté enrichi avec payload runtime et hints UI
+
 ## V4.6.2
 
 ### Added

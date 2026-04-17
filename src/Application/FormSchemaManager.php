@@ -31,6 +31,15 @@ final class FormSchemaManager
                 'theme' => $runtimeContext->theme(),
                 'renderer' => $runtimeContext->renderer(),
                 'metadata' => $runtimeContext->metadata(),
+                'payload' => [
+                    'theme' => $runtimeContext->payload()->theme(),
+                    'renderer' => $runtimeContext->payload()->renderer(),
+                    'metadata' => $runtimeContext->payload()->metadata(),
+                ],
+            ];
+            $schema['ui'] = [
+                'theme' => $runtimeContext->theme(),
+                'variant' => $runtimeContext->payload()->metadataValue('variant'),
             ];
         }
 

@@ -9,18 +9,9 @@ namespace Iriven\PhpFormGenerator\Domain\Contract;
  */
 interface PluginInterface
 {
-    /**
-     * @return array<int, class-string>
-     */
-    public function registerFieldTypes(): array;
+    public function registerFieldTypes(FieldTypeRegistryInterface $registry): void;
 
-    /**
-     * @return array<int, class-string>
-     */
-    public function registerFormTypes(): array;
+    public function registerFormTypes(FormTypeRegistryInterface $registry): void;
 
-    /**
-     * @return array<int, object>
-     */
-    public function registerExtensions(): array;
+    public function registerExtensions(ExtensionRegistryInterface $registry): void;
 }

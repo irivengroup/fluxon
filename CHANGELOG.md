@@ -1,3 +1,17 @@
+## V4.8.1
+
+### Added
+- `tests/UiComponentResolverRegressionTest.php`
+- `tests/ValidationExporterRegressionTest.php`
+- `tests/HeadlessSchemaBuilderRegressionTest.php`
+- `docs/headless-maintenance.md`
+- `releases.d/RELEASE_NOTES_V4.8.1.md`
+- `validations.d/VALIDATION_MANIFEST_V4.8.1.md`
+
+### Changed
+- Stabilisation de la ligne headless/frontend-ready
+- Renforcement de la non-régression sur UI mapping / validation export / schéma headless
+
 ## V4.8.0
 
 ### Added

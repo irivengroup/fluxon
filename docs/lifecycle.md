@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Lifecycle
+> Breadcrumb: [Docs](index.md) / lifecycle.md
 
 # Lifecycle
 

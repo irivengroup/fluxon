@@ -121,4 +121,9 @@
 
 > V4.8.0 rend le moteur frontend-ready avec schéma headless, mapping UI et validation exportable.
 
+
+- [Maintenance headless](headless-maintenance.md)
+
+> V4.8.1 stabilise la ligne headless/frontend-ready avec des tests ciblés et une documentation de maintenance.
+
 [↑ Parent : racine docs](index.md)

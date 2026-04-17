@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Runtime Hooks
+> Breadcrumb: [Docs](index.md) / runtime-hooks.md
 
 # Runtime Hooks
 

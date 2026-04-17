@@ -14,4 +14,9 @@ Décrire le contrat de schéma consommable par un frontend.
 - `runtime`
 - `validation`
 
+
+## Maintenance V4.8.1
+- vérification des layouts absents
+- cohérence du fallback structurel
+
 [↑ Retour au sommaire docs](index.md)

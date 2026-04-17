@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Schema Export
+> Breadcrumb: [Docs](index.md) / schema-export.md
 
 # Schema Export
 

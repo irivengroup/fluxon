@@ -11,4 +11,9 @@ Documenter l’usage headless du moteur de formulaire.
 - export headless via `FormSchemaManager::exportHeadless()`
 - schéma structuré pour intégrations frontend
 
+
+## Maintenance V4.8.1
+- schéma headless sans runtime context
+- cohérence structurelle `form/fields/ui/runtime/validation`
+
 [↑ Retour au sommaire docs](index.md)

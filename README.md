@@ -1210,3 +1210,8 @@ Cette version stabilise le runtime avancé avec des tests ciblés sur le payload
 ## V4.8.0 intégration frontend / headless forms
 
 Cette version rend le moteur frontend-ready avec export headless, mapping UI et validation exportable.
+
+
+## V4.8.1 maintenance headless et non-régression frontend
+
+Cette version stabilise la ligne headless/frontend-ready avec des tests ciblés sur le mapping UI, l’export de validation et le schéma headless.

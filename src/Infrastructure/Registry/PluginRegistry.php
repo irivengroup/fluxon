@@ -5,48 +5,59 @@ declare(strict_types=1);
 namespace Iriven\PhpFormGenerator\Infrastructure\Registry;
 
 use Iriven\PhpFormGenerator\Domain\Contract\PluginInterface;
-use Iriven\PhpFormGenerator\Infrastructure\Extension\ExtensionRegistry;
 
 final class PluginRegistry
 {
-    /** @var array<int, PluginInterface> */
-    private array $plugins = [];
+    /** @var array<int, class-string> */
+    private array $fieldTypes = [];
 
-    public function __construct(
-        private readonly InMemoryFieldTypeRegistry $fieldTypeRegistry,
-        private readonly InMemoryFormTypeRegistry $formTypeRegistry,
-        private readonly ExtensionRegistry $extensionRegistry,
-    ) {
+    /** @var array<int, class-string> */
+    private array $formTypes = [];
+
+    /** @var array<int, object> */
+    private array $extensions = [];
+
+    public function add(PluginInterface $plugin): void
+    {
+        foreach ($plugin->registerFieldTypes() as $fieldType) {
+            $this->fieldTypes[] = $fieldType;
+        }
+
+        foreach ($plugin->registerFormTypes() as $formType) {
+            $this->formTypes[] = $formType;
+        }
+
+        foreach ($plugin->registerExtensions() as $extension) {
+            $this->extensions[] = $extension;
+        }
     }
 
-    public function registerPlugin(PluginInterface $plugin): void
+    public function register(PluginInterface $plugin): void
     {
-        $plugin->registerFieldTypes($this->fieldTypeRegistry);
-        $plugin->registerFormTypes($this->formTypeRegistry);
-        $plugin->registerExtensions($this->extensionRegistry);
-        $this->plugins[] = $plugin;
-    }
-
-    public function fieldTypes(): InMemoryFieldTypeRegistry
-    {
-        return $this->fieldTypeRegistry;
-    }
-
-    public function formTypes(): InMemoryFormTypeRegistry
-    {
-        return $this->formTypeRegistry;
-    }
-
-    public function extensions(): ExtensionRegistry
-    {
-        return $this->extensionRegistry;
+        $this->add($plugin);
     }
 
     /**
-     * @return array<int, PluginInterface>
+     * @return array<int, class-string>
      */
-    public function all(): array
+    public function fieldTypes(): array
     {
-        return $this->plugins;
+        return $this->fieldTypes;
+    }
+
+    /**
+     * @return array<int, class-string>
+     */
+    public function formTypes(): array
+    {
+        return $this->formTypes;
+    }
+
+    /**
+     * @return array<int, object>
+     */
+    public function extensions(): array
+    {
+        return $this->extensions;
     }
 }

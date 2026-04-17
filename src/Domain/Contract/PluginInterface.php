@@ -4,12 +4,23 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Domain\Contract;
 
-use Iriven\PhpFormGenerator\Infrastructure\Registry\PluginRegistry;
-
 /**
  * @api
  */
 interface PluginInterface
 {
-    public function register(PluginRegistry $registry): void;
+    /**
+     * @return array<int, class-string>
+     */
+    public function registerFieldTypes(): array;
+
+    /**
+     * @return array<int, class-string>
+     */
+    public function registerFormTypes(): array;
+
+    /**
+     * @return array<int, object>
+     */
+    public function registerExtensions(): array;
 }

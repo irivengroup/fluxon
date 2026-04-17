@@ -15,7 +15,10 @@ final class FormRenderManager
         private readonly ?FormRuntimePipeline $pipeline = null,
     ) {
     }
-
+    
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function render(Form $form, ?string $themeAlias = null, array $metadata = []): string
     {
         $renderer = $this->rendererFactory->create($themeAlias);

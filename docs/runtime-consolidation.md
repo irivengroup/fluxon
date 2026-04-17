@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Consolidation du runtime
+> Breadcrumb: [Docs](index.md) / runtime-consolidation.md
 
 # Consolidation du runtime
 

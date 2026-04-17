@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Conformité statique du runtime
+> Breadcrumb: [Docs](index.md) / runtime-static-conformance.md
 
 # Conformité statique du runtime
 

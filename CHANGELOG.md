@@ -1,3 +1,23 @@
+## V4.8.0
+
+### Added
+- `src/Application/Frontend/UiComponentResolver.php`
+- `src/Application/Frontend/ValidationExporter.php`
+- `src/Application/Frontend/HeadlessSchemaBuilder.php`
+- `tests/UiComponentResolverTest.php`
+- `tests/ValidationExporterTest.php`
+- `tests/HeadlessSchemaBuilderTest.php`
+- `docs/headless-mode.md`
+- `docs/schema-frontend.md`
+- `docs/validation-export.md`
+- `docs/ui-component-mapping.md`
+- `releases.d/RELEASE_NOTES_V4.8.0.md`
+- `validations.d/VALIDATION_MANIFEST_V4.8.0.md`
+
+### Changed
+- `FormSchemaManager` enrichi d’un export headless complet
+- Runtime utilisable pour des intégrations frontend/headless
+
 ## V4.7.1
 
 ### Added

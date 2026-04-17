@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Application;
 
+use Iriven\PhpFormGenerator\Application\Frontend\HeadlessSchemaBuilder;
 use Iriven\PhpFormGenerator\Domain\Contract\SchemaExporterInterface;
 use Iriven\PhpFormGenerator\Domain\Form\Form;
 
@@ -12,6 +13,7 @@ final class FormSchemaManager
     public function __construct(
         private readonly SchemaExporterInterface $exporter,
         private readonly ?FormHookKernel $hookKernel = null,
+        private readonly ?HeadlessSchemaBuilder $headlessSchemaBuilder = null,
     ) {
     }
 
@@ -51,5 +53,17 @@ final class FormSchemaManager
         $this->hookKernel?->dispatch('after_export', $form, $afterPayload);
 
         return $schema;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function exportHeadless(Form $form, ?FormRuntimeContext $runtimeContext = null): array
+    {
+        $schema = $this->export($form, $runtimeContext);
+
+        $builder = $this->headlessSchemaBuilder ?? new HeadlessSchemaBuilder();
+
+        return $builder->build($form, $schema);
     }
 }

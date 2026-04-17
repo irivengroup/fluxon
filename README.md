@@ -1205,3 +1205,8 @@ Cette version étend le runtime unifié avec un payload typé, des hooks prioris
 ## V4.7.1 maintenance runtime avancé et non-régression
 
 Cette version stabilise le runtime avancé avec des tests ciblés sur le payload, les hooks priorisés et le schéma enrichi.
+
+
+## V4.8.0 intégration frontend / headless forms
+
+Cette version rend le moteur frontend-ready avec export headless, mapping UI et validation exportable.

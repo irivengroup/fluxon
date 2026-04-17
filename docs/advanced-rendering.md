@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Advanced Rendering
+> Breadcrumb: [Docs](index.md) / advanced-rendering.md
 
 # Advanced Rendering
 

@@ -63,7 +63,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V4.7.1 maintenance runtime avancé et non-régression",
-    "release_channel": "advanced-runtime-maintenance"
+    "release_name": "V4.8.0 intégration frontend / headless forms",
+    "release_channel": "headless-frontend"
   }
 }

@@ -113,4 +113,12 @@
 
 > V4.7.1 stabilise le runtime avancé avec de nouveaux tests ciblés et une documentation de maintenance.
 
+
+- [Headless Mode](headless-mode.md)
+- [Schema Frontend](schema-frontend.md)
+- [Validation Export](validation-export.md)
+- [UI Component Mapping](ui-component-mapping.md)
+
+> V4.8.0 rend le moteur frontend-ready avec schéma headless, mapping UI et validation exportable.
+
 [↑ Parent : racine docs](index.md)

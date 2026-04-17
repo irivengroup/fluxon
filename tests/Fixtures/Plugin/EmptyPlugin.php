@@ -22,4 +22,9 @@ final class EmptyPlugin implements PluginInterface
     public function registerExtensions(ExtensionRegistry $registry): void
     {
     }
+
+    public function register(\Iriven\PhpFormGenerator\Infrastructure\Registry\PluginRegistry $registry): void
+    {
+        $registry->register($this);
+    }
 }

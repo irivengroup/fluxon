@@ -1224,3 +1224,8 @@ Cette version stabilise la ligne headless/frontend-ready avec des tests ciblés 
 ## V4.9.0 SDK frontend officiel
 
 Cette version introduit le SDK frontend officiel avec schéma frontend-ready, payloads de soumission et presets de framework.
+
+
+## V5.0.0 API publique figée et industrialisation finale
+
+Cette version fige l’API publique, contractualise le schéma et les plugins, et finalise l’industrialisation du projet.

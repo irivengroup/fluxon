@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / headless-mode.md
+> Breadcrumb: [Docs](index.md) / Headless Mode
 
 # Headless Mode
 

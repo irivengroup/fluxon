@@ -7,6 +7,9 @@ namespace Iriven\PhpFormGenerator\Application;
 use Iriven\PhpFormGenerator\Application\Runtime\RuntimePayload;
 use Iriven\PhpFormGenerator\Domain\Form\Form;
 
+/**
+ * @api
+ */
 final class FormRuntimeContext
 {
     private RuntimePayload $payload;

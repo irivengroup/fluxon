@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / ui-component-mapping.md
+> Breadcrumb: [Docs](index.md) / UI Component Mapping
 
 # UI Component Mapping
 

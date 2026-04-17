@@ -1,3 +1,26 @@
+## V5.0.0
+
+### Added
+- `src/Domain/Contract/PluginInterface.php`
+- `src/Domain/Contract/FieldExtensionInterface.php`
+- `tests/PublicApiStabilityTest.php`
+- `tests/SchemaVersionCompatibilityTest.php`
+- `tests/PluginContractTest.php`
+- `tests/HookLifecycleCompletenessTest.php`
+- `docs/schema-versioning.md`
+- `docs/plugin-contract.md`
+- `docs/hooks-lifecycle.md`
+- `releases.d/RELEASE_NOTES_V5.0.0.md`
+- `validations.d/VALIDATION_MANIFEST_V5.0.0.md`
+
+### Changed
+- Passage du schéma public à la version `2.0`
+- Enrichissement du SDK frontend avec accesseurs publics
+- Contrats publics marqués `@api`
+
+### BC
+- no breaking changes from 4.9.x on generated surface
+
 ## V4.9.1
 
 ### Changed

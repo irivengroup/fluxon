@@ -8,6 +8,9 @@ use Iriven\PhpFormGenerator\Application\FormRuntimeContext;
 use Iriven\PhpFormGenerator\Application\FormSchemaManager;
 use Iriven\PhpFormGenerator\Domain\Form\Form;
 
+/**
+ * @api
+ */
 final class FrontendSdk
 {
     public function __construct(
@@ -22,9 +25,8 @@ final class FrontendSdk
     public function buildSchema(Form $form, ?FormRuntimeContext $runtimeContext = null): array
     {
         $schema = $this->schemaManager->exportHeadless($form, $runtimeContext);
-
-        // normalization (V4.9.1)
         $schema += ['form' => [], 'fields' => [], 'ui' => [], 'runtime' => [], 'validation' => []];
+
         $schema['sdk'] = [
             'framework' => $this->config->framework(),
             'schema_version' => $this->config->schemaVersion(),
@@ -50,5 +52,22 @@ final class FrontendSdk
         ];
     }
 
+    public function getSchemaVersion(): string
+    {
+        return $this->config->schemaVersion();
+    }
 
+    public function getFramework(): string
+    {
+        return $this->config->framework();
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    public function validatePayload(array $data): array
+    {
+        return $data;
+    }
 }

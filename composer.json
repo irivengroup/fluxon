@@ -63,7 +63,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V4.9.0 SDK frontend officiel",
-    "release_channel": "frontend-sdk"
+    "release_name": "V5.0.0 API publique figée et industrialisation finale",
+    "release_channel": "major-stable"
   }
 }

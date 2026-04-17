@@ -6,6 +6,9 @@ namespace Iriven\PhpFormGenerator\Application;
 
 use Iriven\PhpFormGenerator\Domain\Form\Form;
 
+/**
+ * @api
+ */
 final class FormRuntimePipeline
 {
     public function __construct(private readonly ?FormHookKernel $hookKernel = null)

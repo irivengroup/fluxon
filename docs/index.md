@@ -134,8 +134,15 @@
 
 > V4.9.0 introduit le SDK frontend officiel au-dessus du mode headless stabilisé.
 
-[↑ Parent : racine docs](index.md)
 
 - [Frontend SDK Maintenance](frontend-sdk-maintenance.md)
 
 > V4.9.1 stabilise le SDK frontend avec des garanties de structure et de robustesse.
+
+- [Schema Versioning](schema-versioning.md)
+- [Plugin Contract](plugin-contract.md)
+- [Hooks Lifecycle](hooks-lifecycle.md)
+
+> V5.0.0 fige l’API publique, le schéma et les contrats d’extension comme base industrielle.
+
+[↑ Parent : racine docs](index.md)

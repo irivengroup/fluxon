@@ -22,6 +22,9 @@ final class FrontendSdk
     public function buildSchema(Form $form, ?FormRuntimeContext $runtimeContext = null): array
     {
         $schema = $this->schemaManager->exportHeadless($form, $runtimeContext);
+
+        // normalization (V4.9.1)
+        $schema += ['form' => [], 'fields' => [], 'ui' => [], 'runtime' => [], 'validation' => []];
         $schema['sdk'] = [
             'framework' => $this->config->framework(),
             'schema_version' => $this->config->schemaVersion(),
@@ -37,6 +40,9 @@ final class FrontendSdk
      */
     public function buildSubmissionPayload(Form $form, array $data): array
     {
+        // normalize payload (V4.9.1)
+        $data = is_array($data) ? $data : [];
+
         return [
             'form' => $form->getName(),
             'payload' => $data,

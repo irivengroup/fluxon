@@ -1,3 +1,7 @@
+
+
+## V4.9.1 maintenance SDK frontend
+Stabilisation du SDK frontend avec garanties de structure et non-régression.
 # PhpFormGenerator
 
 PhpFormGenerator est un framework de formulaires PHP **autonome**. Il ne dépend d'aucun framework applicatif externe et fournit un noyau complet pour construire, afficher, soumettre, valider et mapper des formulaires simples ou complexes.

@@ -135,3 +135,7 @@
 > V4.9.0 introduit le SDK frontend officiel au-dessus du mode headless stabilisé.
 
 [↑ Parent : racine docs](index.md)
+
+- [Frontend SDK Maintenance](frontend-sdk-maintenance.md)
+
+> V4.9.1 stabilise le SDK frontend avec des garanties de structure et de robustesse.

@@ -1,3 +1,10 @@
+## V4.9.1
+
+### Changed
+- Normalisation du schéma SDK
+- Robustesse payload
+- Tests de non-régression
+
 ## V4.9.0
 
 ### Added

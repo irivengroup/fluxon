@@ -58,6 +58,18 @@
     "sort-packages": true,
     "allow-plugins": {
       "infection/extension-installer": true
+    },
+    "audit": {
+      "ignore": {
+        "PKSA-5jz8-6tcw-pbk4": {
+          "apply": "block",
+          "reason": "PHP 8.2 CI support is still required; PHPUnit 12+ would raise the PHP floor."
+        },
+        "PKSA-z3gr-8qht-p93v": {
+          "apply": "block",
+          "reason": "Temporary exception for dev-only test dependency while maintaining PHP 8.2 compatibility."
+        }
+      }
     }
   },
   "minimum-stability": "stable",
@@ -66,4 +78,16 @@
     "release_name": "V5.0.1 stabilisation post-release et non-régression complète",
     "release_channel": "major-stable-maintenance"
   }
+}
+
+
+
+
+{
+
+  "config": {
+
+  }
+
+
 }

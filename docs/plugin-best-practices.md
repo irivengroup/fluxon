@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Plugin Best Practices
+> Breadcrumb: [Docs](index.md) / plugin-best-practices.md
 
 # Plugin Best Practices
 

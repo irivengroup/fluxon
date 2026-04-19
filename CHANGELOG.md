@@ -1,3 +1,26 @@
+## V5.2.0
+
+### Added
+- `src/Application/Cli/CliApplication.php`
+- `src/Application/Cli/CliCommandInterface.php`
+- `src/Application/Cli/MakeFormCommand.php`
+- `src/Application/Cli/MakePluginCommand.php`
+- `src/Application/Cli/DebugSchemaCommand.php`
+- `src/Application/Cli/DebugRuntimeCommand.php`
+- `tests/CliApplicationTest.php`
+- `tests/MakePluginCommandTest.php`
+- `tests/DebugToolsCommandTest.php`
+- `docs/cli.md`
+- `docs/make-form.md`
+- `docs/make-plugin.md`
+- `docs/debug-tools.md`
+- `releases.d/RELEASE_NOTES_V5.2.0.md`
+- `validations.d/VALIDATION_MANIFEST_V5.2.0.md`
+
+### Changed
+- Ajout d’un binaire CLI minimal
+- Outillage officiel pour scaffolding et debug
+
 ### Fixed
 - Restored legacy-compatible `ExtensionRegistry` methods (`fieldExtensionsFor`, `formExtensions`, `addFieldTypeExtension`) while keeping V5.1.1 hardening.
 

@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Plugin Lifecycle Architecture
+> Breadcrumb: [Docs](index.md) / plugin-lifecycle-architecture.md
 
 # Plugin Lifecycle Architecture
 

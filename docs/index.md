@@ -157,4 +157,12 @@
 
 > V5.1.1 sécurise l’écosystème plugins et documente une architecture lifecycle de niveau framework.
 
+
+- [CLI](cli.md)
+- [make:form](make-form.md)
+- [make:plugin](make-plugin.md)
+- [Debug Tools](debug-tools.md)
+
+> V5.2.0 introduit la CLI officielle et l’outillage développeur du projet.
+
 [↑ Parent : racine docs](index.md)

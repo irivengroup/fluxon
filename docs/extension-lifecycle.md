@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Extension Lifecycle
+> Breadcrumb: [Docs](index.md) / extension-lifecycle.md
 
 # Extension Lifecycle
 

@@ -75,7 +75,10 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V5.1.1 maintenance écosystème et sécurisation complète",
-    "release_channel": "ecosystem-maintenance"
-  }
+    "release_name": "V5.2.0 CLI développeur et outillage officiel",
+    "release_channel": "developer-tooling"
+  },
+  "bin": [
+    "bin/php-form-generator"
+  ]
 }

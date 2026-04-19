@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Plugin Contract
+> Breadcrumb: [Docs](index.md) / plugin-contract.md
 
 # Plugin Contract
 

@@ -14,7 +14,7 @@ Durcir l’écosystème plugins et stabiliser le runtime d’extensions.
 - hardening CI avec `composer audit || true`
 - documentation des bonnes pratiques et du lifecycle plugin
 
-[↑ Retour aux release notes](../RELEASE_NOTES.md)
 ## Correctif compatibilité
 - restauration des méthodes legacy de `ExtensionRegistry` encore utilisées par le runtime existant
 
+[↑ Retour aux release notes](../RELEASE_NOTES.md)

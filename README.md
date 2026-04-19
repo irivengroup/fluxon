@@ -1239,3 +1239,8 @@ Cette version consolide la release majeure avec des tests complémentaires sur l
 ## V5.1.1 maintenance écosystème et sécurisation complète
 
 Cette version durcit l’écosystème plugins, isole les extensions fautives et documente un lifecycle plugin de niveau framework.
+
+
+## V5.2.0 CLI développeur et outillage officiel
+
+Cette version introduit une CLI officielle avec scaffolding et debug développeur.

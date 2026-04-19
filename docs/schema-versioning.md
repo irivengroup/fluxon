@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Schema Versioning
+> Breadcrumb: [Docs](index.md) / schema-versioning.md
 
 # Schema Versioning
 

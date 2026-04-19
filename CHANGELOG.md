@@ -1,3 +1,21 @@
+## V5.1.1
+
+### Added
+- `src/Application/Plugin/PluginValidator.php`
+- `tests/PluginValidatorTest.php`
+- `tests/ExtensionRegistryHardeningTest.php`
+- `tests/PluginKernelHardeningTest.php`
+- `docs/plugin-best-practices.md`
+- `docs/extension-lifecycle.md`
+- `docs/plugin-lifecycle-architecture.md`
+- `releases.d/RELEASE_NOTES_V5.1.1.md`
+- `validations.d/VALIDATION_MANIFEST_V5.1.1.md`
+
+### Changed
+- Hardening de `ExtensionRegistry`
+- Validation explicite des plugins à l’enregistrement
+- Visibilité CI renforcée avec `composer audit`
+
 ## V5.0.1
 
 ### Added

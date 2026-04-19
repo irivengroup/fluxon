@@ -1234,3 +1234,8 @@ Cette version fige l’API publique, contractualise le schéma et les plugins, e
 ## V5.0.1 stabilisation post-release et non-régression complète
 
 Cette version consolide la release majeure avec des tests complémentaires sur la chaîne plugin/runtime/SDK.
+
+
+## V5.1.1 maintenance écosystème et sécurisation complète
+
+Cette version durcit l’écosystème plugins, isole les extensions fautives et documente un lifecycle plugin de niveau framework.

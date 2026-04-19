@@ -75,7 +75,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V5.0.1 stabilisation post-release et non-régression complète",
-    "release_channel": "major-stable-maintenance"
+    "release_name": "V5.1.1 maintenance écosystème et sécurisation complète",
+    "release_channel": "ecosystem-maintenance"
   }
 }

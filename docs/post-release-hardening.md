@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Post-release Hardening
+> Breadcrumb: [Docs](index.md) / post-release-hardening.md
 
 # Post-release Hardening
 

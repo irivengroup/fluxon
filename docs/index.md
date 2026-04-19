@@ -150,4 +150,11 @@
 
 > V5.0.1 consolide la release majeure par une passe de hardening plugin/runtime/SDK.
 
+
+- [Plugin Best Practices](plugin-best-practices.md)
+- [Extension Lifecycle](extension-lifecycle.md)
+- [Plugin Lifecycle Architecture](plugin-lifecycle-architecture.md)
+
+> V5.1.1 sécurise l’écosystème plugins et documente une architecture lifecycle de niveau framework.
+
 [↑ Parent : racine docs](index.md)

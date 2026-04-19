@@ -4,44 +4,59 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Infrastructure\Extension;
 
-use Iriven\PhpFormGenerator\Domain\Contract\FieldTypeExtensionInterface;
-use Iriven\PhpFormGenerator\Domain\Contract\FormExtensionInterface;
+use Iriven\PhpFormGenerator\Domain\Contract\ExtensionInterface;
+use Throwable;
 
+/**
+ * @api
+ */
 final class ExtensionRegistry
 {
-    /** @var array<int, FieldTypeExtensionInterface> */
-    private array $fieldExtensions = [];
+    /** @var list<ExtensionInterface> */
+    private array $extensions = [];
 
-    /** @var array<int, FormExtensionInterface> */
-    private array $formExtensions = [];
-
-    public function addFieldTypeExtension(FieldTypeExtensionInterface $extension): void
+    public function addFieldExtension(ExtensionInterface $extension): void
     {
-        $this->fieldExtensions[] = $extension;
+        $this->extensions[] = $extension;
     }
 
-    public function addFormExtension(FormExtensionInterface $extension): void
+    /** @return list<ExtensionInterface> */
+    public function all(): array
     {
-        $this->formExtensions[] = $extension;
+        return $this->extensions;
     }
 
-    /**
-     * @param string $typeClass
-     * @return array<int, FieldTypeExtensionInterface>
-     */
-    public function fieldExtensionsFor(string $typeClass): array
+    /** @return list<ExtensionInterface> */
+    public function for(string $type): array
     {
         return array_values(array_filter(
-            $this->fieldExtensions,
-            static fn (FieldTypeExtensionInterface $extension): bool => $extension::getExtendedType() === $typeClass
+            $this->extensions,
+            static function (ExtensionInterface $extension) use ($type): bool {
+                try {
+                    return $extension->supports($type);
+                } catch (Throwable) {
+                    return false;
+                }
+            }
         ));
     }
 
     /**
-     * @return array<int, FormExtensionInterface>
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
      */
-    public function formExtensions(): array
+    public function apply(string $type, array $options): array
     {
-        return $this->formExtensions;
+        foreach ($this->for($type) as $extension) {
+            try {
+                $next = $extension->apply($options);
+                if (is_array($next)) {
+                    $options = $next;
+                }
+            } catch (Throwable) {
+            }
+        }
+
+        return $options;
     }
 }

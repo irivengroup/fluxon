@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Application;
 
+use Iriven\PhpFormGenerator\Application\Plugin\PluginValidator;
 use Iriven\PhpFormGenerator\Domain\Contract\PluginInterface;
 use Iriven\PhpFormGenerator\Infrastructure\Extension\ExtensionRegistry;
 use Iriven\PhpFormGenerator\Infrastructure\Registry\BuiltinRegistries;
@@ -16,8 +17,10 @@ final class FormPluginKernel
 {
     private PluginRegistry $plugins;
 
-    public function __construct(?ExtensionRegistry $extensionRegistry = null)
-    {
+    public function __construct(
+        ?ExtensionRegistry $extensionRegistry = null,
+        private readonly ?PluginValidator $pluginValidator = null,
+    ) {
         $this->plugins = new PluginRegistry(
             BuiltinRegistries::fieldTypes(),
             BuiltinRegistries::formTypes(),
@@ -29,6 +32,7 @@ final class FormPluginKernel
 
     public function register(PluginInterface $plugin): self
     {
+        ($this->pluginValidator ?? new PluginValidator())->validate($plugin);
         $this->plugins->registerPlugin($plugin);
         $this->bootRuntime();
 

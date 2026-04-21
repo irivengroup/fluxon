@@ -75,8 +75,8 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V5.7.0 génération assistée et mapping objet/formulaire",
-    "release_channel": "mapping-generation"
+    "release_name": "V5.8.0 génération automatique DTO / schémas exemples",
+    "release_channel": "dto-generation"
   },
   "bin": [
     "bin/php-form-generator"

@@ -1,3 +1,21 @@
+## V5.8.0
+
+### Added
+- `src/Application/Generation/DtoFormGuesser.php`
+- `src/Application/Generation/ExampleSchemaFormGenerator.php`
+- `src/Application/Cli/MakeDtoFormCommand.php`
+- `src/Application/Cli/DebugDtoGuessCommand.php`
+- `tests/DtoFormGuesserTest.php`
+- `tests/ExampleSchemaFormGeneratorTest.php`
+- `tests/DtoCliCommandTest.php`
+- `docs/dto-form-generation.md`
+- `docs/schema-example-generation.md`
+- `releases.d/RELEASE_NOTES_V5.8.0.md`
+- `validations.d/VALIDATION_MANIFEST_V5.8.0.md`
+
+### Changed
+- génération automatique de schémas depuis DTO et exemples
+
 ## V5.7.0
 
 ### Added

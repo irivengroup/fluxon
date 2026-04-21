@@ -223,3 +223,8 @@
 > V5.7.0 introduit la génération assistée et le mapping objet/formulaire.
 
 [↑ Parent : racine docs](index.md)
+
+- [DTO Form Generation](dto-form-generation.md)
+- [Schema Example Generation](schema-example-generation.md)
+
+> V5.8.0 introduit la génération automatique de formulaires depuis DTO et schémas exemples.

@@ -1289,3 +1289,8 @@ Cette version stabilise le mode headless, les réponses JSON-first et les sortie
 ## V5.7.0 génération assistée et mapping objet/formulaire
 
 Cette version améliore la productivité d’intégration avec génération assistée et mapping simple.
+
+
+## V5.8.0 génération automatique DTO / schémas exemples
+
+Cette version ajoute l'inférence de types et la génération automatique de schémas de formulaires.

@@ -1,27 +1,12 @@
-[↑ Retour au sommaire docs](index.md)
+# Architecture
 
-> Breadcrumb: [Docs](index.md) / ARCHITECTURE.md
+## Objectif
+Présenter l'architecture finale du projet.
 
-# Architecture V3.4
-
-## Application
-- `FormFactory`
-- `FormGenerator`
-
-## Domain
-- arbre de formulaire récursif
-- types de champs
-- contraintes
-- validation
-- transformers
-
-## Infrastructure
-- requêtes
-- CSRF
-- data mapping objet / tableau
-
-## Presentation
-- `FormView`
-- rendu HTML thémable
-
-[↑ Retour au sommaire docs](index.md)
+## Blocs
+- runtime / builder / factory
+- frontend SDK
+- headless pipeline
+- génération DTO
+- plugins / extensions
+- rendering / themes

@@ -1,3 +1,7 @@
+### Fixed
+- Refactored `DtoFormGuesser::guess()` to reduce method length and cyclomatic complexity without changing its observable contract.
+- Extracted normalization helpers in `ExampleSchemaFormGenerator` to reduce conditional density.
+
 ## V6.0.0
 
 ### Added

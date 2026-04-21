@@ -17,7 +17,31 @@ final class ExampleSchemaFormGenerator
      */
     public function generate(object|array $sample): array
     {
-        $fields = $this->guesser->guess($sample);
+        $guessed = $this->guesser->guess($sample);
+        $fields = [];
+
+        foreach ($guessed as $name => $definition) {
+            if (is_string($definition)) {
+                $fields[(string) $name] = ['type' => $definition];
+                continue;
+            }
+
+            if (is_array($definition) && isset($definition['type'])) {
+                $field = ['type' => (string) $definition['type']];
+
+                if (isset($definition['required'])) {
+                    $field['required'] = (bool) $definition['required'];
+                }
+
+                if (array_key_exists('label', $definition) && $definition['label'] !== null) {
+                    $field['label'] = (string) $definition['label'];
+                }
+
+                $fields[(string) $name] = $field;
+            }
+        }
+
+        ksort($fields);
 
         return ['fields' => $fields];
     }

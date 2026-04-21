@@ -13,7 +13,7 @@ final class DtoFormGuesser
 
     /**
      * @param object|array<string, mixed> $source
-     * @return array<string, array{type: string, required?: bool, label?: string}>
+     * @return array<string, mixed>
      */
     public function guess(object|array $source): array
     {
@@ -23,10 +23,20 @@ final class DtoFormGuesser
             return [];
         }
 
-        $attributes = is_object($source)
-            ? (($this->attributeReader ?? new DtoAttributeReader())->read($source))
-            : [];
+        if (is_array($source)) {
+            $fields = [];
 
+            foreach ($data as $name => $value) {
+                $fields[(string) $name] = $this->guessType($value);
+            }
+
+            ksort($fields);
+
+            return $fields;
+        }
+
+        $attributes = ($this->attributeReader ?? new DtoAttributeReader())->read($source);
+        $hasRichMetadata = $attributes !== [];
         $fields = [];
 
         foreach ($data as $name => $value) {
@@ -37,21 +47,26 @@ final class DtoFormGuesser
                 continue;
             }
 
-            if (is_array($attribute) && isset($attribute['type'])) {
-                $fields[$key] = ['type' => (string) $attribute['type']];
+            if ($hasRichMetadata) {
+                if (is_array($attribute) && isset($attribute['type'])) {
+                    $fields[$key] = ['type' => (string) $attribute['type']];
 
-                if (isset($attribute['required'])) {
-                    $fields[$key]['required'] = (bool) $attribute['required'];
+                    if (isset($attribute['required'])) {
+                        $fields[$key]['required'] = (bool) $attribute['required'];
+                    }
+
+                    if (array_key_exists('label', $attribute) && $attribute['label'] !== null) {
+                        $fields[$key]['label'] = (string) $attribute['label'];
+                    }
+
+                    continue;
                 }
 
-                if (array_key_exists('label', $attribute) && $attribute['label'] !== null) {
-                    $fields[$key]['label'] = (string) $attribute['label'];
-                }
-
+                $fields[$key] = ['type' => $this->guessType($value)];
                 continue;
             }
 
-            $fields[$key] = ['type' => $this->guessType($value)];
+            $fields[$key] = $this->guessType($value);
         }
 
         ksort($fields);

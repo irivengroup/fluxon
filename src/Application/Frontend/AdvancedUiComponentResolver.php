@@ -14,10 +14,8 @@ final class AdvancedUiComponentResolver
 
     public function resolve(string $fieldType): string
     {
-        try {
-            return $this->baseResolver->resolve($fieldType);
-        } catch (\Throwable) {
-            return $this->componentMap->resolve($fieldType) ?? 'input:text';
-        }
+        $default = $this->baseResolver->resolve($fieldType);
+
+        return $this->componentMap->resolve($fieldType, $default);
     }
 }

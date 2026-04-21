@@ -9,6 +9,16 @@ final class CliApplication
     /** @var array<string, CliCommandInterface> */
     private array $commands = [];
 
+    /**
+     * @param array<int, CliCommandInterface> $commands
+     */
+    public function __construct(array $commands = [])
+    {
+        foreach ($commands as $command) {
+            $this->register($command);
+        }
+    }
+
     public function register(CliCommandInterface $command): self
     {
         $this->commands[$command->name()] = $command;
@@ -16,6 +26,9 @@ final class CliApplication
         return $this;
     }
 
+    /**
+     * @param array<int, string> $args
+     */
     public function run(string $name, array $args = []): string
     {
         if (!isset($this->commands[$name])) {

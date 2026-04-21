@@ -30,16 +30,29 @@ final class SchemaMigrator
      * @param array<string, mixed> $schema
      * @return array<string, mixed>
      */
-    public function migrate(array $schema, string $fromVersion, string $toVersion): array
+    public function migrate(array $schema, string $targetVersion, ?string $fromVersion = null): array
     {
-        $current = $schema;
+        $currentVersion = $fromVersion ?? (string) (($schema['schema']['version'] ?? ''));
 
-        foreach ($this->migrations as $migration) {
-            if ($migration->supports($fromVersion, $toVersion)) {
-                $current = $migration->migrate($current);
-            }
+        if ($currentVersion === $targetVersion) {
+            return $schema;
         }
 
-        return $current;
+        foreach ($this->migrations as $migration) {
+            if ($migration->fromVersion() !== $currentVersion) {
+                continue;
+            }
+
+            if ($migration->toVersion() !== $targetVersion) {
+                continue;
+            }
+
+            $migrated = $migration->migrate($schema);
+            $migrated['schema']['version'] = $targetVersion;
+
+            return $migrated;
+        }
+
+        return $schema;
     }
 }

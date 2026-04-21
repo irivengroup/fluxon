@@ -1,3 +1,36 @@
+## V6.2.0
+
+### Added
+- `src/Application/Events/FormEvents.php`
+- `src/Application/Events/EventDispatcherInterface.php`
+- `src/Application/Events/InMemoryEventDispatcher.php`
+- `src/Application/Events/FormBuildEvent.php`
+- `src/Application/Events/FormRenderEvent.php`
+- `src/Application/Events/FormSubmitEvent.php`
+- `src/Application/Observability/RuntimeMetrics.php`
+- `src/Application/Observability/InMemoryMetricsCollector.php`
+- `src/Application/Observability/StructuredLogger.php`
+- `src/Application/Debug/RuntimeInspector.php`
+- `src/Application/Cli/DebugFormCommand.php`
+- `src/Application/Cli/DebugPipelineCommand.php`
+- `src/Application/Cli/DebugEventsCommand.php`
+- `src/Application/Cli/DebugCacheCommand.php`
+- `tests/RuntimeInspectorTest.php`
+- `tests/EventDispatcherTest.php`
+- `tests/DebugRuntimeCliCommandTest.php`
+- `tests/ObservabilitySmokeTest.php`
+- `docs/events.md`
+- `docs/observability.md`
+- `docs/debugging.md`
+- `docs/runtime-inspector.md`
+- `releases.d/RELEASE_NOTES_V6.2.0.md`
+- `validations.d/VALIDATION_MANIFEST_V6.2.0.md`
+
+### Changed
+- ajout d'une couche d'observabilité runtime
+- ajout d'un lifecycle events system
+- ajout d'outils d'introspection avancée
+
 ## V6.1.0
 
 ### Added

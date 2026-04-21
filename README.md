@@ -1319,3 +1319,8 @@ Cette version fige le contrat public, harmonise les exports et renforce la cohé
 ## V6.1.0 DX, performance et intégrations officielles Symfony / Laravel
 
 Cette version ajoute des outils DX, un cache de schéma et des bridges officiels d'intégration.
+
+
+## V6.2.0 observabilité, fiabilité runtime et introspection avancée
+
+Cette version ajoute un event system, un runtime inspector et une couche d'observabilité structurée.

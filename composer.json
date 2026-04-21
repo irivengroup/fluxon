@@ -75,8 +75,8 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V6.1.0 DX, performance et intégrations officielles Symfony / Laravel",
-    "release_channel": "dx-performance-integrations"
+    "release_name": "V6.2.0 observabilité, fiabilité runtime et introspection avancée",
+    "release_channel": "observability-runtime"
   },
   "bin": [
     "bin/php-form-generator"

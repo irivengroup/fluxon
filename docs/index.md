@@ -257,3 +257,10 @@
 - [Laravel Integration](laravel-integration.md)
 
 > V6.1.0 introduit DX, cache de schéma et intégrations officielles Symfony / Laravel.
+
+- [Events](events.md)
+- [Observability](observability.md)
+- [Debugging](debugging.md)
+- [Runtime Inspector](runtime-inspector.md)
+
+> V6.2.0 introduit observabilité, events runtime et introspection avancée.

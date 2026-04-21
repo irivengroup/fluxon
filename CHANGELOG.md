@@ -1,3 +1,28 @@
+## V5.7.0
+
+### Added
+- `src/Application/Mapping/ObjectFormMapper.php`
+- `src/Application/Mapping/PropertyPathNormalizer.php`
+- `src/Application/Mapping/FormHydrator.php`
+- `src/Application/Mapping/FormExtractionManager.php`
+- `src/Application/Mapping/MappingBlueprintGenerator.php`
+- `src/Application/Cli/MakeMappingCommand.php`
+- `src/Application/Cli/DebugMappingCommand.php`
+- `tests/ObjectFormMapperTest.php`
+- `tests/FormHydratorTest.php`
+- `tests/MappingBlueprintGeneratorTest.php`
+- `tests/MappingCliCommandTest.php`
+- `tests/MappingHeadlessIntegrationTest.php`
+- `docs/object-mapping.md`
+- `docs/form-hydration.md`
+- `docs/mapping-conventions.md`
+- `releases.d/RELEASE_NOTES_V5.7.0.md`
+- `validations.d/VALIDATION_MANIFEST_V5.7.0.md`
+
+### Changed
+- ajout d’un socle de mapping objet/formulaire
+- génération assistée de blueprint de mapping
+
 ## V5.6.1
 
 ### Added

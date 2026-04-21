@@ -215,4 +215,11 @@
 
 > V5.6.1 consolide le mode headless et la non-régression JSON-first.
 
+
+- [Object Mapping](object-mapping.md)
+- [Form Hydration](form-hydration.md)
+- [Mapping Conventions](mapping-conventions.md)
+
+> V5.7.0 introduit la génération assistée et le mapping objet/formulaire.
+
 [↑ Parent : racine docs](index.md)

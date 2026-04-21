@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / JSON Contract
+> Breadcrumb: [Docs](index.md) / json-contract.md
 
 # JSON Contract
 

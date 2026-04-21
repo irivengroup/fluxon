@@ -1284,3 +1284,8 @@ Cette version transforme le projet en socle headless pleinement exploitable avec
 ## V5.6.1 maintenance headless et non-régression JSON-first
 
 Cette version stabilise le mode headless, les réponses JSON-first et les sorties CLI associées.
+
+
+## V5.7.0 génération assistée et mapping objet/formulaire
+
+Cette version améliore la productivité d’intégration avec génération assistée et mapping simple.

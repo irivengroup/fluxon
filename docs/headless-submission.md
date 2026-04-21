@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Headless Submission
+> Breadcrumb: [Docs](index.md) / headless-submission.md
 
 # Headless Submission
 

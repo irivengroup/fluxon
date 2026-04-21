@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Headless API
+> Breadcrumb: [Docs](index.md) / headless-api.md
 
 # Headless API
 

@@ -75,8 +75,8 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V5.6.1 maintenance headless et non-régression JSON-first",
-    "release_channel": "headless-maintenance"
+    "release_name": "V5.7.0 génération assistée et mapping objet/formulaire",
+    "release_channel": "mapping-generation"
   },
   "bin": [
     "bin/php-form-generator"

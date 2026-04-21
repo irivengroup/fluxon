@@ -1,6 +1,6 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / Headless Maintenance
+> Breadcrumb: [Docs](index.md) / headless-maintenance.md
 
 # Headless Maintenance
 

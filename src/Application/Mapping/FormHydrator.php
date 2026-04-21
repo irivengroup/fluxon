@@ -9,17 +9,18 @@ final class FormHydrator
     public function __construct(
         private readonly ObjectFormMapper $mapper = new ObjectFormMapper(),
         private readonly PropertyPathNormalizer $normalizer = new PropertyPathNormalizer(),
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, mixed> $payload
-     * @param object|array<string, mixed> $target
+     * @param mixed $target
      * @return array<string, mixed>
      */
-    public function hydrate(array $payload, object|array $target = []): array
+    public function hydrate(array $payload, mixed $target = []): array
     {
         if ($payload === []) {
-            return is_array($target) ? $target : $this->mapper->extract($target);
+            return $this->mapper->extract($target);
         }
 
         $normalized = [];

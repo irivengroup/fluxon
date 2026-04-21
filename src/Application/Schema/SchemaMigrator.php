@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Application\Schema;
@@ -9,11 +8,11 @@ namespace Iriven\PhpFormGenerator\Application\Schema;
  */
 final class SchemaMigrator
 {
-    /** @var list<SchemaMigrationInterface> */
+    /** @var array<int, SchemaMigrationInterface> */
     private array $migrations = [];
 
     /**
-     * @param list<SchemaMigrationInterface> $migrations
+     * @param array<int, SchemaMigrationInterface> $migrations
      */
     public function __construct(array $migrations = [])
     {
@@ -31,46 +30,16 @@ final class SchemaMigrator
      * @param array<string, mixed> $schema
      * @return array<string, mixed>
      */
-    public function migrate(array $schema, string $targetVersion): array
+    public function migrate(array $schema, string $fromVersion, string $toVersion): array
     {
-        $schema['schema'] = is_array($schema['schema'] ?? null) ? $schema['schema'] : [];
-        $current = (string) ($schema['schema']['version'] ?? '1.0');
-        $guard = 0;
+        $current = $schema;
 
-        if ($current === $targetVersion) {
-            return $schema;
-        }
-
-        while ($current !== $targetVersion && $guard < 20) {
-            $migration = $this->findMigration($current);
-
-            if (!$migration instanceof SchemaMigrationInterface) {
-                break;
-            }
-
-            $schema = $migration->migrate($schema);
-            $schema['schema'] = is_array($schema['schema'] ?? null) ? $schema['schema'] : [];
-            $schema['schema']['version'] = $migration->toVersion();
-            $current = $migration->toVersion();
-            $guard++;
-        }
-
-        return $schema;
-    }
-
-    public function canMigrate(string $fromVersion): bool
-    {
-        return $this->findMigration($fromVersion) instanceof SchemaMigrationInterface;
-    }
-
-    private function findMigration(string $fromVersion): ?SchemaMigrationInterface
-    {
         foreach ($this->migrations as $migration) {
-            if ($migration->fromVersion() === $fromVersion) {
-                return $migration;
+            if ($migration->supports($fromVersion, $toVersion)) {
+                $current = $migration->migrate($current);
             }
         }
 
-        return null;
+        return $current;
     }
 }

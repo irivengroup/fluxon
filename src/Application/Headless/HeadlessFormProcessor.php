@@ -35,7 +35,10 @@ final class HeadlessFormProcessor
     public function validate(Form $form, array $payload): array
     {
         return $this->responseBuilder->build(
-            new HeadlessFormState(true, true, $payload, [], ['mode' => 'validate'])
+            new HeadlessFormState(true, true, $payload, [], [
+                'mode' => 'validate',
+                'form' => $form->getName(),
+            ])
         );
     }
 
@@ -46,7 +49,10 @@ final class HeadlessFormProcessor
     public function submit(Form $form, array $payload): array
     {
         return $this->responseBuilder->build(
-            new HeadlessFormState(true, true, $payload, [], ['mode' => 'submit'])
+            new HeadlessFormState(true, true, $payload, [], [
+                'mode' => 'submit',
+                'form' => $form->getName(),
+            ])
         );
     }
 
@@ -58,7 +64,10 @@ final class HeadlessFormProcessor
     public function invalid(Form $form, array $payload, array $errors): array
     {
         return $this->responseBuilder->build(
-            new HeadlessFormState(true, false, $payload, $errors, ['mode' => 'submit'])
+            new HeadlessFormState(true, false, $payload, $errors, [
+                'mode' => 'submit',
+                'form' => $form->getName(),
+            ])
         );
     }
 }

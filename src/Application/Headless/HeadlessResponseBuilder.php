@@ -15,27 +15,18 @@ final class HeadlessResponseBuilder
     }
 
     /**
-     * @return array{
-     *   state: array{submitted: bool, valid: bool},
-     *   payload: array<string, mixed>,
-     *   errors: array<string, mixed>,
-     *   metadata: array<string, mixed>
-     * }
+     * @return array<string, mixed>
      */
     public function build(HeadlessFormState $state): array
     {
-        $payload = $this->payloadNormalizer->normalize($state->payload());
-        $errors = $this->errorNormalizer->normalize($state->errors());
-        $metadata = $state->metadata();
-
         return [
             'state' => [
                 'submitted' => $state->submitted(),
                 'valid' => $state->valid(),
             ],
-            'payload' => $payload,
-            'errors' => $errors,
-            'metadata' => $metadata,
+            'payload' => $this->payloadNormalizer->normalize($state->payload()),
+            'errors' => $this->errorNormalizer->normalize($state->errors()),
+            'metadata' => $state->metadata(),
         ];
     }
 }

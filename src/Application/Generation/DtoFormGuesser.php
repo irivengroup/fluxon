@@ -12,27 +12,34 @@ final class DtoFormGuesser
     }
 
     /**
-     * @param object|array<string, mixed> $source
+     * @param mixed $source
      * @return array<string, mixed>
      */
-    public function guess(object|array $source): array
+    public function guess(mixed $source): array
     {
-        $data = is_array($source) ? $source : get_object_vars($source);
-
-        if ($data === []) {
-            return [];
-        }
-
         if (is_array($source)) {
-            $fields = [];
+            if ($source === []) {
+                return [];
+            }
 
-            foreach ($data as $name => $value) {
+            $fields = [];
+            foreach ($source as $name => $value) {
                 $fields[(string) $name] = $this->guessType($value);
             }
 
             ksort($fields);
 
             return $fields;
+        }
+
+        if (!is_object($source)) {
+            return [];
+        }
+
+        $data = get_object_vars($source);
+
+        if ($data === []) {
+            return [];
         }
 
         $attributes = ($this->attributeReader ?? new DtoAttributeReader())->read($source);

@@ -7,31 +7,40 @@ namespace Iriven\PhpFormGenerator\Application\Mapping;
 final class ObjectFormMapper
 {
     /**
-     * @param object|array<string, mixed> $source
+     * @param mixed $source
      * @return array<string, mixed>
      */
-    public function extract(object|array $source): array
+    public function extract(mixed $source): array
     {
-        if (!is_object($source)) {
-            return $source;
+        if (is_object($source)) {
+            $result = [];
+            foreach (get_object_vars($source) as $key => $value) {
+                $result[(string) $key] = $value;
+            }
+
+            return $result;
         }
 
-        $result = [];
-        foreach (get_object_vars($source) as $key => $value) {
-            $result[(string) $key] = $value;
+        if (is_array($source)) {
+            $result = [];
+            foreach ($source as $key => $value) {
+                $result[(string) $key] = $value;
+            }
+
+            return $result;
         }
 
-        return $result;
+        return [];
     }
 
     /**
      * @param array<string, mixed> $payload
-     * @param object|array<string, mixed> $target
+     * @param mixed $target
      * @return array<string, mixed>
      */
-    public function hydrate(array $payload, object|array $target = []): array
+    public function hydrate(array $payload, mixed $target = []): array
     {
-        $base = is_object($target) ? $this->extract($target) : $target;
+        $base = $this->extract($target);
 
         foreach ($payload as $key => $value) {
             $base[(string) $key] = $value;

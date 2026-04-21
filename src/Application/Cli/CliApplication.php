@@ -1,26 +1,13 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Application\Cli;
 
-/**
- * @api
- */
+/** @api */
 final class CliApplication
 {
     /** @var array<string, CliCommandInterface> */
     private array $commands = [];
-
-    /**
-     * @param array<int, CliCommandInterface> $commands
-     */
-    public function __construct(array $commands = [])
-    {
-        foreach ($commands as $command) {
-            $this->register($command);
-        }
-    }
 
     public function register(CliCommandInterface $command): self
     {
@@ -29,22 +16,17 @@ final class CliApplication
         return $this;
     }
 
-    /**
-     * @param array<int, string> $args
-     */
     public function run(string $name, array $args = []): string
     {
         if (!isset($this->commands[$name])) {
             return sprintf('Unknown command: %s', $name);
         }
 
-        $output = $this->commands[$name]->run($args);
-
-        return $output !== '' ? $output : sprintf('Command %s produced no output', $name);
+        return $this->commands[$name]->run($args);
     }
 
     /**
-     * @return list<string>
+     * @return array<int, string>
      */
     public function commands(): array
     {

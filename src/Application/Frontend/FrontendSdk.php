@@ -42,8 +42,9 @@ final class FrontendSdk
         ];
 
         $theme = $runtimeContext?->theme() ?? 'default';
-        $channel = is_object($runtimeContext?->payload())
-            ? (string) $runtimeContext->payload()->metadataValue('channel', 'headless')
+        $payload = $runtimeContext?->payload();
+        $channel = $payload !== null
+            ? (string) $payload->metadataValue('channel', 'headless')
             : 'headless';
 
         if ($this->renderProfileManager instanceof RenderProfileManager) {

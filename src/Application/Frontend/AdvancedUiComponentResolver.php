@@ -1,14 +1,9 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iriven\PhpFormGenerator\Application\Frontend;
 
-use Throwable;
-
-/**
- * @api
- */
+/** @api */
 final class AdvancedUiComponentResolver
 {
     public function __construct(
@@ -19,16 +14,10 @@ final class AdvancedUiComponentResolver
 
     public function resolve(string $fieldType): string
     {
-        $default = 'input:text';
-
         try {
-            $default = $this->baseResolver->resolve($fieldType);
-        } catch (Throwable) {
-            $default = 'input:text';
+            return $this->baseResolver->resolve($fieldType);
+        } catch (\Throwable) {
+            return $this->componentMap->resolve($fieldType) ?? 'input:text';
         }
-
-        $resolved = $this->componentMap->resolve($fieldType, $default);
-
-        return $resolved !== '' ? $resolved : 'input:text';
     }
 }

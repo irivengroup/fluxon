@@ -1,16 +1,18 @@
 [↑ Retour au sommaire docs](index.md)
 
-> Breadcrumb: [Docs](index.md) / headless-maintenance.md
+> Breadcrumb: [Docs](index.md) / Headless Maintenance
 
-# Maintenance headless
+# Headless Maintenance
 
 ## Objectif
-Stabiliser la ligne V4.8.x autour du schéma headless/frontend-ready.
+Stabiliser le contrat JSON-first et les réponses headless.
 
 ## Points surveillés
-- fallback de mapping UI
-- validation exportable sans contraintes
-- schéma headless sans runtime context
-- métadonnées layout absentes
+- payload vide
+- erreurs vides
+- erreurs hétérogènes
+- state stable
+- compatibilité schéma versionné
+- sorties CLI JSON valides
 
 [↑ Retour au sommaire docs](index.md)

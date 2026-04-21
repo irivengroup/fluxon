@@ -210,4 +210,9 @@
 
 > V5.6.0 introduit un mode headless complet et un contrat API JSON-first.
 
+
+- [Headless Maintenance](headless-maintenance.md)
+
+> V5.6.1 consolide le mode headless et la non-régression JSON-first.
+
 [↑ Parent : racine docs](index.md)

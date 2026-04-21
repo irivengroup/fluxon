@@ -1,3 +1,19 @@
+## V5.6.1
+
+### Added
+- `tests/HeadlessRegressionTest.php`
+- `tests/HeadlessCliRegressionTest.php`
+- `tests/HeadlessJsonContractShapeTest.php`
+- `docs/headless-maintenance.md`
+- `releases.d/RELEASE_NOTES_V5.6.1.md`
+- `validations.d/VALIDATION_MANIFEST_V5.6.1.md`
+
+### Changed
+- Hardening de `HeadlessPayloadNormalizer`
+- Hardening de `HeadlessErrorNormalizer`
+- Hardening de `HeadlessResponseBuilder`
+- Hardening de `HeadlessFormProcessor`
+
 ## V5.6.0
 
 ### Added

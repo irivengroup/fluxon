@@ -4,6 +4,7 @@
 
 ## Versions
 
+- [V5.6.1](validations.d/VALIDATION_MANIFEST_V5.6.1.md)
 - [V5.6.0](validations.d/VALIDATION_MANIFEST_V5.6.0.md)
 - [V5.5.1](validations.d/VALIDATION_MANIFEST_V5.5.1.md)
 - [V5.5.0](validations.d/VALIDATION_MANIFEST_V5.5.0.md)

@@ -13,4 +13,8 @@ Documenter la soumission headless.
 - submit payload
 - sérialiser la réponse
 
+
+## Maintenance V5.6.1
+- validate/submit/invalid gardent une réponse stable
+
 [↑ Retour au sommaire docs](index.md)

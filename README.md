@@ -1279,3 +1279,8 @@ Cette version industrialise les thèmes et ajoute un socle de rendu multi-canal.
 ## V5.6.0 mode headless complet et API JSON-first
 
 Cette version transforme le projet en socle headless pleinement exploitable avec contrats JSON-first.
+
+
+## V5.6.1 maintenance headless et non-régression JSON-first
+
+Cette version stabilise le mode headless, les réponses JSON-first et les sorties CLI associées.

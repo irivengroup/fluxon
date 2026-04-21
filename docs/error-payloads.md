@@ -16,4 +16,8 @@ Documenter les erreurs structurées.
 }
 ```
 
+
+## Maintenance V5.6.1
+- erreurs hétérogènes sérialisées sans casser le contrat
+
 [↑ Retour au sommaire docs](index.md)

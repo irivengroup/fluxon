@@ -13,4 +13,9 @@ Documenter le mode headless complet du projet.
 - erreurs structurées
 - state sérialisé
 
+
+## Maintenance V5.6.1
+- contrat headless stabilisé
+- réponse sérialisée toujours cohérente
+
 [↑ Retour au sommaire docs](index.md)

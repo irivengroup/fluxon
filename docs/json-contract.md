@@ -13,4 +13,8 @@ Décrire le contrat JSON-first public.
 - `errors`
 - `metadata`
 
+
+## Maintenance V5.6.1
+- shape top-level confirmée : `state`, `payload`, `errors`, `metadata`
+
 [↑ Retour au sommaire docs](index.md)

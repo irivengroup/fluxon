@@ -1,19 +1,13 @@
 <?php
 declare(strict_types=1);
-
 namespace Iriven\PhpFormGenerator\Application\Headless;
-
-/**
- * @api
- */
+/** @api */
 final class HeadlessResponseBuilder
 {
     public function __construct(
         private readonly HeadlessPayloadNormalizer $payloadNormalizer = new HeadlessPayloadNormalizer(),
         private readonly HeadlessErrorNormalizer $errorNormalizer = new HeadlessErrorNormalizer(),
-    ) {
-    }
-
+    ) {}
     /**
      * @return array{
      *   state: array{submitted: bool, valid: bool},
@@ -24,14 +18,14 @@ final class HeadlessResponseBuilder
      */
     public function build(HeadlessFormState $state): array
     {
+        $payload = $this->payloadNormalizer->normalize($state->payload());
+        $errors = $this->errorNormalizer->normalize($state->errors());
+        $metadata = $state->metadata();
         return [
-            'state' => [
-                'submitted' => $state->submitted(),
-                'valid' => $state->valid(),
-            ],
-            'payload' => $this->payloadNormalizer->normalize($state->payload()),
-            'errors' => $this->errorNormalizer->normalize($state->errors()),
-            'metadata' => $state->metadata(),
+            'state' => ['submitted' => $state->submitted(), 'valid' => $state->valid()],
+            'payload' => is_array($payload) ? $payload : [],
+            'errors' => is_array($errors) ? $errors : [],
+            'metadata' => is_array($metadata) ? $metadata : [],
         ];
     }
 }

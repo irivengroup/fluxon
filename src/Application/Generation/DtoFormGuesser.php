@@ -6,9 +6,14 @@ namespace Iriven\PhpFormGenerator\Application\Generation;
 /** @api */
 final class DtoFormGuesser
 {
+    public function __construct(
+        private readonly ?DtoAttributeReader $attributeReader = null,
+    ) {
+    }
+
     /**
      * @param object|array<string, mixed> $source
-     * @return array<string, string>
+     * @return array<string, array{type: string, required?: bool, label?: string}>
      */
     public function guess(object|array $source): array
     {
@@ -18,10 +23,35 @@ final class DtoFormGuesser
             return [];
         }
 
+        $attributes = is_object($source)
+            ? (($this->attributeReader ?? new DtoAttributeReader())->read($source))
+            : [];
+
         $fields = [];
 
         foreach ($data as $name => $value) {
-            $fields[(string) $name] = $this->guessType($value);
+            $key = (string) $name;
+            $attribute = $attributes[$key] ?? null;
+
+            if (is_array($attribute) && (($attribute['ignored'] ?? false) === true)) {
+                continue;
+            }
+
+            if (is_array($attribute) && isset($attribute['type'])) {
+                $fields[$key] = ['type' => (string) $attribute['type']];
+
+                if (isset($attribute['required'])) {
+                    $fields[$key]['required'] = (bool) $attribute['required'];
+                }
+
+                if (array_key_exists('label', $attribute) && $attribute['label'] !== null) {
+                    $fields[$key]['label'] = (string) $attribute['label'];
+                }
+
+                continue;
+            }
+
+            $fields[$key] = ['type' => $this->guessType($value)];
         }
 
         ksort($fields);

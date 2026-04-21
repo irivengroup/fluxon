@@ -12,21 +12,12 @@ final class ExampleSchemaFormGenerator
     }
 
     /**
-     * @param array<string, mixed> $sample
-     * @return array{fields: array<string, array{type: string}>}
+     * @param object|array<string, mixed> $sample
+     * @return array{fields: array<string, array{type: string, required?: bool, label?: string}>}
      */
-    public function generate(array $sample): array
+    public function generate(object|array $sample): array
     {
-        if ($sample === []) {
-            return ['fields' => []];
-        }
-
-        $fields = [];
-        foreach ($this->guesser->guess($sample) as $name => $type) {
-            $fields[$name] = ['type' => $type];
-        }
-
-        ksort($fields);
+        $fields = $this->guesser->guess($sample);
 
         return ['fields' => $fields];
     }

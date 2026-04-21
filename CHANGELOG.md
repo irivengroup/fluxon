@@ -1,3 +1,25 @@
+## V5.9.0
+
+### Added
+- `src/Domain/Attribute/FormField.php`
+- `src/Domain/Attribute/FormIgnore.php`
+- `src/Domain/Attribute/FormType.php`
+- `src/Application/Generation/DtoAttributeReader.php`
+- `src/Application/Cli/DebugDtoMetadataCommand.php`
+- `tests/DtoAttributeReaderTest.php`
+- `tests/DtoFormGuesserAttributeTest.php`
+- `tests/ExampleSchemaFormGeneratorAttributeTest.php`
+- `tests/DtoMetadataCliCommandTest.php`
+- `docs/dto-attributes.md`
+- `docs/form-metadata.md`
+- `docs/generation-strategy.md`
+- `releases.d/RELEASE_NOTES_V5.9.0.md`
+- `validations.d/VALIDATION_MANIFEST_V5.9.0.md`
+
+### Changed
+- `DtoFormGuesser` enrichi avec la lecture d’attributs
+- `ExampleSchemaFormGenerator` produit une metadata enrichie
+
 ## V5.8.1
 
 ### Added

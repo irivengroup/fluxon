@@ -75,8 +75,8 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V5.8.1 maintenance génération DTO et non-régression schémas exemples",
-    "release_channel": "dto-generation-maintenance"
+    "release_name": "V5.9.0 conventions avancées via attributs & metadata",
+    "release_channel": "attributes-metadata"
   },
   "bin": [
     "bin/php-form-generator"

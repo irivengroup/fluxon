@@ -1299,3 +1299,8 @@ Cette version ajoute l'inférence de types et la génération automatique de sch
 ## V5.8.1 maintenance génération DTO et non-régression schémas exemples
 
 Cette version stabilise l’inférence DTO et la génération de schémas exemples.
+
+
+## V5.9.0 conventions avancées via attributs & metadata
+
+Cette version ajoute des attributs PHP et une génération enrichie par metadata.

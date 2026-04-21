@@ -232,3 +232,9 @@
 - [DTO Generation Maintenance](dto-generation-maintenance.md)
 
 > V5.8.1 consolide l’inférence DTO et la non-régression des schémas exemples.
+
+- [DTO Attributes](dto-attributes.md)
+- [Form Metadata](form-metadata.md)
+- [Generation Strategy](generation-strategy.md)
+
+> V5.9.0 introduit les attributs PHP et la génération enrichie par metadata.

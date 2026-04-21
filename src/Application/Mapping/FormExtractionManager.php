@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
+
 namespace Iriven\PhpFormGenerator\Application\Mapping;
+
 /** @api */
 final class FormExtractionManager
 {
@@ -8,7 +10,10 @@ final class FormExtractionManager
         private readonly ObjectFormMapper $mapper = new ObjectFormMapper(),
     ) {}
 
-    /** @return array<string, mixed> */
+    /**
+     * @param object|array<string, mixed> $source
+     * @return array<string, mixed>
+     */
     public function extract(object|array $source): array
     {
         return $this->mapper->extract($source);

@@ -3,5 +3,5 @@
 
 declare(strict_types=1);
 
-echo "PhpFormGenerator CLI placeholder\n";
+echo "Fluxa Form Generator CLI placeholder\n";
 exit(0);

@@ -1,6 +1,6 @@
 {
   "name": "iriven/fluxa",
-  "description": "Enterprise form framework for PHP with nested forms, collections, transformers, events and themes",
+  "description": "Fluxa is a PHP form engine for headless, frontend, runtime, and distributed form workflows.",
   "type": "library",
   "license": "MIT",
   "require": {
@@ -75,10 +75,20 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V6.3.0 moteur distribué et API server",
-    "release_channel": "runtime-api-server"
+    "release_name": "V6.3.1 packaging Packagist et release ready",
+    "release_channel": "packagist-release"
   },
   "bin": [
     "bin/fluxa"
+  ],
+  "keywords": [
+    "php",
+    "forms",
+    "headless",
+    "schema",
+    "runtime",
+    "api",
+    "validation",
+    "frontend"
   ]
 }

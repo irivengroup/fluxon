@@ -24,4 +24,9 @@ final class InMemoryEventDispatcher implements EventDispatcherInterface
             }
         }
     }
+
+    public function listenerCount(): int
+    {
+        return count($this->listeners);
+    }
 }

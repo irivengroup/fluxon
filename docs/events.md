@@ -10,3 +10,8 @@ Documenter le lifecycle events system.
 - POST_RENDER
 - PRE_SUBMIT
 - POST_SUBMIT
+
+## Maintenance V6.2.1
+- listeners fautifs isolés
+- ordre et stabilité conservés
+

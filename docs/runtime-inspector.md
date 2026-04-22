@@ -10,3 +10,8 @@ Exposer l'état runtime de manière structurée.
 - cache
 - timings
 - metrics
+
+## Maintenance V6.2.1
+- inspector toujours structuré même sans runtime context
+- cache key nullable stabilisée
+

@@ -1324,3 +1324,8 @@ Cette version ajoute des outils DX, un cache de schéma et des bridges officiels
 ## V6.2.0 observabilité, fiabilité runtime et introspection avancée
 
 Cette version ajoute un event system, un runtime inspector et une couche d'observabilité structurée.
+
+
+## V6.2.1 maintenance observabilité et non-régression runtime
+
+Cette version stabilise l'observabilité, le dispatcher d'événements et les outils de debug runtime.

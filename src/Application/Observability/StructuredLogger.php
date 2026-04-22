@@ -14,10 +14,7 @@ final class StructuredLogger
      */
     public function log(string $message, array $context = []): void
     {
-        $this->entries[] = [
-            'message' => $message,
-            'context' => $context,
-        ];
+        $this->entries[] = ['message' => $message, 'context' => $context];
     }
 
     /**
@@ -26,5 +23,10 @@ final class StructuredLogger
     public function entries(): array
     {
         return $this->entries;
+    }
+
+    public function count(): int
+    {
+        return count($this->entries);
     }
 }

@@ -8,3 +8,7 @@ Documenter les commandes debug et l'inspection avancée.
 - `debug:pipeline`
 - `debug:events`
 - `debug:cache`
+
+## Maintenance V6.2.1
+- commandes debug runtime toujours JSON valides
+

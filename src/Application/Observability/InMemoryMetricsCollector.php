@@ -24,4 +24,9 @@ final class InMemoryMetricsCollector
     {
         return $this->values;
     }
+
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->values);
+    }
 }

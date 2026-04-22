@@ -264,3 +264,6 @@
 - [Runtime Inspector](runtime-inspector.md)
 
 > V6.2.0 introduit observabilité, events runtime et introspection avancée.
+
+
+> V6.2.1 consolide l’observabilité, les events et la non-régression runtime.

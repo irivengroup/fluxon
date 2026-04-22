@@ -1,3 +1,20 @@
+## V6.2.1
+
+### Added
+- `tests/EventDispatcherRegressionTest.php`
+- `tests/RuntimeInspectorRegressionTest.php`
+- `tests/ObservabilityRegressionTest.php`
+- `tests/DebugRuntimeCliRegressionTest.php`
+- `releases.d/RELEASE_NOTES_V6.2.1.md`
+- `validations.d/VALIDATION_MANIFEST_V6.2.1.md`
+
+### Changed
+- hardening de `InMemoryEventDispatcher`
+- hardening de `RuntimeInspector`
+- hardening de `InMemoryMetricsCollector`
+- hardening de `StructuredLogger`
+- stabilisation des commandes debug runtime
+
 ## V6.2.0
 
 ### Added

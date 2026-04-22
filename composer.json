@@ -75,8 +75,8 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "extra": {
-    "release_name": "V6.5.0 queue transport et exécution async",
-    "release_channel": "queue-async-runtime"
+    "release_name": "V6.5.1 maintenance async et non-régression transport",
+    "release_channel": "async-transport-maintenance"
   },
   "bin": [
     "bin/fluxon"

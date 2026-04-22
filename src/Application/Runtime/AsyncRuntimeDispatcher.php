@@ -26,6 +26,15 @@ final class AsyncRuntimeDispatcher
             $context,
         );
 
+        if (!$job->isValid()) {
+            return [
+                'transport' => 'queue',
+                'status' => 'invalid',
+                'payload' => [],
+                'queue_size' => $this->transport->size(),
+            ];
+        }
+
         return $this->transport->send([
             'serialized_job' => $this->serializer->serialize($job),
             'job' => $job->toArray(),

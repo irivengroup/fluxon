@@ -1360,3 +1360,8 @@ Cette version stabilise le profilage, les diagnostics production et la cohérenc
 ## V6.5.0 queue transport et exécution async
 
 Cette version ajoute le transport queue, l'enveloppe de job async et le dispatcher runtime asynchrone.
+
+
+## V6.5.1 maintenance async et non-régression transport
+
+Cette version stabilise le runtime async, le serializer de job et le queue transport.

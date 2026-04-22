@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Iriven\Fluxon\Application\Runtime;
 
+use JsonException;
+
 /** @api */
 final class JobSerializer
 {
@@ -13,8 +15,12 @@ final class JobSerializer
 
     public function deserialize(string $payload): AsyncJobEnvelope
     {
-        /** @var array<string, mixed> $data */
-        $data = json_decode($payload, true, flags: JSON_THROW_ON_ERROR);
+        try {
+            /** @var array<string, mixed> $data */
+            $data = json_decode($payload, true, flags: JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return new AsyncJobEnvelope('invalid', 'submit', 'unknown', [], null);
+        }
 
         $context = null;
         if (is_array($data['context'] ?? null)) {

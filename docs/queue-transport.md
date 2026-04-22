@@ -7,3 +7,8 @@ Documenter le transport queue.
 - payload structuré
 - mise en file stable
 - taille de file observable
+
+## Maintenance V6.5.1
+- indisponibilité de queue gérée proprement
+- réponse transport toujours structurée
+

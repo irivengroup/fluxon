@@ -290,3 +290,6 @@
 - [Distributed Execution](distributed-execution.md)
 
 > V6.5.0 introduit le transport queue et l'exécution async structurée.
+
+
+> V6.5.1 consolide l'async runtime et la non-régression transport.

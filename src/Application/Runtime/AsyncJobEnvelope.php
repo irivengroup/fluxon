@@ -63,4 +63,9 @@ final class AsyncJobEnvelope
             ],
         ];
     }
+
+    public function isValid(): bool
+    {
+        return $this->jobId !== '' && $this->action !== '' && $this->formName !== '';
+    }
 }

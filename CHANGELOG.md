@@ -1,3 +1,19 @@
+## V6.5.1
+
+### Added
+- `tests/AsyncJobEnvelopeRegressionTest.php`
+- `tests/JobSerializerRegressionTest.php`
+- `tests/QueueTransportRegressionTest.php`
+- `tests/AsyncRuntimeDispatcherRegressionTest.php`
+- `releases.d/RELEASE_NOTES_V6.5.1.md`
+- `validations.d/VALIDATION_MANIFEST_V6.5.1.md`
+
+### Changed
+- hardening de `AsyncJobEnvelope`
+- hardening de `JobSerializer`
+- hardening de `QueueTransport`
+- hardening de `AsyncRuntimeDispatcher`
+
 ## V6.5.0
 
 ### Added

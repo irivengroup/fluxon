@@ -7,14 +7,6 @@
   A modern, extensible, and production-ready PHP form engine for building forms, APIs, and distributed systems.
 </p>
 
-<p align="center">
-  <a href="https://packagist.org/packages/iriven/fluxon"><img src="https://img.shields.io/packagist/v/iriven/fluxon" alt="Latest Version"></a>
-  <a href="https://packagist.org/packages/iriven/fluxon"><img src="https://img.shields.io/packagist/dt/iriven/fluxon" alt="Downloads"></a>
-  <a href="#"><img src="https://img.shields.io/badge/PHP-8.2%2B-blue" alt="PHP Version"></a>
-  <a href="#"><img src="https://img.shields.io/badge/status-stable-brightgreen" alt="Status"></a>
-  <a href="#"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
-</p>
-
 [![Build Status](https://scrutinizer-ci.com/g/irivengroup/fluxon/badges/build.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/fluxon/build-status/master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/irivengroup/fluxon/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/fluxon/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/irivengroup/fluxon/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/irivengroup/fluxon/?branch=master)

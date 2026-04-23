@@ -1,14 +1,9 @@
-[↑ Retour au sommaire docs](index.md)
-
-> Breadcrumb: [Docs](index.md) / plugin-contract.md
-
 # Plugin Contract
 
-## Objectif
-Documenter les contrats plugins officiels de V5.0.0.
+## Goal
+Document the stable plugin contract.
 
-## Contrats
-- `PluginInterface`
-- `FieldExtensionInterface`
-
-[↑ Retour au sommaire docs](index.md)
+## Interfaces
+- `OfficialPluginInterface`
+- `FieldTypePluginInterface`
+- `PluginContext`
